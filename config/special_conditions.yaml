@@ -1,0 +1,70 @@
+special_conditions:
+  - condition: "Plati chastyami"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность (куда)"
+        value: "Плати частями"
+      - field: "Категория"
+        value: ""
+
+  - condition: "перевод по номеру телефона \\+79267660077"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+
+  - condition: "перевод с договора 5174820778"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Тинькофф"
+      - field: "Наличность (куда)"
+        value: "Тинькофф. Платинум"
+      - field: "Категория"
+        value: ""
+
+  - condition: "ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ"
+    actions:
+      - field: "Сумма"
+        value: "-$CURRENT"
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Возврат средств"
+
+  - condition: "ОПЛАТА ПО ДОГОВОРУ 38/25"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Монтессори центр САМИ"
+
+  - condition: "SKLADNO"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Аренда под вещи: складно"
+
+  - condition: "MOSENERGOSBYT"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МосЭнергоСбыт (МЭС)"
+      - field: "Контрагент"
+        value: "Квартира_Ипотека"
+
+  - condition: "КОМ. ПЛАТЕЖИ. ВЕРНАДСКОГО 54"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "ЖКХ"
+      - field: "Контрагент"
+        value: "Квартира_Ипотека"
+
+  - condition: "Номер карты 2578"
+    actions:
+      - field: "Контрагент"
+        value: "! Наташа"

@@ -1,0 +1,189 @@
+import os
+import logging
+from telegram import Update
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters
+)
+from io import BytesIO
+import pandas as pd
+from typing import Optional, Dict
+from tempfile import NamedTemporaryFile
+import asyncio
+import time
+import yaml
+
+# Импорт ваших скриптов
+from extract_transactions_pdf1 import process_pdf as extract_pdf1
+from extract_transactions_pdf2 import process_csv as extract_pdf2
+from classify_transactions_pdf import classify_transactions
+
+# Настройка логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+# Функция для загрузки конфигурации таймаутов
+def load_timeouts(config_path: str = None) -> Dict[str, int]:
+    """Загружает конфигурацию таймаутов из YAML-файла"""
+    if config_path is None:
+        config_path = os.path.join(os.path.dirname(__file__), 'config', 'timeouts.yaml')
+    with open(config_path, 'r', encoding='utf-8') as file:
+        return yaml.safe_load(file)['timeouts']
+
+# Класс бота
+class TransactionProcessorBot:
+    def __init__(self, token: str):
+        # Загрузка таймаутов из YAML
+        timeouts = load_timeouts()
+        self.download_timeout = timeouts['download_timeout']
+        self.processing_timeout = timeouts['processing_timeout']
+        self.request_timeout = timeouts['request_timeout']
+        self.delay_between_operations = timeouts['delay_between_operations']
+
+        # Настройка таймаутов для Application
+        self.application = Application.builder() \
+            .token(token) \
+            .read_timeout(self.request_timeout) \
+            .write_timeout(self.request_timeout) \
+            .build()
+
+        # Регистрация обработчиков
+        self.application.add_handler(CommandHandler("start", self.start))
+        self.application.add_handler(MessageHandler(filters.Document.ALL, self.handle_document))
+
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /start"""
+        await update.message.reply_text(
+            "Привет! Я бот для обработки банковских выписок.\n"
+            "Отправьте мне файл в формате PDF, и я обработаю его для вас.\n"
+            "Обработка может занять несколько минут, пожалуйста, подождите."
+        )
+
+    async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает полученный документ"""
+        user = update.message.from_user
+        document = update.message.document
+
+        # Проверяем, что это PDF
+        if not document.file_name.lower().endswith('.pdf'):
+            await update.message.reply_text("Пожалуйста, отправьте файл в формате PDF.")
+            return
+
+        # Логируем информацию о файле
+        logger.info(f"Получен файл: {document.file_name}, размер: {document.file_size} байт")
+        await update.message.reply_text("Начинаю обработку выписки. Это может занять несколько минут...")
+
+        tmp_pdf_path = None
+        temp_csv_path = None
+        combined_csv_path = None
+        result_csv_path = None
+
+        try:
+            # Скачиваем файл с увеличенным таймаутом
+            start_time = time.time()
+            pdf_file = BytesIO()
+            file = await document.get_file(read_timeout=self.download_timeout)
+            await file.download_to_memory(out=pdf_file, read_timeout=self.download_timeout)
+            pdf_file.seek(0)
+            logger.info(f"Файл загружен за {time.time() - start_time:.2f} секунд")
+
+            # Добавляем небольшую задержку
+            await asyncio.sleep(self.delay_between_operations)
+
+            # Сохраняем временный файл
+            with NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_pdf:
+                tmp_pdf.write(pdf_file.read())
+                tmp_pdf_path = tmp_pdf.name
+
+            # Обработка PDF с таймаутом
+            try:
+                start_process = time.time()
+                temp_csv_path = await asyncio.wait_for(
+                    asyncio.to_thread(extract_pdf1, tmp_pdf_path),
+                    timeout=self.processing_timeout
+                )
+                logger.info(f"PDF обработан за {time.time() - start_process:.2f} секунд")
+                await asyncio.sleep(self.delay_between_operations)
+
+                combined_csv_path = await asyncio.wait_for(
+                    asyncio.to_thread(extract_pdf2, temp_csv_path),
+                    timeout=self.processing_timeout
+                )
+                await asyncio.sleep(self.delay_between_operations)
+
+                result_csv_path = await asyncio.wait_for(
+                    asyncio.to_thread(classify_transactions, combined_csv_path),
+                    timeout=self.processing_timeout
+                )
+            except asyncio.TimeoutError:
+                await update.message.reply_text(
+                    "Обработка файла заняла слишком много времени. "
+                    "Пожалуйста, попробуйте снова или отправьте файл меньшего размера."
+                )
+                return
+
+            # Отправляем результат с увеличенным таймаутом
+            with open(result_csv_path, 'rb') as result_file:
+                await update.message.reply_document(
+                    document=result_file,
+                    caption="Вот ваш обработанный файл с транзакциями",
+                    read_timeout=self.download_timeout,
+                    write_timeout=self.download_timeout
+                )
+        except Exception as e:
+            logger.error(f"Ошибка обработки файла: {e}", exc_info=True)
+            await update.message.reply_text(
+                "Произошла ошибка при обработке файла. Пожалуйста, убедитесь, что файл корректный."
+            )
+        finally:
+            # Удаляем временные файлы с задержками
+            await self.cleanup_files([
+                tmp_pdf_path,
+                temp_csv_path,
+                combined_csv_path,
+                result_csv_path
+            ])
+
+    async def cleanup_files(self, file_paths):
+        """Удаляет временные файлы с задержками"""
+        for path in file_paths:
+            if path and os.path.exists(path):
+                try:
+                    os.unlink(path)
+                    await asyncio.sleep(self.delay_between_operations)
+                except Exception as e:
+                    logger.error(f"Ошибка при удалении файла {path}: {e}")
+
+    async def shutdown(self):
+        """Останавливает бота и завершает все задачи"""
+        logger.info("Ожидание завершения задач...")
+        tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        logger.info("Все задачи завершены.")
+
+    def run(self):
+        """Запускает бота"""
+        try:
+            self.application.run_polling(
+                poll_interval=2.0,  # Увеличиваем интервал опроса
+                timeout=self.request_timeout
+            )
+        except KeyboardInterrupt:
+            logger.info("Остановка бота...")
+            asyncio.run(self.shutdown())
+
+if __name__ == '__main__':
+    # Получаем токен из переменной окружения
+    TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+    if not TOKEN:
+        raise ValueError("Необходимо установить переменную окружения TELEGRAM_BOT_TOKEN")
+    bot = TransactionProcessorBot(TOKEN)
+    bot.run()
