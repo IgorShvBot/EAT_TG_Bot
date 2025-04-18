@@ -4,10 +4,6 @@ import yaml
 import os
 import re
 
-def load_yaml(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return yaml.safe_load(file)
-
 def load_pdf_config(config_path: str = 'pdf_patterns.yaml') -> dict:
     """Загружает конфигурацию из YAML файла"""
     if config_path is None:
