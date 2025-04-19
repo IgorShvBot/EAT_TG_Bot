@@ -4,8 +4,7 @@ import os
 import re
 from pypdf import PdfReader
 import yaml
-# import pdfplumber
-# from tabula import read_pdf
+import fitz  # PyMuPDF
 
 def load_pdf_config(config_path: str = 'pdf_patterns.yaml') -> dict:
     """Загружает конфигурацию из YAML файла"""
@@ -114,68 +113,50 @@ def process_Tinkoff_Platinum(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     return df
 
 def process_Visa_Gold_Aeroflot(df: pd.DataFrame, config: dict) -> pd.DataFrame:
-    """Обработка для Visa_Gold_Aeroflot"""
+    """Обработка для Visa Gold Aeroflot
+    
+    Параметры:
+        df: DataFrame с сырыми данными из PDF (должен содержать столбец 'text')
+        config: Словарь с конфигурацией обработки из YAML
+    
+    Возвращает:
+        Обработанный DataFrame с транзакциями
+    """
+    # Проверка и подготовка конфигурации
+    required_keys = ['remove_rows_by_text', 'start_marker', 'end_marker']
+    for key in required_keys:
+        if key not in config:
+            raise ValueError(f"В конфигурации отсутствует обязательный ключ: {key}")
 
-   # 1. Выбор нужных колонок из исходного DataFrame
-    # Используем индексы колонок из конфига (например, [0, 3, 4, 5])
-    df = df.iloc[:, config['columns']]
-    
-    # 2. Сброс названий колонок на числовые индексы (0, 1, 2...)
-    # Это упрощает дальнейшую обработку
-    df.columns = range(len(df.columns))
-    
-    # 3. Сброс индекса строк (начинаем с 0)
+    remove_texts = config['remove_rows_by_text']
+    start_marker = config['start_marker']
+    end_marker = config['end_marker']
+
+    # Создаем временный столбец для пометки строк к удалению
+    df['to_delete'] = False
+
+    # 1. Удаление строк по текстовым паттернам из конфига
+    for pattern in remove_texts:
+        df.loc[df['text'].str.contains(pattern, regex=False, na=False), 'to_delete'] = True
+
+    # 2. Удаление строк до start_marker (включительно)
+    start_mask = df['text'].str.contains(start_marker, regex=False, na=False)
+    if start_mask.any():
+        start_idx = start_mask.idxmax()
+        df.loc[:start_idx, 'to_delete'] = True
+
+    # 3. Удаление строк после end_marker (включительно)
+    end_mask = df['text'].str.contains(end_marker, regex=False, na=False)
+    if end_mask.any():
+        end_idx = end_mask.idxmax()
+        df.loc[end_idx:, 'to_delete'] = True
+
+    # 4. Применение удаления и очистка
+    df = df[~df['to_delete']].copy()
+    df = df.drop(columns=['to_delete'])
     df = df.reset_index(drop=True)
 
-    # 4. Создание маски для фильтрации строк:
-    # - Исключаем строки, содержащие start_marker или "операции"
-    # - Исключаем дубликаты по первой колонке (кроме первого вхождения)
-    mask = ~(
-        # df.iloc[:, 0].str.contains(f"{config['start_marker']}|операции", na=False) &
-        df.iloc[:, 0].str.contains(f"{config['start_marker']}", na=False) &
-        df.duplicated(subset=df.columns[0], keep='first')
-    )
-    df = df[mask]
-
-    # 5. Поиск начальной строки данных по start_marker
-    start_rows = df[df.iloc[:, 0].str.contains(config['start_marker'], na=False)]
-    if start_rows.empty:
-        raise ValueError(f"Строка с текстом '{config['start_marker']}' не найдена.")
-    start_index = start_rows.index[0]
-
-    # 6. Поиск конечной строки данных по end_marker
-    end_rows = df[df.iloc[:, 0].str.contains(config['end_marker'], na=False)]
-    if end_rows.empty:
-        raise ValueError(f"Строка с текстом '{config['end_marker']}' не найдена.")
-    end_index = end_rows.index[0]
-
-    # 7. Выбор только нужного диапазона строк (от start_index до end_index-1)
-    df = df.loc[start_index:end_index-1]
-
-    # 8. Обработка случая, когда заголовок таблицы разбит на две строки
-    if len(df) > 1:
-        # Объединяем первую и вторую строку через пробел
-        combined_row = df.iloc[0] + " " + df.iloc[1]
-        # Заменяем первую строку объединенной
-        df.iloc[0] = combined_row
-        # Сбрасываем индексы
-        df = df.reset_index(drop=True)
-        # Удаляем вторую строку (она теперь избыточна)
-        df = df.drop(1)
-    
     return df
-
-'''
-    start_index = df[df.iloc[:, 0].str.contains(config['start_marker'], na=False)].index[0]
-    
-    if 'end_marker' in config:
-        end_index = df[df.iloc[:, 0].str.contains(config['end_marker'], na=False)].index[0]
-        df = df.loc[start_index:end_index-1]
-    else:
-        df = df.loc[start_index:]
-    
-    return df
-'''
 
 def process_Tinkoff(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     """Обработка для Tinkoff"""
@@ -234,17 +215,30 @@ def remove_rows_by_position(df: pd.DataFrame, config: dict) -> pd.DataFrame:
 PDF_PROCESSORS = {
     'Tinkoff_Platinum': process_Tinkoff_Platinum,
     'Visa_Gold_Aeroflot': process_Visa_Gold_Aeroflot,
-    'Tinkoff': process_Tinkoff
+    'Tinkoff': process_Tinkoff_Platinum # process_Tinkoff
 }
 
-def process_pdf(pdf_path: str) -> str:
-    """Обрабатывает PDF файл и возвращает путь к временному CSV"""
-    pdf_config = load_pdf_config(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config', 'pdf_patterns.yaml'))
-    pdf_type = detect_pdf_type(pdf_path, pdf_config)
-    print(f"Определен тип PDF: {pdf_type}")
+def sub_process_pdf_Sber(pdf_path: str) -> pd.DataFrame:
+    # Открываем PDF файл
+    document = fitz.open(pdf_path)
+    text = ""
+
+    # Извлекаем текст из всех страниц
+    for page_num in range(len(document)):
+        page = document.load_page(page_num)
+        text += page.get_text()
+    return pd.DataFrame(text.split('\n'), columns=['text'])
     
-    config = pdf_config['pdf_types'][pdf_type]
-    
+    # Разделяем текст на строки
+    # lines = text.split('\n')
+
+    # Создание DataFrame
+    # df = pd.DataFrame(lines, columns=['text'])
+
+    # Создание временного столбца для пометки строк к удалению
+    df['to_delete'] = False
+
+def sub_process_pdf_Not_Sber(pdf_path: str) -> pd.DataFrame:
     # Чтение PDF
     tables = camelot.read_pdf(
         pdf_path,
@@ -256,15 +250,25 @@ def process_pdf(pdf_path: str) -> str:
 
     if not tables:
         raise ValueError("Не удалось извлечь таблицы из PDF")
+    return pd.concat([table.df for table in tables])
 
-    df = pd.concat([table.df for table in tables])
+def process_pdf(pdf_path: str) -> str:
+    """Обрабатывает PDF файл и возвращает путь к временному CSV"""
+    pdf_config = load_pdf_config(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config', 'pdf_patterns.yaml'))
+    pdf_type = detect_pdf_type(pdf_path, pdf_config)
+    print(f"Определен тип PDF: {pdf_type}")
+    
+    config = pdf_config['pdf_types'][pdf_type]
+
+    # Выбираем подпроцесс в зависимости от типа PDF
+    if pdf_type == "Visa_Gold_Aeroflot":
+        df = sub_process_pdf_Sber(pdf_path)
+    else:
+        df = sub_process_pdf_Not_Sber(pdf_path)
 
     # Выбираем обработчик
     processor = PDF_PROCESSORS.get(pdf_type, process_default)
     df = processor(df, config)
-    
-    # Применяем удаление строк по позициям
-    df = remove_rows_by_position(df, config)
     
     # Сохранение во временный файл
     output_dir = os.path.dirname(pdf_path)
@@ -276,8 +280,8 @@ def process_pdf(pdf_path: str) -> str:
     return temp_csv_path
 
 if __name__ == "__main__":
-    pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
-    # pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (К).pdf'
+    # pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
+    pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (Д).pdf'
     try:
         csv_path = process_pdf(pdf_path)
         print(f"CSV файл сохранен по пути: {csv_path}")
