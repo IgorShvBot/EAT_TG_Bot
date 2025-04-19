@@ -21,8 +21,8 @@ def load_pdf_config(config_path: str = 'pdf_patterns.yaml') -> dict:
 
 def transform_dataframe(df):
     # Создаем новый DataFrame с нужными колонками
-    new_df = pd.DataFrame(columns=['Дата и время', 'Дата списания', 'Код авторизации', # 'Категория',
-                                    'Описание операции', 'Сумма', 'Остаток средств'])
+    new_df = pd.DataFrame(columns=['Дата и время операции', 'Сумма операции в валюте карты',
+                                    'Описание операции', 'Номер карты'])
     
     i = 0
     n = len(df)
@@ -40,13 +40,12 @@ def transform_dataframe(df):
                 
                 # Собираем данные для новой строки
                 new_row = {
-                    'Дата и время': f"{date} {time}",
-                    'Дата списания': df.iloc[i+4]['text'].strip() if i+4 < n else '',
-                    'Код авторизации': df.iloc[i]['text'].strip() if i < n else '',
-                    # 'Категория': df.iloc[i+1]['text'].strip() if i+1 < n else '',
-                    'Описание операции': df.iloc[i+1]['text'].strip() + ":" if i+1 < n else '',
-                    'Сумма': df.iloc[i+2]['text'].strip() if i+2 < n else '',
-                    'Остаток средств': df.iloc[i+3]['text'].strip() if i+3 < n else ''
+                    'Дата и время операции': f"{date} {time}",
+                    'Сумма операции в валюте карты': df.iloc[i+2]['text'].strip() if i+2 < n else '',
+                    'Описание операции': "Остаток: " + df.iloc[i+3]['text'].strip() + ", "
+                                                    + df.iloc[i+1]['text'].strip() + ":" if i+1 < n else '',
+                    'Номер карты': "Дата списания: " + df.iloc[i+4]['text'].strip() + ", "
+                                                    + "код авторизации:" + df.iloc[i]['text'].strip()
                 }
                 
                 # Добавляем новую строку в DataFrame
@@ -74,6 +73,7 @@ def extract_text_from_pdf(pdf_path, yaml_path):
 
     # Получаем конфигурацию для конкретного типа PDF
     config = pdf_config['pdf_types'][pdf_type]
+    
     patterns = config['patterns']
     columns = config['columns']
     start_marker = config['start_marker']
@@ -101,9 +101,6 @@ def extract_text_from_pdf(pdf_path, yaml_path):
     # Пометка строк, содержащих указанные тексты
     for text_pattern in remove_rows_by_text:
         df.loc[df['text'].str.contains(text_pattern, regex=False), 'to_delete'] = True
-
-    # Пометка первых 31 строки
-    df.loc[:30, 'to_delete'] = True
 
     # Поиск строки с текстом start_marker
     index_start_marker = df[df['text'].str.contains(start_marker, regex=False)].index
