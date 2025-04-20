@@ -122,3 +122,17 @@ categories:
     patterns:
       - "TRAVEL"
       - "AVIA"
+
+type_settings:
+  Tinkoff_Platinum:
+    class: "01 Личное"
+    contractor: ""
+  Tinkoff:
+    class: "01 Личное"
+    contractor: ""
+  Visa_Gold_Aeroflot:
+    class: "03 Родные, близкие"
+    contractor: "! М"
+  default:
+    class: "01 Личное"
+    contractor: ""

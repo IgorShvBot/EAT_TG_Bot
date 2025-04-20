@@ -215,7 +215,8 @@ def remove_rows_by_position(df: pd.DataFrame, config: dict) -> pd.DataFrame:
 PDF_PROCESSORS = {
     'Tinkoff_Platinum': process_Tinkoff_Platinum,
     'Visa_Gold_Aeroflot': process_Visa_Gold_Aeroflot,
-    'Tinkoff': process_Tinkoff_Platinum # process_Tinkoff
+    'Tinkoff': process_Tinkoff_Platinum, # process_Tinkoff
+    "default": process_default
 }
 
 def sub_process_pdf_Sber(pdf_path: str) -> pd.DataFrame:
@@ -277,7 +278,7 @@ def process_pdf(pdf_path: str) -> str:
     temp_csv_path = os.path.join(output_dir, f"transactions_{pdf_type}_temp.csv")
     df.to_csv(temp_csv_path, index=False)
 
-    return temp_csv_path
+    return temp_csv_path, pdf_type
 
 if __name__ == "__main__":
     # pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"

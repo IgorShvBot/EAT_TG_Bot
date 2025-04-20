@@ -38,8 +38,10 @@ from classify_transactions_pdf import classify_transactions
 # Настройка логирования
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S',
     level=logging.INFO
 )
+
 logger = logging.getLogger(__name__)
 
 def load_timeouts(config_path: str = None) -> Dict[str, int]:
@@ -113,7 +115,7 @@ class TransactionProcessorBot:
         }
         
         if query.data == 'back_to_main':
-            await self.show_config_menu(query.message)
+            await self.show_config_menu(update)  # Передаем update вместо query.message
             return
         elif query.data == 'view_all':
             await self.send_all_config_files(query)
@@ -186,7 +188,13 @@ class TransactionProcessorBot:
 
     async def show_config_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         """Показывает меню управления конфигурацией"""
-        message = update.message if hasattr(update, 'message') else update.callback_query.message
+        # Получаем сообщение из update или callback_query
+        if hasattr(update, 'message'):
+            message = update.message
+        elif hasattr(update, 'callback_query') and update.callback_query.message:
+            message = update.callback_query.message
+        else:
+            message = update  # если передано сообщение напрямую
         
         keyboard = [
             [InlineKeyboardButton("Просмотреть конфиг", callback_data='view_config')],
@@ -217,6 +225,7 @@ class TransactionProcessorBot:
         keyboard = [
             [InlineKeyboardButton("Категории", callback_data='view_categories')],
             [InlineKeyboardButton("Спец. условия", callback_data='view_special')],
+            [InlineKeyboardButton("PDF паттерны", callback_data='view_pdf_patterns')],
             [InlineKeyboardButton("Таймауты", callback_data='view_timeouts')],
             [InlineKeyboardButton("Все файлы", callback_data='view_all')],
             [InlineKeyboardButton("Назад", callback_data='back_to_main')]
@@ -257,6 +266,7 @@ class TransactionProcessorBot:
         keyboard = [
             [InlineKeyboardButton("Категории", callback_data='edit_categories')],
             [InlineKeyboardButton("Спец. условия", callback_data='edit_special')],
+            [InlineKeyboardButton("PDF паттерны", callback_data='edit_pdf_patterns')],
             [InlineKeyboardButton("Таймауты", callback_data='edit_timeouts')],
             [InlineKeyboardButton("Отмена", callback_data='cancel')]
         ]
@@ -420,20 +430,18 @@ class TransactionProcessorBot:
                 tmp_pdf_path = tmp_pdf.name
 
             # Обработка PDF
-            temp_csv_path = await asyncio.wait_for(
+            temp_csv_path, pdf_type = await asyncio.wait_for(
                 asyncio.to_thread(extract_pdf1, tmp_pdf_path),
                 timeout=self.processing_timeout
             )
-            await asyncio.sleep(self.delay_between_operations)
 
             combined_csv_path = await asyncio.wait_for(
-                asyncio.to_thread(extract_pdf2, temp_csv_path),
+                asyncio.to_thread(extract_pdf2, temp_csv_path, pdf_type),  # Передаем тип PDF
                 timeout=self.processing_timeout
             )
-            await asyncio.sleep(self.delay_between_operations)
 
             result_csv_path = await asyncio.wait_for(
-                asyncio.to_thread(classify_transactions, combined_csv_path),
+                asyncio.to_thread(classify_transactions, combined_csv_path, pdf_type), # Передаем тип PDF
                 timeout=self.processing_timeout
             )
 

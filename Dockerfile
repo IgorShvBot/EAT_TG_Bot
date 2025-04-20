@@ -1,3 +1,4 @@
+# FROM python:3.10
 FROM python:3.10-slim
 
 # Устанавливаем системные зависимости
@@ -10,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     tzdata \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Устанавливаем временную зону
 ENV TZ=Europe/Moscow
@@ -24,13 +26,15 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
+# Создаем директорию для конфигов
+RUN mkdir -p /app/config
+
+# Указываем переменные окружения
+ENV PYTHONUNBUFFERED=1
+ENV DOCKER_MODE=1
+
 HEALTHCHECK --interval=30s --timeout=3s \
-    CMD python -c "import requests; exit(0 if requests.get('http://localhost:8080/health').status_code == 200 else 1)" || exit 1
+    CMD python -c "import socket; socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM).bind('\0bank-bot-healthcheck')" || exit 1
 
 CMD ["python", "bot.py"]
-
-
-
-
-
 
