@@ -121,9 +121,9 @@ class TransactionProcessorBot:
 
         self.application.add_handler(CallbackQueryHandler(
             self.config_selection_callback,
-            pattern='^(view_categories|view_special|view_timeouts|view_all|back_to_main)$'
+            pattern='^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'
         ))
-        
+
         # Обработчик для ввода паттерна
         self.pattern_handler = MessageHandler(
             filters.TEXT & ~filters.COMMAND,
@@ -146,7 +146,7 @@ class TransactionProcessorBot:
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.edit_menu_callback,
-            pattern='^(edit_categories|edit_special|edit_timeouts|cancel)$'
+            pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.handle_pattern_callback,
@@ -441,7 +441,7 @@ class TransactionProcessorBot:
         
         for filename, description in config_files.items():
             await self.send_single_config_file(query, filename)
-            await asyncio.sleep(0.5)  # Небольшая задержка между отправками
+            await asyncio.sleep(0.5)
 
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE):
         """Логирует ошибки и уведомляет пользователя"""
@@ -546,11 +546,15 @@ class TransactionProcessorBot:
             'edit_timeouts': 'timeouts.yaml'
         }
         
-        filename = config_map[query.data]
+        filename = config_map.get(query.data)
+        if not filename:
+            await query.edit_message_text("Неизвестный тип конфига")
+            return
+        
         context.user_data['editing_file'] = filename
         await query.edit_message_text(
             text=f"Отправьте новое содержимое файла {filename} в виде текста "
-                 "или файлом YAML. Используйте /cancel для отмены."
+                "или файлом YAML. Используйте /cancel для отмены."
         )
         # Активируем обработчики редактирования
         for handler in self.config_handlers:

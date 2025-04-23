@@ -46,3 +46,99 @@
 24-04-2025 00:34:00 - telegram.ext.Application - INFO - Application started
 24-04-2025 00:45:58 - root - INFO - Запуск бота в Docker-контейнере
 24-04-2025 00:45:58 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:55:35 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:55:36 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:02:49 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:02:49 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:03:39 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:03:41 - camelot - INFO - Processing page-1
+24-04-2025 01:03:41 - camelot - INFO - Processing page-2
+24-04-2025 01:03:41 - camelot - INFO - Processing page-3
+24-04-2025 01:03:41 - camelot - INFO - Processing page-4
+24-04-2025 01:03:42 - camelot - INFO - Processing page-5
+24-04-2025 01:03:42 - camelot - INFO - Processing page-6
+24-04-2025 01:03:42 - camelot - INFO - Processing page-7
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:08:55 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:08:55 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:09:11 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:09:12 - camelot - INFO - Processing page-1
+24-04-2025 01:09:12 - camelot - INFO - Processing page-2
+24-04-2025 01:09:12 - camelot - INFO - Processing page-3
+24-04-2025 01:09:13 - camelot - INFO - Processing page-4
+24-04-2025 01:09:13 - camelot - INFO - Processing page-5
+24-04-2025 01:09:13 - camelot - INFO - Processing page-6
+24-04-2025 01:09:13 - camelot - INFO - Processing page-7
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:16:44 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:16:44 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:16:57 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:16:58 - camelot - INFO - Processing page-1
+24-04-2025 01:16:58 - camelot - INFO - Processing page-2
+24-04-2025 01:16:58 - camelot - INFO - Processing page-3
+24-04-2025 01:16:59 - camelot - INFO - Processing page-4
+24-04-2025 01:16:59 - camelot - INFO - Processing page-5
+24-04-2025 01:16:59 - camelot - INFO - Processing page-6
+24-04-2025 01:16:59 - camelot - INFO - Processing page-7
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:23:53 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:23:54 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:24:03 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:24:05 - camelot - INFO - Processing page-1
+24-04-2025 01:24:05 - camelot - INFO - Processing page-2
+24-04-2025 01:24:05 - camelot - INFO - Processing page-3
+24-04-2025 01:24:06 - camelot - INFO - Processing page-4
+24-04-2025 01:24:06 - camelot - INFO - Processing page-5
+24-04-2025 01:24:06 - camelot - INFO - Processing page-6
+24-04-2025 01:24:06 - camelot - INFO - Processing page-7
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:29:10 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:29:11 - telegram.ext.Application - INFO - Application started
