@@ -5,7 +5,19 @@ import os
 from typing import Dict, List, Any
 import logging
 
+# Настройка логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S %z',
+    level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
+
 def load_config(config_path: str = None) -> Dict[str, Any]:
+    print("Текущая рабочая директория:", os.getcwd())
+    print("Содержимое config/:", os.listdir(os.path.join(os.path.dirname(__file__), 'config')))
+          
     """Загружает конфигурацию из YAML-файла"""
     if config_path is None:
         config_path = os.path.join(os.path.dirname(__file__), 'config', 'categories.yaml')
@@ -46,6 +58,38 @@ def apply_special_conditions(row: pd.Series, conditions: List[Dict[str, Any]], r
                     value = f"{current_value}, {comment}" if comment else current_value
 
                 result.at[row.name, field] = value
+
+def add_pattern_to_category(category_name: str, pattern: str, config_path: str = None) -> None:
+    """Добавляет новый паттерн в указанную категорию конфига"""
+    if config_path is None:
+        config_path = os.path.join(os.path.dirname(__file__), 'config', 'categories.yaml')
+    
+    try:
+        # Загружаем текущий конфиг
+        with open(config_path, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file) or {'categories': []}
+        
+        # Ищем категорию
+        category_found = False
+        for category in config.get('categories', []):
+            if category['name'] == category_name:
+                if pattern not in category['patterns']:
+                    category['patterns'].append(pattern)
+                category_found = True
+                break
+        
+        # Если категория не найдена, создаем новую
+        if not category_found:
+            config['categories'].append({'name': category_name, 'patterns': [pattern]})
+        
+        # Сохраняем изменения
+        with open(config_path, 'w', encoding='utf-8') as file:
+            yaml.dump(config, file, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        
+        logger.info(f"Паттерн '{pattern}' успешно добавлен в категорию '{category_name}'")
+    except Exception as e:
+        logger.error(f"Ошибка при добавлении паттерна: {str(e)}")
+        raise
 
 def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str:
     """Классифицирует транзакции и возвращает путь к итоговому CSV"""
@@ -104,8 +148,18 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str
         output_csv_path = os.path.join(os.path.dirname(input_csv_path), "result.csv")
         result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8')
 
+
+        # Формирование файла с неподходящими транзакциями
+        unclassified_csv_path = None
+        unclassified_df = result[result['Категория'] == 'Другое']
+        if not unclassified_df.empty:
+            unclassified_csv_path = os.path.join(os.path.dirname(input_csv_path), "unclassified.csv")
+            # Сохраняем исходные данные для удобства пользователя
+            unclassified_df = df[df.index.isin(unclassified_df.index)]
+            unclassified_df.to_csv(unclassified_csv_path, sep=';', index=False, encoding='utf-8')
+
     except Exception as e:
         logger.error(f"Ошибка классификации транзакций: {str(e)}")
         raise
 
-    return output_csv_path
+    return output_csv_path, unclassified_csv_path

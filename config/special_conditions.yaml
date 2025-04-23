@@ -36,11 +36,21 @@ special_conditions:
         value: "$CURRENT"
         comment: "Возврат средств"
 
-  - condition: "ОПЛАТА ПО ДОГОВОРУ 38/25"
+  - condition: "ОПЛАТА ПО ДОГОВОРУ ОКАЗАНИЯ УСЛУГ 38/25"
     actions:
       - field: "Чек #"
         value: "$CURRENT"
         comment: "Монтессори центр САМИ"
+
+  - condition: "03224643450000007300"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Осн"
+      - field: "Контрагент"
+        value: "! М"
+      - field: "Класс"
+        value: "03 Родные, близкие"
 
   - condition: "SKLADNO"
     actions:

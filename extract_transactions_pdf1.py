@@ -281,8 +281,8 @@ def process_pdf(pdf_path: str) -> str:
     return temp_csv_path, pdf_type
 
 if __name__ == "__main__":
-    # pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
-    pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (Д).pdf'
+    pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
+    # pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (Д).pdf'
     try:
         csv_path = process_pdf(pdf_path)
         print(f"CSV файл сохранен по пути: {csv_path}")

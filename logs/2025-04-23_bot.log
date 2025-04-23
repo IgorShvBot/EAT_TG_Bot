@@ -1,0 +1,580 @@
+23-04-2025 00:06:26 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 00:06:26 - root - INFO - Запуск бота...
+23-04-2025 00:06:26 - telegram.ext.Application - INFO - Application started
+23-04-2025 00:10:06 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+23-04-2025 00:10:08 - camelot - INFO - Processing page-1
+23-04-2025 00:10:08 - camelot - INFO - Processing page-2
+23-04-2025 00:10:08 - camelot - INFO - Processing page-3
+23-04-2025 00:10:08 - camelot - INFO - Processing page-4
+23-04-2025 00:10:09 - camelot - INFO - Processing page-5
+23-04-2025 00:10:09 - camelot - INFO - Processing page-6
+23-04-2025 00:10:09 - camelot - INFO - Processing page-7
+23-04-2025 00:10:09 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+23-04-2025 00:10:09 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+23-04-2025 00:10:09 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+23-04-2025 00:12:24 - classify_transactions_pdf - INFO - Паттерн 'Solodovnikova OS' успешно добавлен в категорию 'Дети. Игры'
+23-04-2025 00:12:49 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+23-04-2025 00:12:50 - camelot - INFO - Processing page-1
+23-04-2025 00:12:50 - camelot - INFO - Processing page-2
+23-04-2025 00:12:50 - camelot - INFO - Processing page-3
+23-04-2025 00:12:51 - camelot - INFO - Processing page-4
+23-04-2025 00:12:51 - camelot - INFO - Processing page-5
+23-04-2025 00:12:51 - camelot - INFO - Processing page-6
+23-04-2025 00:12:51 - camelot - INFO - Processing page-7
+23-04-2025 00:12:51 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+23-04-2025 00:12:51 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+23-04-2025 00:12:51 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+23-04-2025 00:34:36 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 00:34:36 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 10:03:02 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 10:03:02 - root - INFO - Запуск бота...
+23-04-2025 10:03:03 - telegram.ext.Application - INFO - Application started23-04-2025 14:05:44 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 14:05:44 - root - INFO - Запуск бота...
+23-04-2025 14:05:44 - telegram.ext.Application - INFO - Application started
+23-04-2025 14:21:58 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 14:21:58 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 22:24:50 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 22:24:50 - root - INFO - Запуск бота...
+23-04-2025 22:24:50 - telegram.ext.Application - INFO - Application started
+23-04-2025 22:34:03 - root - ERROR - Ошибка при чтении логов: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+23-04-2025 22:36:01 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 22:36:01 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 22:36:01 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 22:36:01 - root - INFO - Запуск бота...
+23-04-2025 22:36:02 - telegram.ext.Application - INFO - Application started
+23-04-2025 22:36:32 - root - ERROR - Ошибка при перезагрузке: Timed out
+23-04-2025 22:38:17 - root - ERROR - Ошибка при чтении логов: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+23-04-2025 22:38:33 - root - ERROR - Ошибка при чтении логов: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+23-04-2025 22:40:29 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 22:40:29 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 22:41:08 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 22:41:08 - root - INFO - Запуск бота...
+23-04-2025 22:41:09 - telegram.ext.Application - INFO - Application started
+23-04-2025 22:43:22 - root - ERROR - Ошибка при обработке логов: Can't parse entities: can't find end of the entity starting at byte offset 6420
+23-04-2025 22:50:42 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 22:50:42 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 22:50:42 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 22:50:42 - root - INFO - Запуск бота...
+23-04-2025 22:50:43 - telegram.ext.Application - INFO - Application started
+23-04-2025 22:51:05 - root - INFO - Ожидание завершения задач...
+23-04-2025 22:51:05 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 22:51:05 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 22:51:06 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-14' coro=<TransactionProcessorBot.delayed_restart() done, defined at /app/bot.py:850> exception=RuntimeError('This Updater is still running!')>
+Traceback (most recent call last):
+  File "/app/bot.py", line 855, in delayed_restart
+    await self.shutdown()
+  File "/app/bot.py", line 881, in shutdown
+    await self.application.shutdown()
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 451, in shutdown
+    await self.updater.shutdown()
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 154, in shutdown
+    raise RuntimeError("This Updater is still running!")
+RuntimeError: This Updater is still running!
+23-04-2025 22:51:06 - telegram.ext.Updater - ERROR - Error while getting Updates: httpx.ReadError: 
+23-04-2025 22:51:06 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 34, in read
+    return await self._stream.receive(max_bytes=max_bytes)
+  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 219, in receive
+    data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
+    data = await self.transport_stream.receive()
+  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1263, in receive
+    raise ClosedResourceError from None
+anyio.ClosedResourceError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
+    response = await connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 96, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 121, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 99, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 164, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 200, in _receive_event
+    data = await self._network_stream.read(
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 31, in read
+    with map_exceptions(exc_map):
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
+    res = await self._client.request(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
+    response = await self._send_handling_auth(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 240, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ReadError: 
+23-04-2025 22:51:09 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:09 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:13 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:13 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:20 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:20 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:30 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:30 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:45 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:51:45 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:52:08 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:52:08 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:52:38 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:52:38 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:53:08 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:53:08 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:53:38 - telegram.ext.Updater - ERROR - Error while getting Updates: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:53:38 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 186, in do_request
+    raise RuntimeError("This HTTPXRequest is not initialized!")
+RuntimeError: This HTTPXRequest is not initialized!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 293, in _request_wrapper
+    raise NetworkError(f"Unknown error in HTTP implementation: {repr(exc)}") from exc
+telegram.error.NetworkError: Unknown error in HTTP implementation: RuntimeError('This HTTPXRequest is not initialized!')
+23-04-2025 22:55:57 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 22:55:57 - root - INFO - Запуск бота...
+23-04-2025 22:55:58 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:03:22 - root - ERROR - Ошибка при обработке логов: Can't parse entities: can't find end of the entity starting at byte offset 6420
+23-04-2025 23:03:35 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:03:35 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:04:10 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:04:10 - root - INFO - Запуск бота...
+23-04-2025 23:04:11 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:04:38 - root - ERROR - Ошибка при обработке логов: Can't parse entities: can't find end of the entity starting at byte offset 6420
+23-04-2025 23:07:56 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:07:56 - root - INFO - Запуск бота...
+23-04-2025 23:07:57 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:08:27 - root - ERROR - Ошибка при обработке логов: Can't parse entities: can't find end of the entity starting at byte offset 6420
+23-04-2025 23:09:08 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:08 - root - INFO - Запуск бота...
+23-04-2025 23:09:09 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:13 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:13 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:13 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:13 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:14 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:14 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:15 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:15 - root - INFO - Запуск бота...
+23-04-2025 23:09:16 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:16 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:16 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:16 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:16 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:17 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:17 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:18 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:18 - root - INFO - Запуск бота...
+23-04-2025 23:09:18 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:19 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:19 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:19 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:19 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:20 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:20 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:21 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:21 - root - INFO - Запуск бота...
+23-04-2025 23:09:21 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:21 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:21 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:21 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:21 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:22 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:22 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:24 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:24 - root - INFO - Запуск бота...
+23-04-2025 23:09:24 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:25 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:25 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:25 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:25 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:26 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:26 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:28 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:28 - root - INFO - Запуск бота...
+23-04-2025 23:09:28 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:28 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:28 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:28 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:28 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:29 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:29 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:33 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:33 - root - INFO - Запуск бота...
+23-04-2025 23:09:33 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:34 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:34 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:34 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:34 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:35 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:35 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:42 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:42 - root - INFO - Запуск бота...
+23-04-2025 23:09:42 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:43 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:43 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:43 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:43 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:44 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:44 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!
+23-04-2025 23:09:57 - root - INFO - Бот запущен в Docker-контейнере
+23-04-2025 23:09:57 - root - INFO - Запуск бота...
+23-04-2025 23:09:57 - telegram.ext.Application - INFO - Application started
+23-04-2025 23:09:58 - root - INFO - Начало процесса перезагрузки...
+23-04-2025 23:09:58 - root - INFO - Останавливаем polling...
+23-04-2025 23:09:58 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+23-04-2025 23:09:58 - telegram.ext.Application - INFO - Application.stop() complete
+23-04-2025 23:09:59 - root - INFO - Завершаем работу приложения...
+23-04-2025 23:09:59 - root - ERROR - Критическая ошибка при перезагрузке: This Updater is still running!

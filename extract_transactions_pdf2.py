@@ -100,12 +100,12 @@ def process_visa_gold_aeroflot(input_csv_path: str) -> pd.DataFrame:
                         'Дата и время операции': f"{date} {time}",
                         'Сумма операции в валюте карты': df.iloc[i+2]['text'].strip() if i+2 < n else '',
                         'Описание операции': " ".join(filter(None, [
-                            "Остаток: " + df.iloc[i+3]['text'].strip() if i+3 < n else '',
                             df.iloc[i+1]['text'].strip() + ":" if i+1 < n else ''
                         ])),
-                        'Номер карты': " ".join(filter(None, [
-                            "Дата списания: " + df.iloc[i+4]['text'].strip() if i+4 < n else '',
-                            "код авторизации:" + df.iloc[i]['text'].strip() if i < n else ''
+                        'Номер карты': "".join(filter(None, [
+                            "Остаток: " + df.iloc[i+3]['text'].strip() if i+3 < n else '',
+                            " ₽, дата списания: " + df.iloc[i+4]['text'].strip() if i+4 < n else '',
+                            ", код авторизации: " + df.iloc[i]['text'].strip() if i < n else ''
                         ]))
                     }
                     
@@ -185,16 +185,17 @@ def process_csv(input_csv_path: str, pdf_type: Optional[str] = None) -> str:
         raise
 
 if __name__ == "__main__":
-    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
-    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
+    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"Файл не найден: {input_csv}")
     
     try:
         # Определите тип PDF (можно получить из detect_pdf_type из extract_transactions_pdf1.py)
-        pdf_type = "Tinkoff_Platinum"
-        # pdf_type = "Visa_Gold_Aeroflot"
-        output_csv = process_csv(input_csv, "Tinkoff")
+        # pdf_type = "Tinkoff_Platinum"
+        pdf_type = "Visa_Gold_Aeroflot"
+        # output_csv = process_csv(input_csv, "Tinkoff")
+        output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
         print(f"Обработанный CSV сохранен: {output_csv}")
         
         # Проверка результата
