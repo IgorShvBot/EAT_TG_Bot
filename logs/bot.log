@@ -81,3 +81,208 @@ KeyError: 'чек #'
 28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
 28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
 28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 21:47:22 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:23 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:24 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:25 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:26 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:28 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:32 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:39 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:47:53 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:48:19 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:49:48 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:53:48 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:54:49 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:55:49 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:56:50 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:57:51 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:58:52 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 21:59:52 - root - ERROR - Ошибка при запуске бота: 'TransactionProcessorBot' object has no attribute 'admin_only'
+28-04-2025 22:01:50 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:01:50 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:01:51 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:01:52 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:01:54 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:01:56 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:02:00 - root - ERROR - Ошибка при запуске бота: Application.add_handler() got an unexpected keyword argument 'pattern'
+28-04-2025 22:14:02 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 22:14:02 - telegram.ext.Application - INFO - Application started
+28-04-2025 22:15:03 - root - WARNING - Попытка доступа от неавторизованного пользователя: 902734616
+28-04-2025 22:15:23 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 83, in wrapper
+    return await func(update, context)
+TypeError: admin_only.<locals>.wrapper() takes 2 positional arguments but 3 were given
+28-04-2025 22:19:13 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 22:19:14 - telegram.ext.Application - INFO - Application started
+28-04-2025 22:19:23 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 22:23:39 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 22:23:39 - telegram.ext.Application - INFO - Application started
+28-04-2025 22:23:49 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+TypeError: admin_only.<locals>.wrapper() takes 2 positional arguments but 3 were given
+28-04-2025 22:34:23 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 22:34:24 - telegram.ext.Application - INFO - Application started
+28-04-2025 22:34:29 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+TypeError: admin_only.<locals>.wrapper() takes 2 positional arguments but 3 were given
+28-04-2025 22:37:14 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 22:37:14 - telegram.ext.Application - INFO - Application started
+28-04-2025 22:40:39 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 22:40:39 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 22:40:39 - root - INFO - Используются настройки: return_files=0
+28-04-2025 22:40:40 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 22:40:40 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 22:40:40 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 22:40:40 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 997, in handle_document
+    await self.cleanup_files([
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 22:43:20 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+28-04-2025 22:43:21 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+28-04-2025 22:43:21 - root - INFO - Используются настройки: return_files=0
+28-04-2025 22:43:22 - camelot - INFO - Processing page-1
+28-04-2025 22:43:22 - camelot - INFO - Processing page-2
+28-04-2025 22:43:22 - camelot - INFO - Processing page-3
+28-04-2025 22:43:23 - camelot - INFO - Processing page-4
+28-04-2025 22:43:23 - camelot - INFO - Processing page-5
+28-04-2025 22:43:23 - camelot - INFO - Processing page-6
+28-04-2025 22:43:23 - camelot - INFO - Processing page-7
+28-04-2025 22:43:24 - camelot - INFO - Processing page-8
+28-04-2025 22:43:24 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+28-04-2025 22:43:24 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+28-04-2025 22:43:24 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+28-04-2025 22:43:24 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 997, in handle_document
+    await self.cleanup_files([
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 22:55:45 - classify_transactions_pdf - INFO - Паттерн 'CITYDRIVE' успешно добавлен в категорию 'Транспорт. Каршеринг'
+28-04-2025 22:55:59 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+28-04-2025 22:55:59 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+28-04-2025 22:55:59 - root - INFO - Используются настройки: return_files=0
+28-04-2025 22:56:01 - camelot - INFO - Processing page-1
+28-04-2025 22:56:01 - camelot - INFO - Processing page-2
+28-04-2025 22:56:01 - camelot - INFO - Processing page-3
+28-04-2025 22:56:02 - camelot - INFO - Processing page-4
+28-04-2025 22:56:02 - camelot - INFO - Processing page-5
+28-04-2025 22:56:02 - camelot - INFO - Processing page-6
+28-04-2025 22:56:02 - camelot - INFO - Processing page-7
+28-04-2025 22:56:03 - camelot - INFO - Processing page-8
+28-04-2025 22:56:03 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+28-04-2025 22:56:03 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+28-04-2025 22:56:03 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+28-04-2025 22:56:04 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 997, in handle_document
+    await self.cleanup_files([
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 22:59:06 - classify_transactions_pdf - INFO - Паттерн 'inconnect.app' успешно добавлен в категорию 'AppStore | подписки'
+28-04-2025 23:01:13 - classify_transactions_pdf - INFO - Паттерн 'RADISSON' успешно добавлен в категорию 'Путешествия. Расходы на жилье'
+28-04-2025 23:01:34 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+28-04-2025 23:01:34 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+28-04-2025 23:01:34 - root - INFO - Используются настройки: return_files=0
+28-04-2025 23:01:35 - camelot - INFO - Processing page-1
+28-04-2025 23:01:36 - camelot - INFO - Processing page-2
+28-04-2025 23:01:36 - camelot - INFO - Processing page-3
+28-04-2025 23:01:36 - camelot - INFO - Processing page-4
+28-04-2025 23:01:36 - camelot - INFO - Processing page-5
+28-04-2025 23:01:37 - camelot - INFO - Processing page-6
+28-04-2025 23:01:37 - camelot - INFO - Processing page-7
+28-04-2025 23:01:37 - camelot - INFO - Processing page-8
+28-04-2025 23:01:37 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+28-04-2025 23:01:37 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+28-04-2025 23:01:37 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+28-04-2025 23:01:38 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 997, in handle_document
+    await self.cleanup_files([
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 23:02:07 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 672, in main_menu_callback
+    await self.show_config_selection(query)  # Изменено: теперь показываем меню выбора
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 23:02:12 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 672, in main_menu_callback
+    await self.show_config_selection(query)  # Изменено: теперь показываем меню выбора
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 23:02:17 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 674, in main_menu_callback
+    await self.show_edit_menu(query)
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'
+28-04-2025 23:18:29 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 86, in wrapper
+    return await func(self, update, context)
+  File "/app/bot.py", line 676, in main_menu_callback
+    await self.view_logs_callback(query)
+TypeError: admin_only.<locals>.wrapper() missing 1 required positional argument: 'context'

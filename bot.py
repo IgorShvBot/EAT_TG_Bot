@@ -1,4 +1,4 @@
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import os
 import logging
@@ -63,6 +63,28 @@ def setup_logging():
 
 logger = setup_logging()
 
+# Добавляем загрузку списка админов
+def load_admins():
+    """Загружает список админов из переменной окружения"""
+    admins = os.getenv('ADMINS', '').split(',')
+    return set(map(int, filter(None, admins)))  # Преобразуем в set[int]
+
+ALLOWED_USERS = load_admins()
+
+# Декоратор для проверки доступа
+def admin_only(func):
+    """Декоратор для ограничения доступа только админам"""
+    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_id = update.effective_user.id
+        if user_id not in ALLOWED_USERS:
+            logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id}")
+            if update.message:
+                await update.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
+            elif update.callback_query:
+                await update.callback_query.answer("Доступ запрещен")
+            return
+        return await func(self, update, context)
+    return wrapper
 
 # Проверка на дублирующийся запуск
 try:
@@ -171,8 +193,7 @@ class TransactionProcessorBot:
         )
 
     def setup_handlers(self):
-        """Обновленная настройка обработчиков"""
-        # Основные команды
+        # Основные команды (только для админов)
         self.application.add_handler(CommandHandler("start", self.start))
         self.application.add_handler(CommandHandler("config", self.show_config_menu))
         self.application.add_handler(CommandHandler("restart", self.restart_bot))
@@ -180,50 +201,67 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("settings", self.show_settings))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
         
-        # Обработчик текстовых сообщений (для настроек)
+        # Обработчики сообщений и документов (только для админов)
         self.application.add_handler(MessageHandler(
             filters.TEXT & ~filters.COMMAND,
             self.handle_settings
         ))
         
-        # Обработчик документов (теперь без парсинга текста)
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
             self.handle_document
         ))
         
-        # Обработчики callback-запросов
-        self.application.add_handler(CallbackQueryHandler(
-            self.main_menu_callback,
-            pattern='^(view_config|edit_config|restart|view_logs)$'
-        ))
-        self.application.add_handler(CallbackQueryHandler(
-            self.edit_menu_callback,
-            pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'
-        ))
-        self.application.add_handler(CallbackQueryHandler(
-            self.handle_pattern_callback,
-            pattern='^addpat_'
-        ))
-        self.application.add_handler(CallbackQueryHandler(
-            self.add_pattern_interactive,
-            pattern='^add_pattern_interactive$'
-        ))
+        # Обработчики callback-запросов (только для админов)
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.main_menu_callback,
+                pattern='^(view_config|edit_config|restart|view_logs)$'
+            )
+        )
+        
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.edit_menu_callback,
+                pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'
+            )
+        )
+        
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.handle_pattern_callback,
+                pattern='^addpat_'
+            )
+        )
+        
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.add_pattern_interactive,
+                pattern='^add_pattern_interactive$'
+            )
+        )
+        
         # Добавляем обработчик выбора файла логов
-        self.application.add_handler(CallbackQueryHandler(
-            self.handle_logfile_selection,
-            pattern='^logfile_'
-        ))
-        self.application.add_handler(CallbackQueryHandler(
-            self.handle_log_view_option,
-            pattern='^logview_'
-        ))
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.handle_logfile_selection,
+                pattern='^logfile_'
+            )
+        )
+        
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.handle_log_view_option,
+                pattern='^logview_'
+            )
+        )
 
         self.application.add_handler(CommandHandler("cancel", self.cancel_operation))
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
-
+    
+    @admin_only
     async def show_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает текущие сохраненные настройки"""
         settings = context.user_data.get('processing_settings', {})
@@ -238,11 +276,13 @@ class TransactionProcessorBot:
         
         await update.message.reply_text(response)
 
+    @admin_only
     async def reset_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Сбрасывает сохраненные настройки"""
         context.user_data.pop('processing_settings', None)
         await update.message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
 
+    @admin_only
     async def handle_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик текстовых сообщений с настройками"""
         user_data = context.user_data
@@ -263,6 +303,7 @@ class TransactionProcessorBot:
         
         await update.message.reply_text(response)
 
+    @admin_only
     async def view_logs_callback(self, query):
         """Показывает меню выбора логов"""
         try:
@@ -321,6 +362,7 @@ class TransactionProcessorBot:
         else:
             await update.message.reply_text("Нет активных операций для отмены")
 
+    @admin_only
     async def handle_pattern_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор категории для добавления паттерна"""
         query = update.callback_query
@@ -358,6 +400,7 @@ class TransactionProcessorBot:
             self.handle_pattern_input
         ))
 
+    @admin_only
     async def handle_pattern_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает ввод паттерна"""
         if 'adding_pattern' not in context.user_data:
@@ -385,6 +428,7 @@ class TransactionProcessorBot:
                 del context.user_data['adding_pattern']
             self.application.remove_handler(self.pattern_handler)
 
+    @admin_only
     async def add_pattern(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды добавления нового паттерна"""
         try:
@@ -419,6 +463,7 @@ class TransactionProcessorBot:
             await update.message.reply_text("Неверный формат команды")
             return
 
+    @admin_only
     async def add_pattern_interactive(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Интерактивное добавление паттерна"""
         query = update.callback_query
@@ -463,6 +508,7 @@ class TransactionProcessorBot:
         # Устанавливаем следующий шаг
         context.user_data['next_step'] = 'await_pattern'
 
+    @admin_only
     async def config_selection_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор конфига для просмотра"""
         query = update.callback_query
@@ -486,6 +532,7 @@ class TransactionProcessorBot:
         filename = config_map[query.data]
         await self.send_single_config_file(query, filename)
 
+    @admin_only
     async def send_single_config_file(self, query, filename):
         """Отправляет один выбранный конфигурационный файл"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
@@ -522,6 +569,7 @@ class TransactionProcessorBot:
         else:
             await query.message.reply_text(f"Файл {filename} не найден")
 
+    @admin_only
     async def send_all_config_files(self, query):
         """Отправляет все конфигурационные файлы"""
         config_files = {
@@ -534,7 +582,7 @@ class TransactionProcessorBot:
         for filename, description in config_files.items():
             await self.send_single_config_file(query, filename)
             await asyncio.sleep(0.5)
-
+            
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE):
         """Логирует ошибки и уведомляет пользователя"""
         error = context.error
@@ -556,6 +604,8 @@ class TransactionProcessorBot:
             await update.callback_query.answer("Произошла ошибка, попробуйте позже")
 
     # Основные команды
+    # Все методы класса теперь используют декоратор @admin_only
+    @admin_only
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /start"""
         welcome_text = (
@@ -584,6 +634,7 @@ class TransactionProcessorBot:
         
         await update.message.reply_text(welcome_text, parse_mode='HTML')
 
+    @admin_only
     async def show_config_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         """Показывает меню управления конфигурацией"""
         # Получаем сообщение из разных источников
@@ -611,6 +662,7 @@ class TransactionProcessorBot:
         )
 
     # Callback обработчики
+    @admin_only
     async def main_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает callback из главного меню"""
         query = update.callback_query
@@ -625,6 +677,7 @@ class TransactionProcessorBot:
         elif query.data == 'restart':
             await self.restart_bot(update, context)
 
+    @admin_only
     async def show_config_selection(self, query):
         """Показывает меню выбора конфига для просмотра"""
         keyboard = [
@@ -642,6 +695,7 @@ class TransactionProcessorBot:
             reply_markup=reply_markup
         )
 
+    @admin_only
     async def edit_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает callback из меню редактирования"""
         query = update.callback_query
@@ -672,6 +726,7 @@ class TransactionProcessorBot:
         for handler in self.config_handlers:
             self.application.add_handler(handler)
 
+    @admin_only
     async def show_edit_menu(self, query):
         """Показывает меню выбора файла для редактирования"""
         keyboard = [
@@ -717,7 +772,7 @@ class TransactionProcessorBot:
     #         else:
     #             await query.message.reply_text(f"Файл {filename} не найден")
 
-
+    @admin_only
     async def send_config_files(self, query):
         """Отправляет содержимое конфигов как текстовые сообщения"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
@@ -751,6 +806,7 @@ class TransactionProcessorBot:
             else:
                 await query.message.reply_text(f"Файл {filename} не найден")
                 
+    @admin_only
     async def handle_config_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает текстовое редактирование конфига"""
         if 'editing_file' not in context.user_data:
@@ -792,6 +848,7 @@ class TransactionProcessorBot:
             logger.error(f"Ошибка при сохранении файла: {str(e)}")
             await update.message.reply_text(f"Ошибка при сохранении файла: {str(e)}")
 
+    @admin_only
     async def handle_config_upload(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает загрузку конфига файлом"""
         if 'editing_file' not in context.user_data:
@@ -850,6 +907,7 @@ class TransactionProcessorBot:
             self.application.remove_handler(handler)
 
     # Обработка документов
+    @admin_only
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обновленный обработчик документов"""
         user_data = context.user_data
@@ -944,6 +1002,7 @@ class TransactionProcessorBot:
                 unclassified_csv_path
             ])
 
+    @admin_only
     async def cleanup_files(self, file_paths):
         """Удаляет временные файлы"""
         for path in file_paths:
@@ -954,6 +1013,7 @@ class TransactionProcessorBot:
                 except Exception as e:
                     logger.error(f"Ошибка при удалении файла {path}: {e}")
 
+    @admin_only
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор файла логов"""
         query = update.callback_query
@@ -987,6 +1047,7 @@ class TransactionProcessorBot:
             else:
                 logger.error(f"Ошибка при изменении сообщения: {e}")
 
+    @admin_only
     async def handle_log_view_option(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор варианта просмотра логов"""
         query = update.callback_query
@@ -1078,6 +1139,7 @@ class TransactionProcessorBot:
         return content
 
     # Перезагрузка бота
+    @admin_only
     async def restart_bot(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Перезапускает бота"""
         try:
@@ -1105,6 +1167,7 @@ class TransactionProcessorBot:
                 except telegram.error.BadRequest:
                     pass
 
+    @admin_only
     async def delayed_restart(self):
         """Отложенный перезапуск бота"""
         if self._is_restarting:
@@ -1152,6 +1215,7 @@ class TransactionProcessorBot:
         finally:
             self._is_restarting = False
 
+    @admin_only
     async def shutdown(self):
         """Останавливает бота"""
         try:
