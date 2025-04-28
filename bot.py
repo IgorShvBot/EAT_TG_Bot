@@ -1,4 +1,4 @@
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 import os
 import logging
@@ -74,16 +74,22 @@ ALLOWED_USERS = load_admins()
 # Декоратор для проверки доступа
 def admin_only(func):
     """Декоратор для ограничения доступа только админам"""
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def wrapper(*args, **kwargs):
+        # Определяем update из аргументов
+        if len(args) >= 2:
+            update = args[1]  # Для методов класса (self, update, context)
+        else:
+            update = kwargs.get('update') or args[0]  # Для обычных функций
+        
         user_id = update.effective_user.id
         if user_id not in ALLOWED_USERS:
             logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id}")
-            if update.message:
+            if hasattr(update, 'message') and update.message:
                 await update.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
-            elif update.callback_query:
+            elif hasattr(update, 'callback_query') and update.callback_query:
                 await update.callback_query.answer("Доступ запрещен")
             return
-        return await func(self, update, context)
+        return await func(*args, **kwargs)
     return wrapper
 
 # Проверка на дублирующийся запуск
@@ -105,6 +111,11 @@ def load_timeouts(config_path: str = None) -> Dict[str, int]:
         config_path = os.path.join(os.path.dirname(__file__), 'config', 'timeouts.yaml')
     with open(config_path, 'r', encoding='utf-8') as file:
         return yaml.safe_load(file)['timeouts']
+
+
+
+
+
 
 def parse_user_settings(message_text: str) -> dict:
     settings = {}
@@ -198,14 +209,9 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("config", self.show_config_menu))
         self.application.add_handler(CommandHandler("restart", self.restart_bot))
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
+        self.application.add_handler(CommandHandler("add_settings", self.add_settings))
         self.application.add_handler(CommandHandler("settings", self.show_settings))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
-        
-        # Обработчики сообщений и документов (только для админов)
-        self.application.add_handler(MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            self.handle_settings
-        ))
         
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
@@ -262,6 +268,56 @@ class TransactionProcessorBot:
         self.application.add_error_handler(self.error_handler)
     
     @admin_only
+    async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /add_settings для настройки параметров обработки"""
+        args = context.args
+        if not args:
+            await update.message.reply_text(
+                "Использование: /add_settings <параметр>:<значение>\n\n"
+                "Примеры:\n"
+                "/add_settings pdf:1\n"
+                "/add_settings контрагент: ОАЭ 2025\n"
+                "/add_settings описание: НДС 20%"
+            )
+            return
+        
+        # Парсим настройки из аргументов команды
+        settings = {}
+        for arg in args:
+            if ':' not in arg:
+                continue
+            key, value = arg.split(':', 1)
+            key = key.strip().lower()
+            value = value.strip()
+            
+            # Приводим названия полей к стандартному виду
+            if key in ['контрагент', 'контрагента']:
+                key = 'Контрагент'
+            elif key in ['чек', 'чек #', 'чек№']:
+                key = 'Чек #'
+            elif key in ['описание', 'описании']:
+                key = 'Описание'
+            elif key in ['наличность', 'нал', 'наличка']:
+                key = 'Наличность'
+            elif key in ['класс']:
+                key = 'Класс'
+            
+            settings[key] = {
+                'operator': '',  # Можно добавить поддержку операторов
+                'value': value
+            }
+        
+        # Сохраняем настройки в контексте пользователя
+        context.user_data['processing_settings'] = settings
+        
+        # Формируем ответ с подтверждением
+        response = "⚙ Настройки сохранены:\n"
+        for key, value in settings.items():
+            response += f"{key}: {value['value']}\n"
+        
+        await update.message.reply_text(response)
+
+    @admin_only
     async def show_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает текущие сохраненные настройки"""
         settings = context.user_data.get('processing_settings', {})
@@ -304,8 +360,11 @@ class TransactionProcessorBot:
         await update.message.reply_text(response)
 
     @admin_only
-    async def view_logs_callback(self, query):
+    async def view_logs_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора логов"""
+        query = update.callback_query
+        await query.answer()
+        
         try:
             log_dir = os.path.join(os.path.dirname(__file__), 'logs')
             if not os.path.exists(log_dir):
@@ -669,16 +728,20 @@ class TransactionProcessorBot:
         await query.answer()
         
         if query.data == 'view_config':
-            await self.show_config_selection(query)  # Изменено: теперь показываем меню выбора
+            await self.show_config_selection(update, context)
         elif query.data == 'edit_config':
-            await self.show_edit_menu(query)
+            await self.show_edit_menu(update, context)
         elif query.data == 'view_logs':
-            await self.view_logs_callback(query)
+            await self.view_logs_callback(update, context)
         elif query.data == 'restart':
             await self.restart_bot(update, context)
 
     @admin_only
-    async def show_config_selection(self, query):
+    async def show_config_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Показывает меню выбора конфига для просмотра"""
+        query = update.callback_query
+        await query.answer()
+
         """Показывает меню выбора конфига для просмотра"""
         keyboard = [
             [InlineKeyboardButton("Категории", callback_data='view_categories')],
@@ -727,8 +790,11 @@ class TransactionProcessorBot:
             self.application.add_handler(handler)
 
     @admin_only
-    async def show_edit_menu(self, query):
+    async def show_edit_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора файла для редактирования"""
+        query = update.callback_query
+        await query.answer()
+        
         keyboard = [
             [InlineKeyboardButton("Категории", callback_data='edit_categories')],
             [InlineKeyboardButton("Спец. условия", callback_data='edit_special')],
@@ -741,36 +807,6 @@ class TransactionProcessorBot:
             text="Выберите файл для редактирования:",
             reply_markup=reply_markup
         )
-
-    # Работа с конфигурационными файлами
-    # async def send_config_files(self, query):
-    #     """Отправляет текущие конфигурационные файлы"""
-    #     config_dir = os.path.join(os.path.dirname(__file__), 'config')
-    #     if not os.path.exists(config_dir):
-    #         await query.message.reply_text("Папка config не найдена")
-    #         return
-        
-    #     config_files = {
-    #         'categories.yaml': 'Категории транзакций',
-    #         'special_conditions.yaml': 'Специальные условия',
-    #         'timeouts.yaml': 'Таймауты обработки'
-    #     }
-        
-    #     for filename, description in config_files.items():
-    #         filepath = os.path.join(config_dir, filename)
-    #         if os.path.exists(filepath):
-    #             try:
-    #                 with open(filepath, 'rb') as f:
-    #                     await query.message.reply_document(
-    #                         document=f,
-    #                         caption=f"{description} ({filename})"
-    #                     )
-    #                 await asyncio.sleep(1)
-    #             except Exception as e:
-    #                 logger.error(f"Ошибка при отправке файла {filename}: {e}")
-    #                 await query.message.reply_text(f"Ошибка при отправке файла {filename}")
-    #         else:
-    #             await query.message.reply_text(f"Файл {filename} не найден")
 
     @admin_only
     async def send_config_files(self, query):

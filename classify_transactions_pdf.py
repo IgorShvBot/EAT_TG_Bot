@@ -153,15 +153,13 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
         # 7. Тип транзакции (по умолчанию "Расход")
         result['Тип транзакции'] = 'Расход'
         # 8. Контрагент
-        # result['Контрагент'] = settings.get('contractor', '')
         result['Контрагент'] = user_settings.get('Контрагент', {}).get('value', settings.get('contractor', ''))
-        
-        result.loc[df['Номер карты'] == 2578, 'Контрагент'] = '! Наташа'
+        # result.loc[df['Номер карты'] == "2578", 'Контрагент'] = '! Наташа'
         result.loc[result['Категория'] == 'Ком. платежи. Вернадского 54', 'Контрагент'] = 'Квартира_Ипотека'
         # 9. Чек #
         result['Чек #'] = df['Номер карты'].astype(str)
+        result.loc[df['Номер карты'] == "2578", 'Контрагент'] = '! Наташа'
         # 10. Класс
-        # result['Класс'] = settings.get('class', '01 Личное')
         result['Класс'] = user_settings.get('Класс', {}).get('value', settings.get('class', '01 Личное'))
         # Применение специальных условий
         for _, row in df.iterrows():
