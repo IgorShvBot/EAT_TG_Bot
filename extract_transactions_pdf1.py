@@ -165,6 +165,59 @@ def process_Tinkoff(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     df = df.dropna(how='all')
     return df
 
+def process_Yandex(df: pd.DataFrame, config: dict) -> pd.DataFrame:
+    """Обработка для Yandex Pay
+    
+    Параметры:
+        df: DataFrame с сырыми данными из PDF (должен содержать столбец 'text')
+        config: Словарь с конфигурацией обработки из YAML
+    
+    Возвращает:
+        Обработанный DataFrame с транзакциями
+    """
+    # Проверка и подготовка конфигурации
+    required_keys = ['remove_rows_by_text', 'start_marker', 'end_marker']
+    for key in required_keys:
+        if key not in config:
+            raise ValueError(f"В конфигурации отсутствует обязательный ключ: {key}")
+
+    remove_texts = config['remove_rows_by_text']
+    start_marker = config['start_marker']
+    end_marker = config['end_marker']
+
+    # Отладочный вывод: показать первые 3 строки для проверки формата
+    # print("\n[DEBUG] Примеры сырых строк:")
+    # for i in range(min(100, len(df))):  # Выводим первые 3 строки
+    #     print(f"Строка {i}: {repr(df.iloc[i]['text'])}")  # repr() покажет спецсимволы
+
+    # Создаем временный столбец для пометки строк к удалению
+    df['to_delete'] = False
+    
+    # 1. Удаление строк по текстовым паттернам из конфига
+    for pattern in remove_texts:
+        df.loc[df['text'].str.contains(pattern, regex=True, na=False), 'to_delete'] = True
+
+    # 2. Удаление строк до start_marker (включительно)
+    start_mask = df['text'].str.contains(start_marker, regex=False, na=False)
+    if start_mask.any():
+        start_idx = start_mask.idxmax()
+        df.loc[:start_idx, 'to_delete'] = True
+
+    # 3. Удаление строк после end_marker (включительно)
+    end_mask = df['text'].str.contains(end_marker, regex=False, na=False)
+    if end_mask.any():
+        end_idx = end_mask.idxmax()
+        df.loc[end_idx:, 'to_delete'] = True
+
+    # 4. Применение удаления и очистка
+    df = df[~df['to_delete']].copy()
+    df = df.drop(columns=['to_delete'])
+    df = df.reset_index(drop=True)
+
+    # print("Строки, которые не удалились:", df[df['text'].str.contains(r'[0-9\u00A0]+,[0-9]{2} ₽', regex=True) & ~df['text'].str.contains(r'^[+-]'))]))
+    
+    return df
+
 def process_default(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     """Обработка по умолчанию"""
     df = df.iloc[:, config.get('columns', slice(None))]
@@ -214,8 +267,9 @@ def remove_rows_by_position(df: pd.DataFrame, config: dict) -> pd.DataFrame:
 # Словарь обработчиков для разных типов PDF
 PDF_PROCESSORS = {
     'Tinkoff_Platinum': process_Tinkoff_Platinum,
-    'Visa_Gold_Aeroflot': process_Visa_Gold_Aeroflot,
     'Tinkoff': process_Tinkoff_Platinum, # process_Tinkoff
+    'Visa_Gold_Aeroflot': process_Visa_Gold_Aeroflot,
+    "Yandex": process_Yandex,
     "default": process_default
 }
 
@@ -229,15 +283,6 @@ def sub_process_pdf_Sber(pdf_path: str) -> pd.DataFrame:
         page = document.load_page(page_num)
         text += page.get_text()
     return pd.DataFrame(text.split('\n'), columns=['text'])
-    
-    # Разделяем текст на строки
-    # lines = text.split('\n')
-
-    # Создание DataFrame
-    # df = pd.DataFrame(lines, columns=['text'])
-
-    # Создание временного столбца для пометки строк к удалению
-    df['to_delete'] = False
 
 def sub_process_pdf_Not_Sber(pdf_path: str) -> pd.DataFrame:
     # Чтение PDF
@@ -262,26 +307,28 @@ def process_pdf(pdf_path: str) -> str:
     config = pdf_config['pdf_types'][pdf_type]
 
     # Выбираем подпроцесс в зависимости от типа PDF
-    if pdf_type == "Visa_Gold_Aeroflot":
+    if pdf_type in ["Visa_Gold_Aeroflot", "Yandex"]:
         df = sub_process_pdf_Sber(pdf_path)
     else:
         df = sub_process_pdf_Not_Sber(pdf_path)
 
     # Выбираем обработчик
     processor = PDF_PROCESSORS.get(pdf_type, process_default)
+
     df = processor(df, config)
-    
+
     # Сохранение во временный файл
     output_dir = os.path.dirname(pdf_path)
     os.makedirs(output_dir, exist_ok=True)
         
-    temp_csv_path = os.path.join(output_dir, f"transactions_{pdf_type}_temp.csv")
+    temp_csv_path = os.path.join(output_dir, f"transactions_{pdf_type}_temp.csv") 
     df.to_csv(temp_csv_path, index=False)
 
     return temp_csv_path, pdf_type
 
 if __name__ == "__main__":
-    pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
+    pdf_path = "/Users/IgorShvyrkin/Downloads/ДДС_Яндекс.pdf"
+    # pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
     # pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (Д).pdf'
     try:
         csv_path = process_pdf(pdf_path)

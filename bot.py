@@ -1,3 +1,5 @@
+__version__ = "2.0.0"
+
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -42,8 +44,9 @@ def setup_logging():
         backupCount=30,
         encoding='utf-8'
     )
+    
     file_handler.suffix = "%Y-%m-%d_bot.log"
-    file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}\.log$")
+    file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}_bot\.log$")
     file_handler.setFormatter(logging.Formatter(log_format, date_format))
     
     # Основной логгер
@@ -81,8 +84,45 @@ def load_timeouts(config_path: str = None) -> Dict[str, int]:
     with open(config_path, 'r', encoding='utf-8') as file:
         return yaml.safe_load(file)['timeouts']
 
+def parse_user_settings(message_text: str) -> dict:
+    settings = {}
+    if not message_text:
+        return settings
+    
+    lines = [line.strip() for line in message_text.split('\n') if line.strip()]
+    pattern = re.compile(r"^(.+?)\s*:\s*(\+?)\s*(.*)$", re.IGNORECASE)
+    
+    for line in lines:
+        match = pattern.match(line)
+        if match:
+            key = match.group(1).strip().lower()
+            operator = match.group(2).strip()
+            value = match.group(3).strip()
+            
+            # Приводим названия полей к стандартному виду
+            if key in ['контрагент', 'контрагента']:
+                key = 'Контрагент'
+            elif key in ['чек', 'чек #', 'чек№']:
+                key = 'Чек #'
+            elif key in ['описание', 'описании']:
+                key = 'Описание'
+            elif key in ['наличность', 'нал', 'наличка']:
+                key = 'Наличность'
+            elif key in ['класс']:
+                key = 'Класс'
+                
+            settings[key] = {
+                'operator': operator,
+                'value': value
+            }
+    
+    return settings
+
 class TransactionProcessorBot:
     def __init__(self, token: str):
+        self._active_tasks = 0
+        self._max_active_tasks = 3  # Максимум 3 одновременно обрабатываемых файла
+
         self._is_running = False
         self._is_restarting = False  # Флаг перезагрузки  
         self._in_docker = os.getenv('DOCKER_MODE') is not None
@@ -131,13 +171,26 @@ class TransactionProcessorBot:
         )
 
     def setup_handlers(self):
-        """Настройка всех обработчиков команд"""
+        """Обновленная настройка обработчиков"""
         # Основные команды
         self.application.add_handler(CommandHandler("start", self.start))
         self.application.add_handler(CommandHandler("config", self.show_config_menu))
         self.application.add_handler(CommandHandler("restart", self.restart_bot))
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
-        self.application.add_handler(MessageHandler(filters.Document.ALL, self.handle_document))
+        self.application.add_handler(CommandHandler("settings", self.show_settings))
+        self.application.add_handler(CommandHandler("reset", self.reset_settings))
+        
+        # Обработчик текстовых сообщений (для настроек)
+        self.application.add_handler(MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            self.handle_settings
+        ))
+        
+        # Обработчик документов (теперь без парсинга текста)
+        self.application.add_handler(MessageHandler(
+            filters.Document.ALL,
+            self.handle_document
+        ))
         
         # Обработчики callback-запросов
         self.application.add_handler(CallbackQueryHandler(
@@ -170,6 +223,45 @@ class TransactionProcessorBot:
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
+
+    async def show_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Показывает текущие сохраненные настройки"""
+        settings = context.user_data.get('processing_settings', {})
+        
+        if not settings:
+            await update.message.reply_text("Настройки не заданы. Используются значения по умолчанию.")
+            return
+        
+        response = "⚙ Текущие настройки:\n"
+        for key, value in settings.items():
+            response += f"{key}: {value['value']}\n"
+        
+        await update.message.reply_text(response)
+
+    async def reset_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Сбрасывает сохраненные настройки"""
+        context.user_data.pop('processing_settings', None)
+        await update.message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
+
+    async def handle_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик текстовых сообщений с настройками"""
+        user_data = context.user_data
+        message_text = update.message.text
+        
+        # Парсим настройки
+        settings = parse_user_settings(message_text)
+        
+        # Сохраняем настройки в контексте пользователя
+        user_data['processing_settings'] = settings
+        
+        # Формируем ответ с подтверждением
+        response = "⚙ Настройки сохранены:\n"
+        for key, value in settings.items():
+            response += f"{key}: {value['value']}\n"
+        
+        response += "\nТеперь отправьте PDF-файл для обработки."
+        
+        await update.message.reply_text(response)
 
     async def view_logs_callback(self, query):
         """Показывает меню выбора логов"""
@@ -466,11 +558,31 @@ class TransactionProcessorBot:
     # Основные команды
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /start"""
-        await update.message.reply_text(
-            "Привет! Я бот для обработки банковских выписок.\n"
-            "Отправьте мне файл в формате PDF, и я обработаю его для вас.\n"
-            "Обработка может занять несколько минут, пожалуйста, подождите."
+        welcome_text = (
+            "👋 Привет! Я бот для обработки банковских выписок и управления финансами.\n\n"
+            "📌 <b>Основные возможности:</b>\n"
+            "• Обработка PDF-выписок из банков (Tinkoff, Сбербанк, Яндекс и другие)\n"
+            "• Автоматическая классификация транзакций по категориям\n"
+            "• Настройка категорий и паттернов для распознавания\n"
+            "• Управление конфигурацией прямо в чате\n"
+            "• Просмотр логов работы бота\n\n"
+            "📄 <b>Как работать с ботом:</b>\n"
+            "1. Просто отправьте мне PDF-файл с банковской выпиской\n"
+            "2. Я обработаю его и верну структурированные данные\n"
+            "3. Для транзакций, которые не удалось классифицировать, будет отдельный файл\n\n"
+            "⚙ <b>Дополнительные команды:</b>\n"
+            "/config - Управление конфигурацией (категории, паттерны, таймауты)\n"
+            "/add_pattern - Добавить новый паттерн для категории\n"
+            "/settings - Показать текущие настройки\n"
+            "/reset - Сбросить настройки к значениям по умолчанию\n\n"
+            "<b>Примеры команд:</b>\n"
+            "• <code>/add_pattern \"Еда\" \"VKUSVILL\"</code> - добавить паттерн для категории\n"
+            "• <code>PDF: 1</code> - сохранить промежуточные файлы обработки\n"
+            "• <code>Чек #: + НДС</code> - добавить текст ко всем чекам\n\n"
+            "Обработка файла может занять несколько минут, пожалуйста, подождите."
         )
+        
+        await update.message.reply_text(welcome_text, parse_mode='HTML')
 
     async def show_config_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         """Показывает меню управления конфигурацией"""
@@ -650,7 +762,9 @@ class TransactionProcessorBot:
         
         try:
             # Проверяем валидность YAML
-            yaml.safe_load(new_content)
+            parsed = yaml.safe_load(new_content)
+            if not isinstance(parsed, dict):  # Проверяем, что это словарь
+                raise yaml.YAMLError("Конфиг должен быть в формате YAML словаря")
             
             # Получаем абсолютный путь к файлу конфигурации
             config_dir = os.path.join(os.path.dirname(__file__), 'config')
@@ -737,13 +851,33 @@ class TransactionProcessorBot:
 
     # Обработка документов
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обновленный обработчик документов"""
+        user_data = context.user_data
+        
+        # Получаем сохраненные настройки или используем по умолчанию
+        settings = user_data.get('processing_settings', {})
+        return_files = settings.get('pdf', {'value': '0'})['value']
+        if return_files not in ('0', '1', '2'):
+            return_files = '0'
+            logger.warning(f"Некорректное значение настройки PDF: {return_files}, использовано значение по умолчанию '0'")
+        
+        # Очищаем настройки после использования (опционально)
+        user_data.pop('processing_settings', None)
+        
         document = update.message.document
         if not document.file_name.lower().endswith('.pdf'):
             await update.message.reply_text("Пожалуйста, отправьте файл в формате PDF.")
             return
 
+        if document.file_size > 10 * 1024 * 1024:  # 10 MB
+            await update.message.reply_text("Файл слишком большой. Максимальный размер - 10 МБ.")
+            return
+
         logger.info(f"Получен файл: {document.file_name}")
         await update.message.reply_text("Начинаю обработку...")
+
+        logger.info(f"Начата обработка PDF: {document.file_name}, размер: {document.file_size} байт")
+        logger.info(f"Используются настройки: return_files={return_files}")
 
         tmp_pdf_path = temp_csv_path = combined_csv_path = result_csv_path = unclassified_csv_path = None
 
@@ -752,6 +886,7 @@ class TransactionProcessorBot:
             pdf_file = BytesIO()
             file = await document.get_file()
             await file.download_to_memory(out=pdf_file)
+            pdf_file.seek(0)  # Перемещаем указатель в начало
 
             with NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_pdf:
                 tmp_pdf.write(pdf_file.getbuffer())
@@ -762,24 +897,45 @@ class TransactionProcessorBot:
             
             # Получаем ОБА пути
             result_csv_path, unclassified_csv_path = await asyncio.to_thread(
-                classify_transactions, combined_csv_path, pdf_type
+                classify_transactions, combined_csv_path, pdf_type, user_settings=settings
             )
 
-            # Отправка результатов
-            with open(result_csv_path, 'rb') as result_file:
-                await update.message.reply_document(document=result_file, caption="Обработанные транзакции")
-
-            if unclassified_csv_path and os.path.exists(unclassified_csv_path):
-                with open(unclassified_csv_path, 'rb') as unclassified_file:
-                    await update.message.reply_document(
-                        document=unclassified_file,
-                        caption="Транзакции для ручной классификации"
-                    )
+            # Отправка файлов согласно настройкам
+            files_to_send = []
+            
+            if return_files == '1':
+                files_to_send.append(temp_csv_path)
+            elif return_files == '2':
+                files_to_send.extend([temp_csv_path, combined_csv_path])
+            else:  # default - только итоговый файл
+                files_to_send.append(result_csv_path)
+                # Добавляем unclassified только при отправке итогового файла
+                if unclassified_csv_path and os.path.exists(unclassified_csv_path):
+                    files_to_send.append(unclassified_csv_path)
+            
+            # Отправка выбранных файлов
+            for file_path in files_to_send:
+                if file_path and os.path.exists(file_path):
+                    caption = "Транзакции для ручной классификации" if file_path == unclassified_csv_path else None
+                    with open(file_path, 'rb') as f:
+                        await update.message.reply_document(document=f, caption=caption)
 
         except Exception as e:
-            logger.error(f"Ошибка обработки: {e}")
-            await update.message.reply_text(f"Ошибка: {str(e)}")
+            logger.error(f"Ошибка обработки PDF: {str(e)}", exc_info=True)
+            await update.message.reply_text(
+                "Произошла ошибка при обработке файла. Пожалуйста, убедитесь, что:\n"
+                "1. Это корректная банковская выписка\n"
+                "2. Файл не поврежден\n"
+                "3. Формат соответствует поддерживаемым (Tinkoff, Сбербанк, Яндекс)"
+            )
+
         finally:
+            if pdf_file:
+                pdf_file.close()
+                del pdf_file  # Явное освобождение памяти
+            if tmp_pdf:
+                tmp_pdf.close()
+
             await self.cleanup_files([
                 tmp_pdf_path,
                 temp_csv_path,
@@ -838,6 +994,11 @@ class TransactionProcessorBot:
         
         action, filename = query.data.replace('logview_', '').split('_', 1)
         log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
+
+        file_size = os.path.getsize(log_path)
+        if file_size > 5 * 1024 * 1024:  # 5 MB
+            await query.message.reply_text("Файл лога слишком большой (>5 MB) для просмотра. Используйте скачивание.")
+            return
         
         try:
             if action == 'text':
@@ -981,6 +1142,7 @@ class TransactionProcessorBot:
             subprocess.Popen([sys.executable, __file__])
             
             logger.info("Завершение текущего процесса...")
+            await asyncio.sleep(3)  # Даем время для завершения
             os._exit(0)
 
         except Exception as e:
@@ -994,6 +1156,7 @@ class TransactionProcessorBot:
         """Останавливает бота"""
         try:
             logger.info("Начало процесса завершения работы...")
+            await asyncio.sleep(1)  # Даем время для завершения операций
             
             if self.application.updater and self.application.updater.running:
                 logger.info("Останавливаем updater...")
@@ -1010,6 +1173,7 @@ class TransactionProcessorBot:
                 await asyncio.sleep(1)
             
             logger.info("Все задачи завершены.")
+        
         except Exception as e:
             logger.error(f"Ошибка при завершении работы: {e}")
             raise

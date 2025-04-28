@@ -16,12 +16,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def load_config(config_path: str = None) -> Dict[str, Any]:
-    print("Текущая рабочая директория:", os.getcwd())
-    print("Содержимое config/:", os.listdir(os.path.join(os.path.dirname(__file__), 'config')))
-          
     """Загружает конфигурацию из YAML-файла"""
     if config_path is None:
         config_path = os.path.join(os.path.dirname(__file__), 'config', 'categories.yaml')
+    with open(config_path, 'r', encoding='utf-8') as file:
+        return yaml.safe_load(file)
+
+def load_class_contractor_config(config_path: str = None) -> Dict[str, Any]:
+    """Загружает конфигурацию class_contractor из YAML-файла"""
+    if config_path is None:
+        config_path = os.path.join(os.path.dirname(__file__), 'config', 'class_contractor.yaml')
     with open(config_path, 'r', encoding='utf-8') as file:
         return yaml.safe_load(file)
 
@@ -36,8 +40,11 @@ def classify_transaction(description: str, categories: List[Dict[str, Any]]) -> 
                 return category['name']
     return 'Другое'
 
-def apply_special_conditions(row: pd.Series, conditions: List[Dict[str, Any]], result: pd.DataFrame) -> None:
+def apply_special_conditions(row: pd.Series, conditions: List[Dict[str, Any]], result: pd.DataFrame, user_settings: dict = None) -> None:
     description = row['Описание операции'].upper()
+    
+    # Инициализация user_settings, если не переданы
+    user_settings = user_settings or {}
 
     for condition in conditions:
         if re.search(condition['condition'], description, re.IGNORECASE):
@@ -48,15 +55,20 @@ def apply_special_conditions(row: pd.Series, conditions: List[Dict[str, Any]], r
                 if value == "$SELF":
                     value = result.at[row.name, 'Сумма']
                 elif value == "-$CURRENT":
-                    # Получаем текущее значение суммы и добавляем минус
                     current_value = result.at[row.name, 'Сумма']
-                    # Удаляем возможные пробелы и символы валюты
                     clean_value = current_value.replace(' ', '').replace('₽', '').replace('P', '')
-                    value = f"-{clean_value} ₽"  # Добавляем минус и возвращаем валюту
+                    value = f"-{clean_value} ₽"
                 elif value == "$CURRENT":
                     current_value = result.at[row.name, field]
                     comment = action.get('comment', '')
                     value = f"{current_value}, {comment}" if comment else current_value
+
+                # Применение пользовательских настроек только для поля 'Чек #'
+                if field == 'Чек #' and 'Чек #' in user_settings:
+                    if user_settings['Чек #']['operator'] == '+':
+                        value = f"{value} {user_settings['Чек #']['value']}"
+                    else:
+                        value = user_settings['Чек #']['value']
 
                 result.at[row.name, field] = value
 
@@ -92,9 +104,11 @@ def add_pattern_to_category(category_name: str, pattern: str, config_path: str =
         logger.error(f"Ошибка при добавлении паттерна: {str(e)}")
         raise
 
-def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str:
+def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_settings: dict = None) -> str:
     """Классифицирует транзакции и возвращает путь к итоговому CSV"""
     try:
+        if user_settings is None:
+            user_settings = {}
         df = pd.read_csv(input_csv_path)
         
         # Проверка обязательных столбцов
@@ -106,7 +120,7 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str
         
         # Загрузка конфигураций
         categories_config = load_config()
-        type_settings = categories_config.get('type_settings', {})
+        type_settings = load_class_contractor_config().get('type_settings', {})
         settings = type_settings.get(pdf_type, type_settings.get('default', {}))
         special_conditions = load_config(os.path.join(os.path.dirname(__file__), 'config', 'special_conditions.yaml'))['special_conditions']
         # Чтение исходных данных
@@ -116,13 +130,9 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str
         # 1. Дата
         result['Дата'] = df['Дата и время операции']
         # 2. Сумма
-        # if df['Сумма операции в валюте карты'].isna().any():
-        # logger.warning("Обнаружены пустые значения в столбце 'Сумма операции в валюте карты'")
-        # result['Сумма'] = df['Сумма операции в валюте карты'].str.replace(' ₽', '', regex=True).str.replace('-', '', regex=True).str.replace('+', '', regex=True).str.strip()
-        # Альтернатива с одним вызовом replace
         result['Сумма'] = df['Сумма операции в валюте карты'].str.replace(r'[₽+-]|\s', '', regex=True).str.strip()
         # 3. Наличность
-        result['Наличность'] = 'Тинькофф. Платинум'
+        result['Наличность'] = user_settings.get('Наличность', {}).get('value', settings.get('cash', ''))
         # 4. Сумма (куда) и Наличность (куда)
         result['Сумма (куда)'] = ''
         result['Наличность (куда)'] = ''
@@ -131,24 +141,62 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str
             lambda x: classify_transaction(x, categories_config['categories'])
         )
         # 6. Описание
-        result['Описание'] = df['Описание операции']
+        if 'Описание' in user_settings:
+            setting = user_settings['Описание']
+            if setting['operator'] == '+':
+                result['Описание'] = df['Описание операции'] + ', ' + setting['value']
+            else:
+                result['Описание'] = setting['value']
+        else:
+            result['Описание'] = df['Описание операции']
+
         # 7. Тип транзакции (по умолчанию "Расход")
         result['Тип транзакции'] = 'Расход'
         # 8. Контрагент
-        result['Контрагент'] = settings.get('contractor', '')
+        # result['Контрагент'] = settings.get('contractor', '')
+        result['Контрагент'] = user_settings.get('Контрагент', {}).get('value', settings.get('contractor', ''))
+        
         result.loc[df['Номер карты'] == 2578, 'Контрагент'] = '! Наташа'
         result.loc[result['Категория'] == 'Ком. платежи. Вернадского 54', 'Контрагент'] = 'Квартира_Ипотека'
         # 9. Чек #
         result['Чек #'] = df['Номер карты'].astype(str)
         # 10. Класс
-        result['Класс'] = settings.get('class', '01 Личное')
+        # result['Класс'] = settings.get('class', '01 Личное')
+        result['Класс'] = user_settings.get('Класс', {}).get('value', settings.get('class', '01 Личное'))
         # Применение специальных условий
         for _, row in df.iterrows():
-            apply_special_conditions(row, special_conditions, result)
+            apply_special_conditions(row, special_conditions, result, user_settings)
+
+        # Применение пользовательских настроек (дополнительно)
+        if user_settings:
+            for setting_key, setting_value in user_settings.items():
+                # Нормализуем название поля
+                normalized_key = setting_key.lower().replace(' ', '').replace('#', '').replace('№', '')
+                
+                # Определяем соответствующее название колонки в DataFrame
+                if normalized_key in ['контрагент', 'контрагента']:
+                    column_name = 'Контрагент'
+                elif normalized_key in ['чек', 'чек#', 'чек№']:
+                    column_name = 'Чек #'
+                elif normalized_key in ['описание', 'описании']:
+                    column_name = 'Описание'
+                elif normalized_key in ['наличность', 'нал', 'наличка']:
+                    column_name = 'Наличность'
+                elif normalized_key in ['класс']:
+                    column_name = 'Класс'
+                else:
+                    continue  # Пропускаем неизвестные настройки
+                    
+                # Применяем настройку, если колонка существует
+                if column_name in result.columns:
+                    if setting_value['operator'] == '+':
+                        result[column_name] = result[column_name].astype(str) + ', ' + setting_value['value']
+                    else:
+                        result[column_name] = setting_value['value']
+
         # Сохранение результата
         output_csv_path = os.path.join(os.path.dirname(input_csv_path), "result.csv")
         result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8')
-
 
         # Формирование файла с неподходящими транзакциями
         unclassified_csv_path = None
@@ -156,7 +204,7 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default') -> str
         if not unclassified_df.empty:
             unclassified_csv_path = os.path.join(os.path.dirname(input_csv_path), "unclassified.csv")
             # Сохраняем исходные данные для удобства пользователя
-            unclassified_df = df[df.index.isin(unclassified_df.index)]
+            # unclassified_df = df[df.index.isin(unclassified_df.index)]
             unclassified_df.to_csv(unclassified_csv_path, sep=';', index=False, encoding='utf-8')
 
     except Exception as e:

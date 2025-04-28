@@ -1,0 +1,46 @@
+27-04-2025 18:41:31 - root - INFO - Запуск бота в Docker-контейнере
+27-04-2025 18:41:32 - telegram.ext.Application - INFO - Application started
+27-04-2025 18:49:42 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 18:49:43 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 18:49:43 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 18:49:43 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+27-04-2025 18:49:43 - root - ERROR - Ошибка обработки: name 'user_settings' is not defined
+27-04-2025 18:54:09 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 18:54:10 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 18:54:10 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 18:54:10 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+27-04-2025 18:54:10 - root - ERROR - Ошибка обработки: name 'user_settings' is not defined
+27-04-2025 23:21:53 - root - INFO - Запуск бота в Docker-контейнере
+27-04-2025 23:21:53 - telegram.ext.Application - INFO - Application started
+27-04-2025 23:23:09 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 23:23:09 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+27-04-2025 23:23:09 - root - INFO - Используются настройки: return_files=0
+27-04-2025 23:23:10 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 23:23:10 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 23:23:10 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+27-04-2025 23:27:47 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+27-04-2025 23:27:47 - root - INFO - Начата обработка PDF: Выписка_по_счёту_кредитной_карты.pdf, размер: 328213 байт
+27-04-2025 23:27:47 - root - INFO - Используются настройки: return_files=0
+27-04-2025 23:27:48 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+27-04-2025 23:27:48 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+27-04-2025 23:27:48 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+27-04-2025 23:34:15 - root - INFO - Запуск бота в Docker-контейнере
+27-04-2025 23:34:15 - telegram.ext.Application - INFO - Application started
+27-04-2025 23:34:29 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 23:34:29 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+27-04-2025 23:34:29 - root - INFO - Используются настройки: return_files=0
+27-04-2025 23:34:29 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 23:34:29 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 23:34:29 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+27-04-2025 23:35:07 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 23:35:07 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+27-04-2025 23:35:07 - root - INFO - Используются настройки: return_files=0
+27-04-2025 23:35:08 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 23:35:08 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 23:35:08 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+27-04-2025 23:38:14 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+27-04-2025 23:38:14 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+27-04-2025 23:38:14 - root - INFO - Используются настройки: return_files=0
+27-04-2025 23:38:14 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+27-04-2025 23:38:14 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+27-04-2025 23:38:14 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv

@@ -125,6 +125,69 @@ def process_visa_gold_aeroflot(input_csv_path: str) -> pd.DataFrame:
 
     return new_df
 
+def process_Yandex(input_csv_path: str) -> pd.DataFrame:
+    """Обрабатывает CSV для Yandex"""
+    try:
+        df = pd.read_csv(input_csv_path)
+        logger.info(f"Успешно загружен CSV для Yandex, строк: {len(df)}")
+    except Exception as e:
+        logger.error(f"Ошибка чтения CSV для Yandex: {str(e)}")
+        raise
+
+    new_df = pd.DataFrame(columns=[
+        'Дата и время операции', 
+        'Сумма операции в валюте карты',
+        'Описание операции', 
+        'Номер карты'
+    ])
+
+    i = 0
+    n = len(df)
+    
+    while i < n:
+        try:
+            # Сбор описания операции (может занимать несколько строк перед датой)
+            description_parts = []
+            while i < n and not re.match(r'\d{2}\.\d{2}\.\d{4}', df.iloc[i]['text'].strip()):
+                description_parts.append(df.iloc[i]['text'].strip())
+                i += 1
+
+            if i >= n:
+                break
+
+            # Обработка даты и времени
+            date = df.iloc[i]['text'].strip()
+            i += 1
+            
+            if i < n and re.match(r'в \d{2}:\d{2}', df.iloc[i]['text'].strip()):
+                time = re.match(r'в (\d{2}:\d{2})', df.iloc[i]['text'].strip()).group(1)
+                i += 1
+            else:
+                time = "00:00"
+
+            # Пропуск даты обработки и суммы в валюте операции
+            i += 2  # дата обработки и сумма в валюте операции
+
+            # Получение суммы в валюте карты
+            amount = df.iloc[i]['text'].strip() if i < n else ''
+            i += 1
+
+            # Формирование строки
+            new_row = {
+                'Дата и время операции': f"{date} {time}",
+                'Сумма операции в валюте карты': amount,
+                'Описание операции': ' '.join(description_parts).strip(),
+                'Номер карты': "Карта Пэй"
+            }
+            
+            new_df = pd.concat([new_df, pd.DataFrame([new_row])], ignore_index=True)
+
+        except Exception as e:
+            logger.error(f"Ошибка обработки строки {i}: {str(e)}")
+            i += 1
+
+    return new_df
+
 def process_default(input_csv_path: str) -> pd.DataFrame:
     """Обработка по умолчанию для неизвестных типов PDF"""
     try:
@@ -169,8 +232,9 @@ def process_csv(input_csv_path: str, pdf_type: Optional[str] = None) -> str:
 
     processors: Dict[str, callable] = {
         "Tinkoff_Platinum": process_tinkoff_platinum,
+        "Tinkoff": process_tinkoff_platinum,        
         "Visa_Gold_Aeroflot": process_visa_gold_aeroflot,
-        "Tinkoff": process_tinkoff_platinum,
+        "Yandex": process_Yandex,
         "default": process_default
     }
 
@@ -185,7 +249,8 @@ def process_csv(input_csv_path: str, pdf_type: Optional[str] = None) -> str:
         raise
 
 if __name__ == "__main__":
-    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
+    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Yandex_temp.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
     # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"Файл не найден: {input_csv}")
@@ -193,15 +258,18 @@ if __name__ == "__main__":
     try:
         # Определите тип PDF (можно получить из detect_pdf_type из extract_transactions_pdf1.py)
         # pdf_type = "Tinkoff_Platinum"
-        pdf_type = "Visa_Gold_Aeroflot"
+        # pdf_type = "Visa_Gold_Aeroflot"
+        pdf_type = "Yandex"
         # output_csv = process_csv(input_csv, "Tinkoff")
-        output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
-        print(f"Обработанный CSV сохранен: {output_csv}")
+        # output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
+        output_csv = process_csv(input_csv, "Yandex")
+        # print(f"Обработанный CSV сохранен: {output_csv}")
+        logger.info(f"Обработанный CSV сохранен: {output_csv}")
         
         # Проверка результата
-        result_df = pd.read_csv(output_csv)
-        print("\nРезультат обработки:")
-        print(result_df.head())
+        # result_df = pd.read_csv(output_csv)
+        # print("\nРезультат обработки:")
+        # print(result_df.head())
     except Exception as e:
         logger.error(f"Ошибка при обработке: {str(e)}")
         sys.exit(1)

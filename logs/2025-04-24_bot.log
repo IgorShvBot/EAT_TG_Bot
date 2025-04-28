@@ -1,0 +1,330 @@
+24-04-2025 00:14:23 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:24 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:25 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:26 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:27 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:30 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:33 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:41 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:14:54 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:15:20 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:16:12 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:17:13 - root - INFO - Бот запущен в Docker-контейнере
+24-04-2025 00:22:06 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:06 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:12 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:12 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:13 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:13 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:13 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:13 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:14 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:14 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:15 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:15 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:16 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:16 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:16 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:16 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:18 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:22 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:22 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:22 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:25 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:25 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:26 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:26 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:22:29 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:22:30 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:22:30 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:22:30 - root - INFO - В Docker-режиме просто завершаем процесс
+24-04-2025 00:25:48 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:25:48 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:25:48 - root - INFO - Начало процесса перезагрузки...
+24-04-2025 00:25:48 - root - INFO - Перезагрузка в Docker не поддерживается. Используйте 'docker restart'.
+24-04-2025 00:33:59 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:34:00 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:45:58 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:45:58 - telegram.ext.Application - INFO - Application started
+24-04-2025 00:55:35 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 00:55:36 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:02:49 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:02:49 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:03:39 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:03:41 - camelot - INFO - Processing page-1
+24-04-2025 01:03:41 - camelot - INFO - Processing page-2
+24-04-2025 01:03:41 - camelot - INFO - Processing page-3
+24-04-2025 01:03:41 - camelot - INFO - Processing page-4
+24-04-2025 01:03:42 - camelot - INFO - Processing page-5
+24-04-2025 01:03:42 - camelot - INFO - Processing page-6
+24-04-2025 01:03:42 - camelot - INFO - Processing page-7
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:08:55 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:08:55 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:09:11 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:09:12 - camelot - INFO - Processing page-1
+24-04-2025 01:09:12 - camelot - INFO - Processing page-2
+24-04-2025 01:09:12 - camelot - INFO - Processing page-3
+24-04-2025 01:09:13 - camelot - INFO - Processing page-4
+24-04-2025 01:09:13 - camelot - INFO - Processing page-5
+24-04-2025 01:09:13 - camelot - INFO - Processing page-6
+24-04-2025 01:09:13 - camelot - INFO - Processing page-7
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:16:44 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:16:44 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:16:57 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:16:58 - camelot - INFO - Processing page-1
+24-04-2025 01:16:58 - camelot - INFO - Processing page-2
+24-04-2025 01:16:58 - camelot - INFO - Processing page-3
+24-04-2025 01:16:59 - camelot - INFO - Processing page-4
+24-04-2025 01:16:59 - camelot - INFO - Processing page-5
+24-04-2025 01:16:59 - camelot - INFO - Processing page-6
+24-04-2025 01:16:59 - camelot - INFO - Processing page-7
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:23:53 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:23:54 - telegram.ext.Application - INFO - Application started
+24-04-2025 01:24:03 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 01:24:05 - camelot - INFO - Processing page-1
+24-04-2025 01:24:05 - camelot - INFO - Processing page-2
+24-04-2025 01:24:05 - camelot - INFO - Processing page-3
+24-04-2025 01:24:06 - camelot - INFO - Processing page-4
+24-04-2025 01:24:06 - camelot - INFO - Processing page-5
+24-04-2025 01:24:06 - camelot - INFO - Processing page-6
+24-04-2025 01:24:06 - camelot - INFO - Processing page-7
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
+24-04-2025 01:29:10 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 01:29:11 - telegram.ext.Application - INFO - Application started
+24-04-2025 16:54:08 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 16:54:08 - telegram.ext.Application - INFO - Application started
+24-04-2025 16:55:06 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+24-04-2025 16:55:08 - camelot - INFO - Processing page-1
+24-04-2025 16:55:08 - camelot - INFO - Processing page-2
+24-04-2025 16:55:08 - camelot - INFO - Processing page-3
+24-04-2025 16:55:09 - camelot - INFO - Processing page-4
+24-04-2025 16:55:09 - camelot - INFO - Processing page-5
+24-04-2025 16:55:09 - camelot - INFO - Processing page-6
+24-04-2025 16:55:09 - camelot - INFO - Processing page-7
+24-04-2025 16:55:09 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 16:55:09 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 16:55:09 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 16:55:09 - classify_transactions_pdf - ERROR - Ошибка классификации транзакций: apply_special_conditions() missing 1 required positional argument: 'user_settings'
+24-04-2025 16:55:09 - root - ERROR - Ошибка обработки: apply_special_conditions() missing 1 required positional argument: 'user_settings'
+24-04-2025 17:02:04 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 17:02:05 - telegram.ext.Application - INFO - Application started
+24-04-2025 17:02:34 - root - INFO - Получен файл: Справка_о_движении_денежных_средств_4.pdf
+24-04-2025 17:02:40 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 155, in _call_sslobject_method
+    result = func(*args)
+  File "/usr/local/lib/python3.10/ssl.py", line 975, in do_handshake
+    self._sslobj.do_handshake()
+ssl.SSLWantReadError: The operation did not complete (read) (_ssl.c:1017)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 115, in fail_after
+    yield cancel_scope
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 69, in start_tls
+    ssl_stream = await anyio.streams.tls.TLSStream.wrap(
+  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 147, in wrap
+    await wrapper._call_sslobject_method(ssl_object.do_handshake)
+  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
+    data = await self.transport_stream.receive()
+  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1254, in receive
+    await self._protocol.read_event.wait()
+  File "/usr/local/lib/python3.10/asyncio/locks.py", line 214, in wait
+    await fut
+asyncio.exceptions.CancelledError: Cancelled by cancel scope ffff639efa60
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 78, in start_tls
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 68, in start_tls
+    with anyio.fail_after(timeout):
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 118, in fail_after
+    raise TimeoutError
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
+    response = await connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 92, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 69, in handle_async_request
+    stream = await self._connect(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 149, in _connect
+    stream = await stream.start_tls(**kwargs)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 66, in start_tls
+    with map_exceptions(exc_map):
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
+    res = await self._client.request(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
+    response = await self._send_handling_auth(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
+    await coroutine
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
+    return await self.callback(update, context)
+  File "/app/bot.py", line 772, in handle_document
+    await update.message.reply_text("Начинаю обработку...")
+  File "/root/.local/lib/python3.10/site-packages/telegram/_message.py", line 1074, in reply_text
+    return await self.get_bot().send_message(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 2633, in send_message
+    return await super().send_message(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 807, in send_message
+    return await self._send_message(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 507, in _send_message
+    result = await super()._send_message(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 559, in _send_message
+    result = await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 233, in do_request
+    raise TimedOut from err
+telegram.error.TimedOut: Timed out
+24-04-2025 17:20:59 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 17:20:59 - telegram.ext.Application - INFO - Application started
+24-04-2025 17:22:03 - root - INFO - Получен файл: Справка_о_движении_денежных_средств_4.pdf
+24-04-2025 17:22:04 - camelot - INFO - Processing page-1
+24-04-2025 17:22:05 - camelot - INFO - Processing page-2
+24-04-2025 17:22:05 - camelot - INFO - Processing page-3
+24-04-2025 17:22:05 - camelot - INFO - Processing page-4
+24-04-2025 17:22:05 - camelot - INFO - Processing page-5
+24-04-2025 17:22:06 - camelot - INFO - Processing page-6
+24-04-2025 17:22:06 - camelot - INFO - Processing page-7
+24-04-2025 17:22:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+24-04-2025 17:22:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
+24-04-2025 17:22:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+24-04-2025 17:22:51 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 17:22:52 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 17:22:52 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 17:22:52 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+24-04-2025 18:13:29 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 18:13:29 - telegram.ext.Application - INFO - Application started
+24-04-2025 18:13:29 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 18:13:30 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 18:13:30 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 18:13:30 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+24-04-2025 18:13:30 - root - ERROR - Ошибка обработки: stat: path should be string, bytes, os.PathLike or integer, not list
+24-04-2025 22:22:32 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 22:22:32 - telegram.ext.Application - INFO - Application started
+24-04-2025 22:22:53 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 22:22:54 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 22:22:54 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 22:22:54 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+24-04-2025 22:26:06 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 22:26:07 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 22:26:07 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 22:26:07 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+24-04-2025 22:27:57 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 22:27:58 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 22:27:58 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 22:27:58 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv
+24-04-2025 22:58:33 - root - INFO - Запуск бота в Docker-контейнере
+24-04-2025 22:58:33 - telegram.ext.Application - INFO - Application started
+24-04-2025 22:58:45 - root - INFO - Получен файл: Выписка_по_счёту_кредитной_карты.pdf
+24-04-2025 22:58:46 - extract_transactions_pdf2 - INFO - Обработка CSV как Visa_Gold_Aeroflot
+24-04-2025 22:58:46 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Visa Gold Aeroflot, строк: 152
+24-04-2025 22:58:46 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_visa_gold_aeroflot.csv

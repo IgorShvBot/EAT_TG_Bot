@@ -1,144 +1,83 @@
-24-04-2025 00:14:23 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:24 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:25 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:26 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:27 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:30 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:33 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:41 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:14:54 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:15:20 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:16:12 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:17:13 - root - INFO - Бот запущен в Docker-контейнере
-24-04-2025 00:22:06 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:06 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:12 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:12 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:13 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:13 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:13 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:13 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:14 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:14 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:15 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:15 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:16 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:16 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:16 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:16 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:18 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:22 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:22 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:22 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:25 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:25 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:26 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:26 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:22:29 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:22:30 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:22:30 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:22:30 - root - INFO - В Docker-режиме просто завершаем процесс
-24-04-2025 00:25:48 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:25:48 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:25:48 - root - INFO - Начало процесса перезагрузки...
-24-04-2025 00:25:48 - root - INFO - Перезагрузка в Docker не поддерживается. Используйте 'docker restart'.
-24-04-2025 00:33:59 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:34:00 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:45:58 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:45:58 - telegram.ext.Application - INFO - Application started
-24-04-2025 00:55:35 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 00:55:36 - telegram.ext.Application - INFO - Application started
-24-04-2025 01:02:49 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 01:02:49 - telegram.ext.Application - INFO - Application started
-24-04-2025 01:03:39 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-24-04-2025 01:03:41 - camelot - INFO - Processing page-1
-24-04-2025 01:03:41 - camelot - INFO - Processing page-2
-24-04-2025 01:03:41 - camelot - INFO - Processing page-3
-24-04-2025 01:03:41 - camelot - INFO - Processing page-4
-24-04-2025 01:03:42 - camelot - INFO - Processing page-5
-24-04-2025 01:03:42 - camelot - INFO - Processing page-6
-24-04-2025 01:03:42 - camelot - INFO - Processing page-7
-24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
-24-04-2025 01:03:42 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-24-04-2025 01:08:55 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 01:08:55 - telegram.ext.Application - INFO - Application started
-24-04-2025 01:09:11 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-24-04-2025 01:09:12 - camelot - INFO - Processing page-1
-24-04-2025 01:09:12 - camelot - INFO - Processing page-2
-24-04-2025 01:09:12 - camelot - INFO - Processing page-3
-24-04-2025 01:09:13 - camelot - INFO - Processing page-4
-24-04-2025 01:09:13 - camelot - INFO - Processing page-5
-24-04-2025 01:09:13 - camelot - INFO - Processing page-6
-24-04-2025 01:09:13 - camelot - INFO - Processing page-7
-24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
-24-04-2025 01:09:13 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-24-04-2025 01:16:44 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 01:16:44 - telegram.ext.Application - INFO - Application started
-24-04-2025 01:16:57 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-24-04-2025 01:16:58 - camelot - INFO - Processing page-1
-24-04-2025 01:16:58 - camelot - INFO - Processing page-2
-24-04-2025 01:16:58 - camelot - INFO - Processing page-3
-24-04-2025 01:16:59 - camelot - INFO - Processing page-4
-24-04-2025 01:16:59 - camelot - INFO - Processing page-5
-24-04-2025 01:16:59 - camelot - INFO - Processing page-6
-24-04-2025 01:16:59 - camelot - INFO - Processing page-7
-24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
-24-04-2025 01:16:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:16:59 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:23:53 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 01:23:54 - telegram.ext.Application - INFO - Application started
-24-04-2025 01:24:03 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-24-04-2025 01:24:05 - camelot - INFO - Processing page-1
-24-04-2025 01:24:05 - camelot - INFO - Processing page-2
-24-04-2025 01:24:05 - camelot - INFO - Processing page-3
-24-04-2025 01:24:06 - camelot - INFO - Processing page-4
-24-04-2025 01:24:06 - camelot - INFO - Processing page-5
-24-04-2025 01:24:06 - camelot - INFO - Processing page-6
-24-04-2025 01:24:06 - camelot - INFO - Processing page-7
-24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 310
-24-04-2025 01:24:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: 03224643450000007300
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: SKLADNO
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод с договора 5174820778
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: MOSENERGOSBYT
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: Plati chastyami
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:24:06 - classify_transactions_pdf - INFO - Найдено совпадение для условия: перевод по номеру телефона \+79267660077
-24-04-2025 01:29:10 - root - INFO - Запуск бота в Docker-контейнере
-24-04-2025 01:29:11 - telegram.ext.Application - INFO - Application started
+28-04-2025 11:04:51 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 11:04:51 - telegram.ext.Application - INFO - Application started
+28-04-2025 11:06:14 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 11:06:14 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 11:06:14 - root - INFO - Используются настройки: return_files=0
+28-04-2025 11:06:15 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 11:06:15 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 11:06:15 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 11:07:41 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 11:07:41 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 11:07:41 - root - INFO - Используются настройки: return_files=0
+28-04-2025 11:07:41 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 11:07:41 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 11:07:41 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 11:07:41 - classify_transactions_pdf - ERROR - Ошибка классификации транзакций: 'чек #'
+28-04-2025 11:07:41 - root - ERROR - Ошибка обработки PDF: 'чек #'
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3653, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 147, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 176, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7080, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'чек #'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/bot.py", line 895, in handle_document
+    result_csv_path, unclassified_csv_path = await asyncio.to_thread(
+  File "/usr/local/lib/python3.10/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "/usr/local/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/app/classify_transactions_pdf.py", line 168, in classify_transactions
+    result[column_name] = result[column_name].astype(str) + ' ' + setting_value['value']
+  File "/root/.local/lib/python3.10/site-packages/pandas/core/frame.py", line 3761, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3655, in get_loc
+    raise KeyError(key) from err
+KeyError: 'чек #'
+28-04-2025 11:31:11 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 11:31:11 - telegram.ext.Application - INFO - Application started
+28-04-2025 11:34:59 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 11:35:00 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 11:35:00 - root - INFO - Используются настройки: return_files=0
+28-04-2025 11:35:00 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 11:35:00 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 11:35:00 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 11:36:51 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 11:36:51 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 11:36:51 - root - INFO - Используются настройки: return_files=0
+28-04-2025 11:36:52 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 11:36:52 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 11:36:52 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 11:37:59 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 11:37:59 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 11:37:59 - root - INFO - Используются настройки: return_files=0
+28-04-2025 11:37:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 11:37:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 11:37:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 13:38:20 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 13:38:20 - telegram.ext.Application - INFO - Application started
+28-04-2025 13:39:20 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 13:39:20 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 13:39:20 - root - INFO - Используются настройки: return_files=0
+28-04-2025 13:39:20 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 13:39:20 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 13:39:20 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 13:40:26 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 13:40:26 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 13:40:26 - root - INFO - Используются настройки: return_files=0
+28-04-2025 13:40:27 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 13:40:27 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 13:40:27 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
+28-04-2025 13:43:35 - root - INFO - Запуск бота в Docker-контейнере
+28-04-2025 13:43:35 - telegram.ext.Application - INFO - Application started
+28-04-2025 13:44:10 - root - INFO - Получен файл: ДДС_Яндекс.pdf
+28-04-2025 13:44:10 - root - INFO - Начата обработка PDF: ДДС_Яндекс.pdf, размер: 127126 байт
+28-04-2025 13:44:10 - root - INFO - Используются настройки: return_files=0
+28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Обработка CSV как Yandex
+28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Yandex, строк: 135
+28-04-2025 13:44:11 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_yandex.csv
