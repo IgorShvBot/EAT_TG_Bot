@@ -272,33 +272,57 @@ class TransactionProcessorBot:
         args = context.args
         if not args:
             await update.message.reply_text(
-                "Использование:\n"
-                "/add_settings Контрагент: ОАЭ 2025\n"
-                "или отправьте несколько настроек текстом после команды, например:\n\n"
-                "/add_settings\n"
-                "Контрагент: Калининград 2025\n"
-                "Чек: + свой текст"
+                "Использование: /add_settings <параметр>:<значение>\n\n"
+                "Примеры:\n"
+                "/add_settings pdf:1\n"
+                "/add_settings контрагент:ОАЭ 2025\n"
+                "/add_settings описание:НДС 20%"
             )
             return
-
-        # Получаем весь текст сообщения с учётом переносов строк
-        full_text = update.message.text[len('/add_settings'):].strip()
-
-        # Парсим настройки из текста
-        settings = parse_user_settings(full_text)
+        
+        # Объединяем все аргументы в одну строку для корректного парсинга
+        full_text = ' '.join(args)
+        settings = parse_user_settings(full_text)  # Используем существующий парсер
+        logger.info(f"Получены аргументы: {args}, объединенная строка: {full_text}")
 
         if not settings:
             await update.message.reply_text("Не удалось распознать настройки. Проверьте формат.")
             return
 
+        """# Парсим настройки из аргументов команды
+         settings = {}
+        for arg in args:
+            if ':' not in arg:
+                continue
+            key, value = arg.split(':', 1)
+            key = key.strip().lower()
+            value = value.strip()
+            
+            # Приводим названия полей к стандартному виду
+            if key in ['контрагент', 'контрагента']:
+                key = 'Контрагент'
+            elif key in ['чек', 'чек #', 'чек№']:
+                key = 'Чек #'
+            elif key in ['описание', 'описании']:
+                key = 'Описание'
+            elif key in ['наличность', 'нал', 'наличка']:
+                key = 'Наличность'
+            elif key in ['класс']:
+                key = 'Класс'
+            
+            settings[key] = {
+                'operator': '',  # Можно добавить поддержку операторов
+                'value': value
+            } """
+        
         # Сохраняем настройки в контексте пользователя
         context.user_data['processing_settings'] = settings
-
+        
         # Формируем ответ с подтверждением
         response = "⚙ Настройки сохранены:\n"
         for key, value in settings.items():
             response += f"{key}: {value['value']}\n"
-
+        
         await update.message.reply_text(response)
 
     @admin_only
