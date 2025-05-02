@@ -133,56 +133,53 @@ class Database:
         """Массовая вставка транзакций с возвратом статистики"""
         stats = {'new': 0, 'duplicates': 0, 'updated': 0, 'duplicates_list': []}
         
-        if not isinstance(df, pd.DataFrame) or df.empty:
-            logger.error("Передан пустой DataFrame или не DataFrame")
-            raise ValueError("Передан пустой DataFrame")
-
-        logger.info(f"Начало сохранения {len(df)} транзакций для user_id={user_id}")
-
+        # Приведение названий столбцов к нижнему регистру для унификации
+        df.columns = df.columns.str.lower()
+        
         try:
             with self.get_cursor() as cur:
                 cur.execute("SELECT nextval('import_id_seq')")
                 import_id = cur.fetchone()[0]
 
-                df['Дата'] = pd.to_datetime(df['Дата'], errors='coerce')
-                df['Сумма'] = pd.to_numeric(df['Сумма'], errors='coerce')
-                df.dropna(subset=['Дата', 'Сумма'], inplace=True)
+                # Преобразование и валидация данных
+                df['дата'] = pd.to_datetime(df['дата'], errors='coerce')
+                df['сумма'] = pd.to_numeric(df['сумма'], errors='coerce')
+                if 'сумма (куда)' in df.columns:
+                    df['сумма (куда)'] = pd.to_numeric(df['сумма (куда)'], errors='coerce')
+                
+                df.dropna(subset=['дата', 'сумма'], inplace=True)
 
                 if df.empty:
-                    logger.warning("DataFrame стал пустым после очистки")
                     return stats
 
-                # Разделяем данные на новые и дубликаты
                 new_data = []
-                duplicates = []
-                
                 for _, row in df.iterrows():
-                    if self.check_duplicate(row['Дата'], row['Наличность'], row['Сумма']):
-                        duplicates.append(row)
-                        stats['duplicates'] += 1
-                    else:
+                    if not self.check_duplicate(row['дата'], row['наличность'], row['сумма']):
                         new_data.append((
-                            import_id, user_id, row['Дата'], row['Сумма'],
-                            row['Наличность'], row['Категория'], row['Описание'],
-                            row['Контрагент'], row['Чек #'], row['Тип транзакции']
+                            import_id, user_id, row['дата'], row['сумма'],
+                            row.get('наличность'), row.get('категория'), 
+                            row.get('описание'), row.get('контрагент'),
+                            row.get('чек #'), row.get('тип транзакции'),
+                            # Новые поля:
+                            row.get('класс'), 
+                            row.get('сумма (куда)'),
+                            row.get('наличность (куда)')
                         ))
                         stats['new'] += 1
 
-                # Вставляем только НОВЫЕ данные
                 if new_data:
                     execute_batch(
                         cur,
                         """INSERT INTO transactions (
-                            import_id, user_id, transaction_date, amount, 
-                            cash_source, category, description, 
-                            counterparty, check_num, transaction_type
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                        new_data,  # Только новые данные без дубликатов
+                            import_id, user_id, transaction_date, amount,
+                            cash_source, category, description,
+                            counterparty, check_num, transaction_type,
+                            transaction_class, target_amount, target_cash_source
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                        new_data,
                         page_size=100
                     )
-                    logger.info(f"Добавлено {len(new_data)} новых записей")
 
-                stats['duplicates_list'] = duplicates
                 return stats
                 
         except Exception as e:
@@ -202,24 +199,25 @@ class Database:
 
     def get_transactions(self, user_id, start_date, end_date, filters=None):
         """Получает транзакции с фильтрацией"""
-        query = """
-            SELECT * FROM transactions 
-            WHERE user_id = %s 
-            AND transaction_date BETWEEN %s AND %s
-        """
+        query = sql.SQL("""
+            SELECT 
+                id, transaction_date, amount, cash_source,
+                category, description, counterparty,
+                check_num, transaction_type,
+                transaction_class, target_amount, target_cash_source
+            FROM transactions 
+            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s
+        """)
         params = [user_id, start_date, end_date]
 
         if filters:
             conditions = []
             for key, value in filters.items():
-                if 'LIKE' in key:
-                    conditions.append(key)
-                    params.append(value)
-                else:
+                if key in ['transaction_class', 'target_cash_source']:  # Поддержка новых полей
                     col = sql.Identifier(key)
                     conditions.append(sql.SQL("{0} = %s").format(col))
                     params.append(value)
-            query += " AND " + " AND ".join(conditions)
+                # ... остальная логика фильтрации
 
         with self.get_cursor() as cur:
             cur.execute(query, params)

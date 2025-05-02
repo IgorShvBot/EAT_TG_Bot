@@ -367,3 +367,41 @@ DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Ти�
 02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
 02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
 02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 16:38:30 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 16:38:30 - telegram.ext.Application - INFO - Application started
+02-05-2025 16:40:58 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 16:40:58 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 86586 байт
+02-05-2025 16:40:58 - root - INFO - Используются настройки: return_files=0
+02-05-2025 16:40:59 - camelot - INFO - Processing page-1
+02-05-2025 16:40:59 - camelot - INFO - Processing page-2
+02-05-2025 16:40:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 16:40:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 23
+02-05-2025 16:40:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:41:06 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 16:41:06 - database - INFO - Подключение к БД успешно
+02-05-2025 16:41:06 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 16:41:06 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 16:41:06 - root - INFO - Сохранено: новых - 0, дубликатов - 0
+02-05-2025 16:41:06 - database - INFO - Соединение с БД закрыто
+02-05-2025 16:41:06 - root - INFO - Удален временный файл: /tmp/tmpld6j0r86.pdf
+02-05-2025 16:41:06 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 16:41:06 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:41:06 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 16:53:17 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 16:53:17 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 86586 байт
+02-05-2025 16:53:18 - root - INFO - Используются настройки: return_files=0
+02-05-2025 16:53:18 - camelot - INFO - Processing page-1
+02-05-2025 16:53:18 - camelot - INFO - Processing page-2
+02-05-2025 16:53:18 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 16:53:18 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 23
+02-05-2025 16:53:18 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:53:21 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 16:53:21 - database - INFO - Подключение к БД успешно
+02-05-2025 16:53:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 16:53:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 16:53:21 - root - INFO - Сохранено: новых - 10, дубликатов - 0
+02-05-2025 16:53:21 - database - INFO - Соединение с БД закрыто
+02-05-2025 16:53:21 - root - INFO - Удален временный файл: /tmp/tmprpfr1oci.pdf
+02-05-2025 16:53:21 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 16:53:21 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:53:21 - root - INFO - Удален временный файл: /tmp/result.csv

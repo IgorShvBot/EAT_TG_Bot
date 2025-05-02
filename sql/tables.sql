@@ -1,17 +1,22 @@
 -- Таблица транзакций
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
-    import_id INT NOT NULL,
-    user_id INT NOT NULL,
-    transaction_date DATE NOT NULL,
-    amount NUMERIC(10, 2) NOT NULL,
-    cash_source VARCHAR(50),
+    import_id INTEGER,
+    user_id INTEGER NOT NULL,
+    transaction_date TIMESTAMP NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL,
+    cash_source VARCHAR(100),
     category VARCHAR(100),
     description TEXT,
-    counterparty VARCHAR(255),
+    counterparty VARCHAR(200),
     check_num VARCHAR(50),
     transaction_type VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- Новые поля:
+    transaction_class VARCHAR(100),  -- Класс
+    target_amount NUMERIC(12, 2),    -- Сумма (куда)
+    target_cash_source VARCHAR(100), -- Наличность (куда)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_transaction UNIQUE (user_id, transaction_date, cash_source, amount)
 );
 
 -- Секвенция для импорта
