@@ -1,4 +1,4 @@
-__version__ = "2.3.0"
+__version__ = "3.0.0"
 
 import os
 import logging
@@ -25,6 +25,8 @@ import subprocess
 import shlex
 import telegram
 import re
+from database import Database
+from datetime import datetime, timedelta
 
 # Настройка логирования
 def setup_logging():
@@ -36,8 +38,12 @@ def setup_logging():
     console_handler.setFormatter(logging.Formatter(log_format, date_format))
     
     # Логи в файл (если нужно)
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
+    try:
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
+    except OSError as e:
+        logger.error(f"Ошибка при создании директории для логов: {e}")
+
     file_handler = TimedRotatingFileHandler(
         'logs/bot.log',
         when='midnight',
@@ -48,7 +54,7 @@ def setup_logging():
     file_handler.suffix = "%Y-%m-%d_bot.log"
     file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}_bot\.log$")
     file_handler.setFormatter(logging.Formatter(log_format, date_format))
-    
+       
     # Основной логгер
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -121,7 +127,8 @@ def parse_user_settings(message_text: str) -> dict:
     if not message_text:
         return settings
     
-    lines = [line.strip() for line in message_text.split('\n') if line.strip()]
+    # lines = [line.strip() for line in message_text.split('\n') if line.strip()]
+    lines = [line.strip() for line in message_text.split('\n')[:100] if line and len(line) < 100]
     pattern = re.compile(r"^(.+?)\s*:\s*(\+?)\s*(.*)$", re.IGNORECASE)
     
     for line in lines:
@@ -210,7 +217,18 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings))
         self.application.add_handler(CommandHandler("settings", self.show_settings))
+        self.application.add_handler(CommandHandler("export", self.export_data))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
+
+        # self.application.add_handler(CallbackQueryHandler(self.set_filter, pattern='^set_'))
+        self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
+        self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input))
+        self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
+        self.application.add_handler(CallbackQueryHandler(self.set_cash_source, pattern='^set_cash_source'))
+        self.application.add_handler(CallbackQueryHandler(self.set_counterparty, pattern='^set_counterparty'))
+        self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
+        self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
         
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
@@ -261,11 +279,227 @@ class TransactionProcessorBot:
             )
         )
 
+        self.application.add_handler(CallbackQueryHandler(
+        self.handle_save_confirmation,
+        pattern='^save_(yes|no)$'
+        ))
+
         self.application.add_handler(CommandHandler("cancel", self.cancel_operation))
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
+
+    @admin_only
+    async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обновленное меню фильтров с новыми полями"""
+        user_data = context.user_data
+        filters = user_data['export_filters']
+        
+        keyboard = [
+            [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
+            [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+            [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
+            [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
+            [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
+            [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
+            [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
+            [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
+            [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
+            [InlineKeyboardButton("❌ Отмена", callback_data='cancel_export')]
+        ]
+        
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        if update.callback_query:
+            await update.callback_query.edit_message_text(
+                "⚙ Настройте параметры отчета:",
+                reply_markup=reply_markup
+            )
+        else:
+            await update.message.reply_text(
+                "⚙ Настройте параметры отчета:",
+                reply_markup=reply_markup
+            )
+
+    @admin_only
+    async def export_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Начало процесса экспорта с предзаполненными фильтрами"""
+        user_data = context.user_data
+        user_data['export_filters'] = {
+            'start_date': (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d'),
+            'end_date': datetime.now().strftime('%Y-%m-%d'),
+            'category': 'Все',
+            'transaction_type': 'Все',
+            'cash_source': 'Все',
+            'counterparty': 'Все',
+            'check_num': 'Все',
+            'transaction_class': 'Все'
+            }
+        
+        await self.show_filters_menu(update, context)
+
+    @admin_only
+    # Добавим новые методы для получения уникальных значений
+    def get_unique_values(self, column_name, user_id):
+        self.cursor.execute(f"""
+            SELECT DISTINCT {column_name} FROM transactions 
+            WHERE user_id = %s AND {column_name} IS NOT NULL
+            ORDER BY {column_name}
+        """, (user_id,))
+        return [row[0] for row in self.cursor.fetchall()]
+
+    @admin_only
+    async def set_cash_source(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Меню выбора Наличности"""
+        query = update.callback_query
+        await query.answer()
+        
+        db = Database()
+        sources = ['Все'] + db.get_unique_values('cash_source', query.from_user.id)
+        db.close()
+        
+        keyboard = [
+            [InlineKeyboardButton(src, callback_data=f'source_{src}') 
+            for src in sources[i:i+2]]
+            for i in range(0, len(sources), 2)
+        ]
+        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        
+        await query.edit_message_text(
+            "Выберите источник средств:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
     
+    @admin_only      
+    async def set_counterparty(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Меню выбора Контрагента"""
+        query = update.callback_query
+        await query.answer()
+        
+        await query.edit_message_text(
+            "Введите имя контрагента или часть названия:"
+        )
+        context.user_data['awaiting_input'] = 'counterparty'
+
+    @admin_only
+    async def set_check_num(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Меню выбора Чека"""
+        query = update.callback_query
+        await query.answer()
+        
+        await query.edit_message_text(
+            "Введите номер чека или часть номера:"
+        )
+        context.user_data['awaiting_input'] = 'check_num'
+
+    @admin_only
+    async def set_class(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Меню выбора Класса"""
+        query = update.callback_query
+        await query.answer()
+        
+        db = Database()
+        classes = ['Все'] + db.get_unique_values('transaction_class', query.from_user.id)
+        db.close()
+        
+        keyboard = [
+            [InlineKeyboardButton(cls, callback_data=f'class_{cls}') 
+            for cls in classes[i:i+3]]
+            for i in range(0, len(classes), 3)
+        ]
+        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        
+        await query.edit_message_text(
+            "Выберите класс транзакции:",
+            reply_markup=InlineKeyboardMarkup(keyboard))
+
+    @admin_only
+    # Обновим обработчик текстового ввода
+    async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_data = context.user_data
+        if 'awaiting_input' not in user_data:
+            return
+        
+        text = update.message.text.strip()
+        if not text:
+            await update.message.reply_text("Пожалуйста, введите непустое значение")
+            return
+        
+        filter_type = user_data['awaiting_input']
+        user_data['export_filters'][filter_type] = text
+        del user_data['awaiting_input']
+        
+        await self.show_filters_menu(update, context)
+
+    @admin_only
+    # Обновим обработчик callback-запросов
+    async def handle_filter_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        await query.answer()
+        
+        data = query.data.split('_')
+        filter_type = data[0]
+        value = '_'.join(data[1:])
+        
+        if filter_type == 'cat':
+            context.user_data['export_filters']['category'] = value
+        elif filter_type == 'type':
+            context.user_data['export_filters']['transaction_type'] = value
+        elif filter_type == 'source':
+            context.user_data['export_filters']['cash_source'] = value
+        elif filter_type == 'class':
+            context.user_data['export_filters']['transaction_class'] = value
+        
+        await self.show_filters_menu(update, context)
+
+    @admin_only
+    async def generate_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Генерация и отправка отчета"""
+        query = update.callback_query
+        await query.answer()
+        
+        user_data = context.user_data
+        filters = user_data['export_filters']
+        
+        db_filters = {}
+        for key in ['category', 'transaction_type', 'cash_source', 'counterparty', 'check_num', 'transaction_class']:
+            if filters[key] != 'Все':
+                db_filters[key] = filters[key]
+        
+        db = Database()
+        try:
+            df = db.get_transactions(
+                user_id=query.from_user.id,
+                start_date=filters['start_date'],
+                end_date=filters['end_date'],
+                filters=db_filters if db_filters else None
+            )
+            
+            if df.empty:
+                await query.edit_message_text("⚠ По вашему запросу ничего не найдено")
+                return
+                
+            with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
+                df.to_csv(tmp.name, index=False)
+                await context.bot.send_document(
+                    chat_id=query.from_user.id,
+                    document=open(tmp.name, 'rb'),
+                    caption=f"Отчет за {filters['start_date']} - {filters['end_date']}"
+                )
+                
+            await query.edit_message_text("✅ Отчет успешно сформирован")
+            
+        except Exception as e:
+            logger.error(f"Ошибка генерации отчета: {e}")
+            await query.edit_message_text("❌ Ошибка при формировании отчета")
+        
+        db.close()
+        del user_data['export_filters']
+
+
+
+
+
     @admin_only
     async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /add_settings для настройки параметров обработки"""
@@ -888,7 +1122,13 @@ class TransactionProcessorBot:
             filepath = os.path.join(config_dir, filename)
             
             # Скачиваем временный файл
-            file = await document.get_file()
+            # file = await document.get_file()
+            file = await document.get_file(
+                read_timeout=30,
+                connect_timeout=30,
+                pool_timeout=30,
+                write_timeout=30
+            )
             downloaded_file = await file.download_to_drive()
             
             # Проверяем валидность YAML
@@ -926,6 +1166,21 @@ class TransactionProcessorBot:
         for handler in self.config_handlers:
             self.application.remove_handler(handler)
 
+    @admin_only
+    async def export_data(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        db = Database()
+        df = db.get_transactions(
+            user_id=update.effective_user.id,
+            start_date=datetime(2025, 4, 1),
+            end_date=datetime.now(),
+            filters={"category": "Еда"}
+        )
+        db.close()
+    
+        with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
+            df.to_csv(tmp.name, index=False)
+            await update.message.reply_document(document=open(tmp.name, 'rb'))
+
     # Обработка документов
     @admin_only
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -953,7 +1208,7 @@ class TransactionProcessorBot:
 
         logger.info(f"Получен файл: {document.file_name}")
         await update.message.reply_text("Начинаю обработку...")
-
+        
         logger.info(f"Начата обработка PDF: {document.file_name}, размер: {document.file_size} байт")
         logger.info(f"Используются настройки: return_files={return_files}")
 
@@ -991,6 +1246,10 @@ class TransactionProcessorBot:
                 if unclassified_csv_path and os.path.exists(unclassified_csv_path):
                     files_to_send.append(unclassified_csv_path)
             
+            # db = Database()
+            # db.save_transactions(pd.read_csv(result_csv_path), update.effective_user.id)
+            # db.close()
+
             # Отправка выбранных файлов
             for file_path in files_to_send:
                 if file_path and os.path.exists(file_path):
@@ -998,52 +1257,127 @@ class TransactionProcessorBot:
                     with open(file_path, 'rb') as f:
                         await update.message.reply_document(document=f, caption=caption)
 
-        except Exception as e:
-            logger.error(f"Ошибка обработки PDF: {str(e)}", exc_info=True)
-            await update.message.reply_text(
-                "Произошла ошибка при обработке файла. Пожалуйста, убедитесь, что:\n"
-                "1. Это корректная банковская выписка\n"
-                "2. Файл не поврежден\n"
-                "3. Формат соответствует поддерживаемым (Tinkoff, Сбербанк, Яндекс)"
-            )
+            # Сохраняем DataFrame во временное хранилище
+            # context.user_data['pending_data'] = {
+            #     'df': pd.read_csv(result_csv_path),
+            #     'timestamp': time.time()
+            # }
+            
+            df = pd.read_csv(
+                result_csv_path,
+                sep=';',          # Указываем разделитель
+                quotechar='"',     # Символ кавычек
+                encoding='utf-8',  # Кодировка
+                on_bad_lines='warn' # Обработка битых строк
+                )
 
-        finally:
-            if pdf_file:
-                pdf_file.close()
-                del pdf_file  # Явное освобождение памяти
-            if tmp_pdf:
-                tmp_pdf.close()
-
-            # проверка на None для путей файлов перед их удалением
-            files_to_cleanup = [
+            context.user_data['pending_data'] = {
+                'df': df,
+                'timestamp': time.time()  # Фиксируем время получения данных
+            }
+            context.user_data['temp_files'] = [
                 tmp_pdf_path,
                 temp_csv_path,
                 combined_csv_path,
                 result_csv_path,
                 unclassified_csv_path
             ]
-            files_to_cleanup = [path for path in files_to_cleanup if path is not None]
-            await self.cleanup_files(files_to_cleanup)
 
-            await self.cleanup_files([
-                tmp_pdf_path,
-                temp_csv_path,
-                combined_csv_path,
-                result_csv_path,
-                unclassified_csv_path
-            ])
+            # Создаем клавиатуру с кнопками
+            keyboard = [
+                [InlineKeyboardButton("Да ✅", callback_data='save_yes'),
+                InlineKeyboardButton("Нет ❌", callback_data='save_no')]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            # Отправляем вопрос
+            await update.message.reply_text(
+                "Сохранить эти данные в базу данных?",
+                reply_markup=reply_markup
+            )
+
+        except Exception as e:
+            logger.error(f"Ошибка обработки PDF: {str(e)}", exc_info=True)
+            await update.message.reply_text(
+                "Произошла ошибка при обработке файла.\n"
+                "Пожалуйста, убедитесь, что:\n"
+                "1. Это корректная банковская выписка\n"
+                "2. Файл не поврежден\n"
+                "3. Формат соответствует поддерживаемым (Tinkoff, Сбербанк, Яндекс)"
+            )
+            # Удаляем pending_data в случае ошибки
+            if 'pending_data' in context.user_data:
+                del context.user_data['pending_data']
+
+        finally:
+            if pdf_file:
+                pdf_file.close()
+            if tmp_pdf:
+                tmp_pdf.close()
+
+    @admin_only
+    async def handle_save_confirmation(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        await query.answer()
+        
+        user_data = context.user_data
+        
+        if query.data == 'save_no':
+            await query.edit_message_text("Данные не сохранены")
+            
+            if 'temp_files' in user_data:
+                await self.cleanup_files(user_data['temp_files'])
+                del user_data['temp_files']
+            
+            if 'pending_data' in user_data:
+                del user_data['pending_data']
+            return
+        
+        # Только для ответа "Да" продолжаем проверки
+        pending_data = user_data.get('pending_data', {})
+        
+        if not pending_data or 'timestamp' not in pending_data or 'df' not in pending_data:
+            await query.edit_message_text("Данные для сохранения не найдены или повреждены")
+            return
+            
+        if time.time() - pending_data['timestamp'] > 300:
+            await query.edit_message_text("Время подтверждения истекло (максимум 5 минут)")
+            return
+
+        db = None
+        try:
+            db = Database()  # Создаем подключение к БД
+            db.save_transactions(pending_data['df'], query.from_user.id)
+            await query.edit_message_text("✅ Данные успешно сохранены")
+        except Exception as e:
+            logger.error(f"Ошибка БД: {str(e)}", exc_info=True)
+            await query.edit_message_text(
+                "❌ Ошибка при сохранении в БД\n"
+                "Проверьте:\n"
+                "1. Запущен ли сервер PostgreSQL\n"
+                "2. Правильно ли настроены переменные окружения (DB_HOST, DB_PORT и др.)"
+            )
+        finally:
+            if db is not None:  # Закрываем соединение только если оно было создано
+                db.close()
+            
+            # Очистка временных данных
+            if 'temp_files' in user_data:
+                await self.cleanup_files(user_data['temp_files'])
+                del user_data['temp_files']
+            
+            if 'pending_data' in user_data:
+                del user_data['pending_data']
 
     @admin_only
     async def cleanup_files(self, file_paths):
-        """Удаляет временные файлы"""
         for path in file_paths:
-            if path and os.path.exists(path):
+            if path and os.path.exists(path) and os.path.isfile(path):
                 try:
-                    os.unlink(path)
-                    await asyncio.sleep(self.delay_between_operations)
-                    logger.info(f"Удаление временного файла: {path}")
+                    await asyncio.to_thread(os.unlink, path)
+                    logger.info(f"Удален временный файл: {path}")
                 except Exception as e:
-                    logger.error(f"Ошибка при удалении файла {path}: {e}")
+                    logger.error(f"Ошибка удаления {path}: {e}")
 
     @admin_only
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1240,6 +1574,8 @@ class TransactionProcessorBot:
             await asyncio.sleep(3)  # Даем время для завершения
             os._exit(0)
 
+            await asyncio.wait_for(self.application.shutdown(), timeout=10)
+            
         except Exception as e:
             logger.error(f"Критическая ошибка при перезагрузке: {e}")
             os._exit(1)

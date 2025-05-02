@@ -1,174 +1,150 @@
-29-04-2025 01:05:34 - root - INFO - Запуск бота в Docker-контейнере
-29-04-2025 01:05:34 - telegram.ext.Application - INFO - Application started
-29-04-2025 01:08:46 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 01:08:46 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 01:08:46 - root - INFO - Используются настройки: return_files=0
-29-04-2025 01:08:47 - camelot - INFO - Processing page-1
-29-04-2025 01:08:48 - camelot - INFO - Processing page-2
-29-04-2025 01:08:48 - camelot - INFO - Processing page-3
-29-04-2025 01:08:48 - camelot - INFO - Processing page-4
-29-04-2025 01:08:49 - camelot - INFO - Processing page-5
-29-04-2025 01:08:49 - camelot - INFO - Processing page-6
-29-04-2025 01:08:49 - camelot - INFO - Processing page-7
-29-04-2025 01:08:49 - camelot - INFO - Processing page-8
-29-04-2025 01:08:50 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 01:08:50 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 01:08:50 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 01:08:50 - root - ERROR - Исключение при обработке запроса:
+02-05-2025 10:34:57 - telegram.ext.Application - INFO - Application started
+02-05-2025 10:40:35 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 10:40:36 - telegram.ext.Application - INFO - Application started
+02-05-2025 10:41:09 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 10:41:09 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 10:41:09 - root - INFO - Используются настройки: return_files=0
+02-05-2025 10:41:10 - camelot - INFO - Processing page-1
+02-05-2025 10:41:10 - camelot - INFO - Processing page-2
+02-05-2025 10:41:11 - camelot - INFO - Processing page-3
+02-05-2025 10:41:11 - camelot - INFO - Processing page-4
+02-05-2025 10:41:11 - camelot - INFO - Processing page-5
+02-05-2025 10:41:11 - camelot - INFO - Processing page-6
+02-05-2025 10:41:11 - camelot - INFO - Processing page-7
+02-05-2025 10:41:11 - camelot - INFO - Processing page-8
+02-05-2025 10:41:12 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 10:41:12 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 10:41:12 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 10:41:16 - root - INFO - Удален временный файл: /tmp/tmptg2i04ji.pdf
+02-05-2025 10:41:16 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 10:41:16 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 10:41:16 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 10:41:16 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+02-05-2025 10:49:27 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 10:49:28 - telegram.ext.Application - INFO - Application started
+02-05-2025 10:49:55 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 10:49:55 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 10:49:55 - root - INFO - Используются настройки: return_files=0
+02-05-2025 10:49:56 - camelot - INFO - Processing page-1
+02-05-2025 10:49:56 - camelot - INFO - Processing page-2
+02-05-2025 10:49:57 - camelot - INFO - Processing page-3
+02-05-2025 10:49:57 - camelot - INFO - Processing page-4
+02-05-2025 10:49:57 - camelot - INFO - Processing page-5
+02-05-2025 10:49:57 - camelot - INFO - Processing page-6
+02-05-2025 10:49:57 - camelot - INFO - Processing page-7
+02-05-2025 10:49:57 - camelot - INFO - Processing page-8
+02-05-2025 10:49:58 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 10:49:58 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 10:49:58 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 10:50:19 - root - INFO - Удален временный файл: /tmp/tmphis1xghk.pdf
+02-05-2025 10:50:19 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 10:50:19 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 10:50:19 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 10:50:19 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+02-05-2025 10:50:38 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 10:50:38 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 10:50:38 - root - INFO - Используются настройки: return_files=0
+02-05-2025 10:50:39 - camelot - INFO - Processing page-1
+02-05-2025 10:50:39 - camelot - INFO - Processing page-2
+02-05-2025 10:50:40 - camelot - INFO - Processing page-3
+02-05-2025 10:50:40 - camelot - INFO - Processing page-4
+02-05-2025 10:50:40 - camelot - INFO - Processing page-5
+02-05-2025 10:50:40 - camelot - INFO - Processing page-6
+02-05-2025 10:50:40 - camelot - INFO - Processing page-7
+02-05-2025 10:50:41 - camelot - INFO - Processing page-8
+02-05-2025 10:50:41 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 10:50:41 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 10:50:41 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 10:50:52 - database - ERROR - Ошибка подключения к БД: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+02-05-2025 10:50:52 - root - ERROR - Ошибка БД: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+02-05-2025 10:50:52 - root - ERROR - Исключение при обработке запроса:
 Traceback (most recent call last):
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
     await coroutine
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
     return await self.callback(update, context)
-  File "/app/bot.py", line 92, in wrapper
+  File "/app/bot.py", line 102, in wrapper
     return await func(*args, **kwargs)
-  File "/app/bot.py", line 1033, in handle_document
-    await self.cleanup_files([
-  File "/app/bot.py", line 84, in wrapper
-    user_id = update.effective_user.id
-AttributeError: 'list' object has no attribute 'effective_user'
-29-04-2025 11:21:59 - root - INFO - Запуск бота в Docker-контейнере
-29-04-2025 11:21:59 - telegram.ext.Application - INFO - Application started
-29-04-2025 11:25:55 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 11:25:55 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 11:25:55 - root - INFO - Используются настройки: return_files=0
-29-04-2025 11:25:56 - camelot - INFO - Processing page-1
-29-04-2025 11:25:56 - camelot - INFO - Processing page-2
-29-04-2025 11:25:57 - camelot - INFO - Processing page-3
-29-04-2025 11:25:57 - camelot - INFO - Processing page-4
-29-04-2025 11:25:57 - camelot - INFO - Processing page-5
-29-04-2025 11:25:57 - camelot - INFO - Processing page-6
-29-04-2025 11:25:58 - camelot - INFO - Processing page-7
-29-04-2025 11:25:58 - camelot - INFO - Processing page-8
-29-04-2025 11:25:58 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 11:25:58 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 11:25:58 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:26:04 - root - INFO - Удаление временного файла: /tmp/tmpwb5mnxdz.pdf
-29-04-2025 11:26:09 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 11:26:14 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:26:19 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 11:26:24 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 11:27:43 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 11:27:43 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 11:27:43 - root - INFO - Используются настройки: return_files=0
-29-04-2025 11:27:44 - camelot - INFO - Processing page-1
-29-04-2025 11:27:45 - camelot - INFO - Processing page-2
-29-04-2025 11:27:45 - camelot - INFO - Processing page-3
-29-04-2025 11:27:45 - camelot - INFO - Processing page-4
-29-04-2025 11:27:45 - camelot - INFO - Processing page-5
-29-04-2025 11:27:46 - camelot - INFO - Processing page-6
-29-04-2025 11:27:46 - camelot - INFO - Processing page-7
-29-04-2025 11:27:46 - camelot - INFO - Processing page-8
-29-04-2025 11:27:46 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 11:27:46 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 11:27:46 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:27:52 - root - INFO - Удаление временного файла: /tmp/tmpctifo6sz.pdf
-29-04-2025 11:27:57 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 11:28:02 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:28:07 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 11:28:12 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 11:43:44 - root - INFO - Запуск бота в Docker-контейнере
-29-04-2025 11:43:45 - telegram.ext.Application - INFO - Application started
-29-04-2025 11:44:19 - root - INFO - Получены аргументы: ['Чек:тест', '29'], объединенная строка: Чек:тест 29
-29-04-2025 11:44:32 - root - INFO - Получены аргументы: ['Контрагент:тест', '299'], объединенная строка: Контрагент:тест 299
-29-04-2025 11:44:54 - root - INFO - Получены аргументы: ['Контрагент:тест', '299', 'Чек:тест', '29'], объединенная строка: Контрагент:тест 299 Чек:тест 29
-29-04-2025 11:45:18 - root - INFO - Получены аргументы: ['Контрагент:тест', '299', 'Чек:тест', '29'], объединенная строка: Контрагент:тест 299 Чек:тест 29
-29-04-2025 11:45:46 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 11:45:46 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 11:45:46 - root - INFO - Используются настройки: return_files=0
-29-04-2025 11:45:48 - camelot - INFO - Processing page-1
-29-04-2025 11:45:48 - camelot - INFO - Processing page-2
-29-04-2025 11:45:48 - camelot - INFO - Processing page-3
-29-04-2025 11:45:48 - camelot - INFO - Processing page-4
-29-04-2025 11:45:49 - camelot - INFO - Processing page-5
-29-04-2025 11:45:49 - camelot - INFO - Processing page-6
-29-04-2025 11:45:49 - camelot - INFO - Processing page-7
-29-04-2025 11:45:49 - camelot - INFO - Processing page-8
-29-04-2025 11:45:49 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 11:45:49 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 11:45:49 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:45:55 - root - INFO - Удаление временного файла: /tmp/tmpiypqgsqp.pdf
-29-04-2025 11:46:00 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 11:46:05 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 11:46:10 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 11:46:15 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 12:02:31 - root - INFO - Запуск бота в Docker-контейнере
-29-04-2025 12:02:31 - telegram.ext.Application - INFO - Application started
-29-04-2025 12:08:29 - root - INFO - Запуск бота в Docker-контейнере
-29-04-2025 12:08:29 - telegram.ext.Application - INFO - Application started
-29-04-2025 12:08:53 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 12:08:53 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 12:08:53 - root - INFO - Используются настройки: return_files=0
-29-04-2025 12:08:55 - camelot - INFO - Processing page-1
-29-04-2025 12:08:55 - camelot - INFO - Processing page-2
-29-04-2025 12:08:55 - camelot - INFO - Processing page-3
-29-04-2025 12:08:55 - camelot - INFO - Processing page-4
-29-04-2025 12:08:56 - camelot - INFO - Processing page-5
-29-04-2025 12:08:56 - camelot - INFO - Processing page-6
-29-04-2025 12:08:56 - camelot - INFO - Processing page-7
-29-04-2025 12:08:56 - camelot - INFO - Processing page-8
-29-04-2025 12:08:56 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 12:08:56 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 12:08:56 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:09:02 - root - INFO - Удаление временного файла: /tmp/tmpns2ddgn9.pdf
-29-04-2025 12:09:07 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 12:09:12 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:09:17 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 12:09:22 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 12:11:06 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 12:11:07 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 12:11:07 - root - INFO - Используются настройки: return_files=0
-29-04-2025 12:11:08 - camelot - INFO - Processing page-1
-29-04-2025 12:11:09 - camelot - INFO - Processing page-2
-29-04-2025 12:11:09 - camelot - INFO - Processing page-3
-29-04-2025 12:11:09 - camelot - INFO - Processing page-4
-29-04-2025 12:11:10 - camelot - INFO - Processing page-5
-29-04-2025 12:11:10 - camelot - INFO - Processing page-6
-29-04-2025 12:11:10 - camelot - INFO - Processing page-7
-29-04-2025 12:11:10 - camelot - INFO - Processing page-8
-29-04-2025 12:11:11 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 12:11:11 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 12:11:11 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:11:16 - root - INFO - Удаление временного файла: /tmp/tmpg4eb8o_v.pdf
-29-04-2025 12:11:21 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 12:11:26 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:11:31 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 12:11:36 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 12:12:34 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 12:12:34 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 12:12:34 - root - INFO - Используются настройки: return_files=0
-29-04-2025 12:12:36 - camelot - INFO - Processing page-1
-29-04-2025 12:12:36 - camelot - INFO - Processing page-2
-29-04-2025 12:12:36 - camelot - INFO - Processing page-3
-29-04-2025 12:12:36 - camelot - INFO - Processing page-4
-29-04-2025 12:12:37 - camelot - INFO - Processing page-5
-29-04-2025 12:12:37 - camelot - INFO - Processing page-6
-29-04-2025 12:12:37 - camelot - INFO - Processing page-7
-29-04-2025 12:12:37 - camelot - INFO - Processing page-8
-29-04-2025 12:12:38 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 12:12:38 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 12:12:38 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:12:43 - root - INFO - Удаление временного файла: /tmp/tmpvzb97nlk.pdf
-29-04-2025 12:12:48 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 12:12:53 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:12:58 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 12:13:03 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
-29-04-2025 12:13:32 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-29-04-2025 12:13:32 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
-29-04-2025 12:13:32 - root - INFO - Используются настройки: return_files=0
-29-04-2025 12:13:33 - camelot - INFO - Processing page-1
-29-04-2025 12:13:34 - camelot - INFO - Processing page-2
-29-04-2025 12:13:34 - camelot - INFO - Processing page-3
-29-04-2025 12:13:34 - camelot - INFO - Processing page-4
-29-04-2025 12:13:35 - camelot - INFO - Processing page-5
-29-04-2025 12:13:35 - camelot - INFO - Processing page-6
-29-04-2025 12:13:35 - camelot - INFO - Processing page-7
-29-04-2025 12:13:35 - camelot - INFO - Processing page-8
-29-04-2025 12:13:35 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-29-04-2025 12:13:35 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
-29-04-2025 12:13:36 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:13:41 - root - INFO - Удаление временного файла: /tmp/tmp2hru81a5.pdf
-29-04-2025 12:13:46 - root - INFO - Удаление временного файла: /tmp/transactions_Tinkoff_Platinum_temp.csv
-29-04-2025 12:13:51 - root - INFO - Удаление временного файла: /tmp/transactions_processed_tinkoff_platinum.csv
-29-04-2025 12:13:56 - root - INFO - Удаление временного файла: /tmp/result.csv
-29-04-2025 12:14:01 - root - INFO - Удаление временного файла: /tmp/unclassified.csv
+  File "/app/bot.py", line 1359, in handle_save_confirmation
+    db.close()
+UnboundLocalError: local variable 'db' referenced before assignment
+02-05-2025 11:30:30 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 11:30:30 - telegram.ext.Application - INFO - Application started
+02-05-2025 11:31:57 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 11:31:57 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 11:31:57 - root - INFO - Используются настройки: return_files=0
+02-05-2025 11:31:58 - camelot - INFO - Processing page-1
+02-05-2025 11:31:58 - camelot - INFO - Processing page-2
+02-05-2025 11:31:58 - camelot - INFO - Processing page-3
+02-05-2025 11:31:59 - camelot - INFO - Processing page-4
+02-05-2025 11:31:59 - camelot - INFO - Processing page-5
+02-05-2025 11:31:59 - camelot - INFO - Processing page-6
+02-05-2025 11:31:59 - camelot - INFO - Processing page-7
+02-05-2025 11:31:59 - camelot - INFO - Processing page-8
+02-05-2025 11:31:59 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 11:31:59 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 11:31:59 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:32:09 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 11:32:09 - database - INFO - Подключение к БД успешно
+02-05-2025 11:32:09 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 11:32:09 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 11:32:09 - database - INFO - Начало сохранения 173 транзакций для user_id=198451926
+02-05-2025 11:32:09 - database - INFO - Сохранено 167 транзакций (import_id=1)
+02-05-2025 11:32:09 - database - INFO - Соединение с БД закрыто
+02-05-2025 11:32:09 - root - INFO - Удален временный файл: /tmp/tmpw__5v6lr.pdf
+02-05-2025 11:32:09 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 11:32:09 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:32:09 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 11:32:09 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+02-05-2025 11:34:25 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 11:34:26 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 11:34:26 - root - INFO - Используются настройки: return_files=0
+02-05-2025 11:34:27 - camelot - INFO - Processing page-1
+02-05-2025 11:34:27 - camelot - INFO - Processing page-2
+02-05-2025 11:34:27 - camelot - INFO - Processing page-3
+02-05-2025 11:34:27 - camelot - INFO - Processing page-4
+02-05-2025 11:34:27 - camelot - INFO - Processing page-5
+02-05-2025 11:34:27 - camelot - INFO - Processing page-6
+02-05-2025 11:34:28 - camelot - INFO - Processing page-7
+02-05-2025 11:34:28 - camelot - INFO - Processing page-8
+02-05-2025 11:34:28 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 11:34:28 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 11:34:28 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:34:55 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 11:34:55 - database - INFO - Подключение к БД успешно
+02-05-2025 11:34:55 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 11:34:55 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 11:34:55 - database - INFO - Начало сохранения 173 транзакций для user_id=198451926
+02-05-2025 11:34:55 - database - INFO - Сохранено 167 транзакций (import_id=2)
+02-05-2025 11:34:55 - database - INFO - Соединение с БД закрыто
+02-05-2025 11:34:55 - root - INFO - Удален временный файл: /tmp/tmp5gfbnotj.pdf
+02-05-2025 11:34:55 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 11:34:55 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:34:55 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 11:34:55 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+02-05-2025 11:47:53 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 11:47:53 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 11:47:53 - root - INFO - Используются настройки: return_files=0
+02-05-2025 11:47:54 - camelot - INFO - Processing page-1
+02-05-2025 11:47:55 - camelot - INFO - Processing page-2
+02-05-2025 11:47:55 - camelot - INFO - Processing page-3
+02-05-2025 11:47:55 - camelot - INFO - Processing page-4
+02-05-2025 11:47:55 - camelot - INFO - Processing page-5
+02-05-2025 11:47:55 - camelot - INFO - Processing page-6
+02-05-2025 11:47:56 - camelot - INFO - Processing page-7
+02-05-2025 11:47:56 - camelot - INFO - Processing page-8
+02-05-2025 11:47:56 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 11:47:56 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 11:47:56 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/tmp0zbrpgn5.pdf
+02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/result.csv

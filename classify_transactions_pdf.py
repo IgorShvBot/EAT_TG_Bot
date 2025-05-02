@@ -4,6 +4,7 @@ import yaml
 import os
 from typing import Dict, List, Any
 import logging
+import csv
 
 # Настройка логирования
 logging.basicConfig(
@@ -109,7 +110,8 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
     try:
         if user_settings is None:
             user_settings = {}
-        df = pd.read_csv(input_csv_path)
+        # df = pd.read_csv(input_csv_path)
+        df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
         
         # Проверка обязательных столбцов
         required_columns = ['Дата и время операции', 'Сумма операции в валюте карты']
@@ -194,7 +196,8 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
 
         # Сохранение результата
         output_csv_path = os.path.join(os.path.dirname(input_csv_path), "result.csv")
-        result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8')
+        # result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8')
+        result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8', quoting=csv.QUOTE_ALL)
 
         # Формирование файла с неподходящими транзакциями
         unclassified_csv_path = None

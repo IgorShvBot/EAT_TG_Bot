@@ -3,6 +3,7 @@ import re
 import os
 import logging
 from typing import List, Optional, Dict
+import sys
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +12,8 @@ logger = logging.getLogger(__name__)
 def process_tinkoff_platinum(input_csv_path: str) -> pd.DataFrame:
     """Обрабатывает CSV для Tinkoff Platinum"""
     try:
-        df = pd.read_csv(input_csv_path, header=None, skiprows=1)
+        # df = pd.read_csv(input_csv_path, header=None, skiprows=1)
+        df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
         logger.info(f"Успешно загружен CSV для Tinkoff Platinum, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Tinkoff Platinum: {str(e)}")
@@ -70,7 +72,8 @@ def process_tinkoff_platinum(input_csv_path: str) -> pd.DataFrame:
 def process_visa_gold_aeroflot(input_csv_path: str) -> pd.DataFrame:
     """Обрабатывает CSV для Visa Gold Aeroflot"""
     try:
-        df = pd.read_csv(input_csv_path)
+        # df = pd.read_csv(input_csv_path)
+        df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
         logger.info(f"Успешно загружен CSV для Visa Gold Aeroflot, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Visa Gold Aeroflot: {str(e)}")
@@ -128,7 +131,8 @@ def process_visa_gold_aeroflot(input_csv_path: str) -> pd.DataFrame:
 def process_Yandex(input_csv_path: str) -> pd.DataFrame:
     """Обрабатывает CSV для Yandex"""
     try:
-        df = pd.read_csv(input_csv_path)
+        # df = pd.read_csv(input_csv_path)
+        df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
         logger.info(f"Успешно загружен CSV для Yandex, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Yandex: {str(e)}")
@@ -191,7 +195,8 @@ def process_Yandex(input_csv_path: str) -> pd.DataFrame:
 def process_default(input_csv_path: str) -> pd.DataFrame:
     """Обработка по умолчанию для неизвестных типов PDF"""
     try:
-        df = pd.read_csv(input_csv_path)
+        # df = pd.read_csv(input_csv_path)
+        df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
         logger.info(f"Применена обработка по умолчанию, строк: {len(df)}")
         
         # Стандартизация столбцов для совместимости
@@ -249,20 +254,20 @@ def process_csv(input_csv_path: str, pdf_type: Optional[str] = None) -> str:
         raise
 
 if __name__ == "__main__":
-    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Yandex_temp.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Yandex_temp.csv"
     # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
-    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
+    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"Файл не найден: {input_csv}")
     
     try:
         # Определите тип PDF (можно получить из detect_pdf_type из extract_transactions_pdf1.py)
-        # pdf_type = "Tinkoff_Platinum"
+        pdf_type = "Tinkoff_Platinum"
         # pdf_type = "Visa_Gold_Aeroflot"
-        pdf_type = "Yandex"
-        # output_csv = process_csv(input_csv, "Tinkoff")
+        # pdf_type = "Yandex"
+        output_csv = process_csv(input_csv, "Tinkoff_Platinum")
         # output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
-        output_csv = process_csv(input_csv, "Yandex")
+        # output_csv = process_csv(input_csv, "Yandex")
         # print(f"Обработанный CSV сохранен: {output_csv}")
         logger.info(f"Обработанный CSV сохранен: {output_csv}")
         

@@ -4,10 +4,9 @@
 FROM python:3.10-slim AS builder
 
 # Установка системных зависимостей с кешированием
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    libpq-dev \
     libpoppler-cpp-dev \
     poppler-utils && \
     rm -rf /var/lib/apt/lists/*
@@ -27,6 +26,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt/lists \
     apt-get update && \
     apt-get install -y --no-install-recommends \
+    libpq-dev \
     libpoppler-cpp-dev \
     poppler-utils && \
     rm -rf /var/lib/apt/lists/*

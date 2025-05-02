@@ -1,137 +1,157 @@
 categories:
-- name: Еда
-  patterns:
-  - PAYINFOTECH
-  - VKUSVILL
-  - SAMOKAT
-  - '5411'
-  - AZBUKAVKUSA
-  - YANDEX\*541
-  - YANDEX\*5411\*EDA
-  - VPROK
-  - VV_
-  - BALAKLAVSKIJ PROSPEKT
-  - PYATEROCHKA
-- name: Кафе, посиделки
-  patterns:
-  - KOFEMANIYA
-  - FRANK BY BASTA
-  - BUKHANKA
-  - RESTORAN
-  - LPITTORE
-  - SURF
-  - COFFEE
-  - BURGER HEROES
-  - SLAV INVEST SITI
-  - Gigiberiya
-  - KOFEJNYA
-  - TKC KULTURA
-- name: Заказ еды
-  patterns:
-  - '5814'
-  - YAKITORIYA
-- name: Обеды
-  patterns:
-  - FLOOR TEA
-- name: Бытовые расходы
-  patterns:
-  - SBER\*5732\*MEGAMARKET
-- name: Семья и личные расходы. Медицина
-  patterns:
-  - АРТЕКА
-  - DOCDENT
-  - MED
-  - MSKAPT
-  - LENINSKY
-  - AU \d{3}
-  - VITA
-  - Gorzdrav
-  - Аптечная сеть
-- name: Косметология и уход
-  patterns:
-  - WAXANDGO
-- name: Стрижка
-  patterns:
-  - LIVECURLY
-- name: Домашние животные
-  patterns:
-  - VET UNION
-- name: Праздники, Подарки
-  patterns:
-  - SOYUZCVETTORG
-  - VSEVSAD
-  - '79067082755'
-- name: Транспорт. Транспорт
-  patterns:
-  - METRO
-  - TRANSPORT
-- name: Такси
-  patterns:
-  - TAXI
-  - '412'
-  - '4121'
-- name: Транспорт. Каршеринг
-  patterns:
-  - CITYDRIVE
-- name: Доставка
-  patterns:
-  - DOSTAVKA
-  - POCHTA
-  - '4215'
-- name: Ком. платежи. Вернадского 54
-  patterns:
-  - ZHKU
-- name: 'Ком. платежи: Интернет'
-  patterns:
-  - MGTS
-- name: Уборка
-  patterns:
-  - GETAIRO
-  - domovenok
-- name: Электричество
-  patterns:
-  - MOSENERGOSBYT
-- name: Дом. Аренда
-  patterns:
-  - SKLADNO
-- name: Дети. Одежда
-  patterns:
-  - WB
-  - WILDBERRIES
-  - DETSKIY MIR
-  - KOTOFEJ
-- name: Дети. Образование | Сад
-  patterns:
-  - '03224643450000007300'
-  - Оплата по договору оказания услуг №38/25
-- name: Дети. Спорт | Секции | Бассейн
-  patterns:
-  - DemiDS
-  - PE LOPATKINA
-- name: Дети. Игры
-  patterns:
-  - Solodovnikova OS
-- name: Одежда
-  patterns:
-  - LAMODA
-- name: Аппаратура
-  patterns:
-  - ALIEXPRESS
-  - ПЕРЕВОД ПО НОМЕРУ ТЕЛЕФОНА \+79267660077
-- name: Путешествия. Расходы на жилье
-  patterns:
-  - TRAVEL
-  - AVIA
-  - RADISSON
-- name: Авиаперелеты
-  patterns:
-  - YANDEX.PAY
-- name: Долги. Кредитная карта
-  patterns:
-  - КОМИССИЯ ЗА ОПЕРАЦИЮ В КРЕДИТНЫХ ОРГАНИЗАЦИЯХ
-- name: Проценты по карте
-  patterns:
-  - Проценты по кредиту
-- name: AppStore | подписки
-  patterns:
-  - inconnect.app
+  - name: Еда
+    patterns:
+      - PAYINFOTECH
+      - VKUSVILL
+      - SAMOKAT
+      - "5411"
+      - AZBUKAVKUSA
+      - YANDEX\*541
+      - YANDEX\*5411\*EDA
+      - VPROK
+      - VV_
+      - BALAKLAVSKIJ PROSPEKT
+      - PYATEROCHKA
+      - GURMETSPAR
+  - name: Кафе, посиделки
+    patterns:
+      - KOFEMANIYA
+      - FRANK BY BASTA
+      - BUKHANKA
+      - RESTORAN
+      - LPITTORE
+      - SURF
+      - COFFEE
+      - BURGER HEROES
+      - SLAV INVEST SITI
+      - Gigiberiya
+      - KOFEJNYA
+      - TKC KULTURA
+      - EATANDSPLIT
+      - SAVINSKIJ
+      - TERN SVETLOGORSK
+      - VYPECHKA
+      - PICCERIYA
+      - KHOD-DOG
+      - UGLI
+      - KRANC PARK
+      - DZHO
+  - name: Заказ еды
+    patterns:
+      - "5814"
+      - YAKITORIYA
+  - name: Обеды
+    patterns:
+      - FLOOR TEA
+  - name: Бытовые расходы
+    patterns:
+      - SBER\*5732\*MEGAMARKET
+  - name: Семья и личные расходы. Медицина
+    patterns:
+      - АРТЕКА
+      - DOCDENT
+      - MED
+      - MSKAPT
+      - LENINSKY
+      - AU \d{3}
+      - VITA
+      - Gorzdrav
+      - Аптечная сеть
+  - name: Косметология и уход
+    patterns:
+      - WAXANDGO
+  - name: Стрижка
+    patterns:
+      - LIVECURLY
+  - name: Домашние животные
+    patterns:
+      - VET UNION
+  - name: Праздники, Подарки
+    patterns:
+      - SOYUZCVETTORG
+      - VSEVSAD
+      - "79067082755"
+      - POPOVA YU.V. Khrabrovo
+      - YANTARNAYA ZARYA
+  - name: Транспорт. Транспорт
+    patterns:
+      - METRO
+      - TRANSPORT
+  - name: Такси
+    patterns:
+      - TAXI
+      - "412"
+      - "4121"
+  - name: Транспорт. Каршеринг
+    patterns:
+      - CITYDRIVE
+  - name: Доставка
+    patterns:
+      - DOSTAVKA
+      - POCHTA
+      - "4215"
+  - name: Ком. платежи. Вернадского 54
+    patterns:
+      - ZHKU
+  - name: "Ком. платежи: Интернет"
+    patterns:
+      - MGTS
+  - name: Уборка
+    patterns:
+      - GETAIRO
+      - domovenok
+  - name: Электричество
+    patterns:
+      - MOSENERGOSBYT
+  - name: Дом. Аренда
+    patterns:
+      - SKLADNO
+  - name: Дети. Одежда
+    patterns:
+      - WB
+      - WILDBERRIES
+      - DETSKIY MIR
+      - KOTOFEJ
+      - перевод по номеру телефона \+79295575863
+  - name: Дети. Образование | Сад
+    patterns:
+      - "03224643450000007300"
+      - Оплата по договору оказания услуг №38/25
+  - name: Дети. Спорт | Секции | Бассейн
+    patterns:
+      - DemiDS
+      - PE LOPATKINA
+  - name: Дети. Игры
+    patterns:
+      - Solodovnikova OS
+      - park-unost
+      - KASSA PARKA
+      - MOB. KASSA BSO1 Svetlogorsk
+  - name: Одежда
+    patterns:
+      - LAMODA
+  - name: Аппаратура
+    patterns:
+      - ALIEXPRESS
+      - ПЕРЕВОД ПО НОМЕРУ ТЕЛЕФОНА \+79267660077
+  - name: Путешествия. Расходы на жилье
+    patterns:
+      - TRAVEL
+      - AVIA
+      - RADISSON
+  - name: Путешествия. Прочее
+    patterns:
+      - SHANAURIN O.O.
+      - LIFT PANORAMA
+  - name: Путешествия. Авиаперелеты
+    patterns:
+      - YANDEX.PAY
+  - name: Долги. Кредитная карта
+    patterns:
+      - КОМИССИЯ ЗА ОПЕРАЦИЮ В КРЕДИТНЫХ ОРГАНИЗАЦИЯХ
+  - name: Проценты по карте
+    patterns:
+      - Проценты по кредиту
+  - name: AppStore | подписки
+    patterns:
+      - inconnect.app

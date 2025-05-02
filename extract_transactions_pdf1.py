@@ -5,6 +5,7 @@ import re
 from pypdf import PdfReader
 import yaml
 import fitz  # PyMuPDF
+import csv
 
 def load_pdf_config(config_path: str = 'pdf_patterns.yaml') -> dict:
     """Загружает конфигурацию из YAML файла"""
@@ -316,20 +317,22 @@ def process_pdf(pdf_path: str) -> str:
     processor = PDF_PROCESSORS.get(pdf_type, process_default)
 
     df = processor(df, config)
-
+    
     # Сохранение во временный файл
     output_dir = os.path.dirname(pdf_path)
     os.makedirs(output_dir, exist_ok=True)
         
     temp_csv_path = os.path.join(output_dir, f"transactions_{pdf_type}_temp.csv") 
-    df.to_csv(temp_csv_path, index=False)
+    # df.to_csv(temp_csv_path, index=False)
+    df.to_csv(temp_csv_path, index=False, sep=',', quoting=csv.QUOTE_ALL)
 
     return temp_csv_path, pdf_type
 
 if __name__ == "__main__":
-    pdf_path = "/Users/IgorShvyrkin/Downloads/ДДС_Яндекс.pdf"
+    # pdf_path = "/Users/IgorShvyrkin/Downloads/ДДС_Яндекс.pdf"
     # pdf_path = "/Users/IgorShvyrkin/Downloads/Выписка_по_счёту_кредитной_карты.pdf"
     # pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (Д).pdf'
+    pdf_path = '/Users/IgorShvyrkin/Downloads/Справка_о_движении_денежных_средств (5).pdf'
     try:
         csv_path = process_pdf(pdf_path)
         print(f"CSV файл сохранен по пути: {csv_path}")
