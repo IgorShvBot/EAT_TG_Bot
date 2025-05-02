@@ -1,4 +1,4 @@
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 import os
 import logging
@@ -283,6 +283,13 @@ class TransactionProcessorBot:
         self.handle_save_confirmation,
         pattern='^save_(yes|no)$'
         ))
+
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.handle_duplicates_decision,
+                pattern='^(update_duplicates|skip_duplicates)$'
+            )
+        )
 
         self.application.add_handler(CommandHandler("cancel", self.cancel_operation))
 
@@ -1346,9 +1353,29 @@ class TransactionProcessorBot:
 
         db = None
         try:
-            db = Database()  # Создаем подключение к БД
-            db.save_transactions(pending_data['df'], query.from_user.id)
-            await query.edit_message_text("✅ Данные успешно сохранены")
+            db = Database()
+            stats = db.save_transactions(pending_data['df'], query.from_user.id)
+            
+            logger.info(
+                f"Сохранено: новых - {stats['new']}, дубликатов - {stats['duplicates']}"
+            )
+            
+            if stats['duplicates'] > 0:
+                context.user_data['pending_duplicates'] = stats['duplicates_list']
+                keyboard = [
+                    [InlineKeyboardButton("Обновить дубликаты ✅", callback_data='update_duplicates')],
+                    [InlineKeyboardButton("Пропустить ❌", callback_data='skip_duplicates')]
+                ]
+                reply_markup = InlineKeyboardMarkup(keyboard)
+                
+                await query.edit_message_text(
+                    f"Найдено {stats['duplicates']} дубликатов. Обновить записи?",
+                    reply_markup=reply_markup
+                )
+            else:
+                await query.edit_message_text(
+                    f"✅ Успешно сохранено {stats['new']} записей"
+                )
         except Exception as e:
             logger.error(f"Ошибка БД: {str(e)}", exc_info=True)
             await query.edit_message_text(
@@ -1368,6 +1395,56 @@ class TransactionProcessorBot:
             
             if 'pending_data' in user_data:
                 del user_data['pending_data']
+
+    def update_transaction(self, date, amount, new_category):
+        with self.get_cursor() as cur:
+            cur.execute("""
+                UPDATE transactions 
+                SET category = %s 
+                WHERE transaction_date = %s 
+                AND amount = %s
+            """, (new_category, date, amount))
+
+    @admin_only
+    async def handle_duplicates_decision(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        await query.answer()
+        
+        user_data = context.user_data
+        duplicates = user_data.get('pending_duplicates', [])
+        
+        if not duplicates:
+            await query.edit_message_text("Нет данных для обновления")
+            return
+
+        if query.data == 'update_duplicates':
+            try:
+                db = Database()
+                updated = 0
+                
+                for row in duplicates:
+                    # Логика обновления существующих записей
+                    # Например:
+                    db.update_transaction(
+                        date=row['Дата'],
+                        amount=row['Сумма'],
+                        new_category=row['Категория']
+                    )
+                    updated += 1
+                    
+                logger.info(f"Обновлено {updated} дубликатов")
+                await query.edit_message_text(f"✅ Обновлено {updated} записей")
+                
+            except Exception as e:
+                logger.error(f"Ошибка обновления: {e}")
+                await query.edit_message_text("❌ Ошибка при обновлении")
+                
+        elif query.data == 'skip_duplicates':
+            await query.edit_message_text("Дубликаты пропущены")
+        
+        # Очистка временных данных
+        user_data.pop('pending_duplicates', None)
+
 
     @admin_only
     async def cleanup_files(self, file_paths):

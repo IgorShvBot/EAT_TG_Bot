@@ -148,3 +148,222 @@ UnboundLocalError: local variable 'db' referenced before assignment
 02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
 02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
 02-05-2025 11:47:59 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 14:44:14 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 14:44:14 - telegram.ext.Application - INFO - Application started
+02-05-2025 14:44:57 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 14:44:57 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 91910 байт
+02-05-2025 14:44:57 - root - INFO - Используются настройки: return_files=0
+02-05-2025 14:44:57 - camelot - INFO - Processing page-1
+02-05-2025 14:44:58 - camelot - INFO - Processing page-2
+02-05-2025 14:44:58 - camelot - INFO - Processing page-3
+02-05-2025 14:44:58 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 14:44:58 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 82
+02-05-2025 14:44:58 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 14:45:05 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 14:45:05 - database - INFO - Подключение к БД успешно
+02-05-2025 14:45:05 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 14:45:05 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 14:45:05 - database - INFO - Начало сохранения 34 транзакций для user_id=198451926
+02-05-2025 14:45:05 - database - ERROR - Ошибка при работе с БД: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+Traceback (most recent call last):
+  File "/app/database.py", line 59, in get_cursor
+    yield cursor
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.SyntaxError: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+
+02-05-2025 14:45:05 - database - ERROR - Ошибка при сохранении транзакций: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+Traceback (most recent call last):
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.SyntaxError: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+
+02-05-2025 14:45:05 - root - ERROR - Ошибка БД: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+Traceback (most recent call last):
+  File "/app/bot.py", line 1357, in handle_save_confirmation
+    stats = db.save_transactions(pending_data['df'], query.from_user.id)
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.SyntaxError: syntax error at or near ".."
+LINE 1: INSERT INTO transactions (...) VALUES (...);INSERT INTO tran...
+                                  ^
+
+02-05-2025 14:45:05 - database - INFO - Соединение с БД закрыто
+02-05-2025 14:45:05 - root - INFO - Удален временный файл: /tmp/tmpi0fc5m7p.pdf
+02-05-2025 14:45:05 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 14:45:05 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 14:45:05 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 14:53:26 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 14:53:26 - telegram.ext.Application - INFO - Application started
+02-05-2025 14:55:03 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 14:55:04 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 91910 байт
+02-05-2025 14:55:04 - root - INFO - Используются настройки: return_files=0
+02-05-2025 14:55:04 - camelot - INFO - Processing page-1
+02-05-2025 14:55:04 - camelot - INFO - Processing page-2
+02-05-2025 14:55:04 - camelot - INFO - Processing page-3
+02-05-2025 14:55:04 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 14:55:04 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 82
+02-05-2025 14:55:04 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 14:55:08 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 14:55:08 - database - INFO - Подключение к БД успешно
+02-05-2025 14:55:08 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 14:55:08 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 14:55:08 - database - INFO - Начало сохранения 34 транзакций для user_id=198451926
+02-05-2025 14:55:08 - database - INFO - Добавлено 29 новых записей
+02-05-2025 14:55:08 - root - INFO - Сохранено: новых - 29, дубликатов - 5
+02-05-2025 14:55:08 - root - ERROR - Ошибка БД: The parameter `inline_keyboard` should be a sequence of sequences of InlineKeyboardButtons
+Traceback (most recent call last):
+  File "/app/bot.py", line 1369, in handle_save_confirmation
+    reply_markup = InlineKeyboardMarkup(keyboard)
+  File "/root/.local/lib/python3.10/site-packages/telegram/_inline/inlinekeyboardmarkup.py", line 79, in __init__
+    raise ValueError(
+ValueError: The parameter `inline_keyboard` should be a sequence of sequences of InlineKeyboardButtons
+02-05-2025 14:55:08 - database - INFO - Соединение с БД закрыто
+02-05-2025 14:55:08 - root - INFO - Удален временный файл: /tmp/tmpp8ekaavn.pdf
+02-05-2025 14:55:08 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 14:55:08 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 14:55:08 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 15:00:58 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 15:00:59 - telegram.ext.Application - INFO - Application started
+02-05-2025 15:11:37 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 15:11:37 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 91910 байт
+02-05-2025 15:11:37 - root - INFO - Используются настройки: return_files=0
+02-05-2025 15:11:38 - camelot - INFO - Processing page-1
+02-05-2025 15:11:38 - camelot - INFO - Processing page-2
+02-05-2025 15:11:38 - camelot - INFO - Processing page-3
+02-05-2025 15:11:38 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 15:11:38 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 82
+02-05-2025 15:11:38 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 15:11:42 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 15:11:42 - database - INFO - Подключение к БД успешно
+02-05-2025 15:11:42 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 15:11:42 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 15:11:42 - database - INFO - Начало сохранения 34 транзакций для user_id=198451926
+02-05-2025 15:11:42 - database - INFO - Добавлено 34 новых записей
+02-05-2025 15:11:42 - root - INFO - Сохранено: новых - 34, дубликатов - 0
+02-05-2025 15:11:42 - database - INFO - Соединение с БД закрыто
+02-05-2025 15:11:42 - root - INFO - Удален временный файл: /tmp/tmp_sfj2flx.pdf
+02-05-2025 15:11:42 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 15:11:42 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 15:11:42 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 15:16:11 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 15:16:11 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 118274 байт
+02-05-2025 15:16:11 - root - INFO - Используются настройки: return_files=0
+02-05-2025 15:16:13 - camelot - INFO - Processing page-1
+02-05-2025 15:16:13 - camelot - INFO - Processing page-2
+02-05-2025 15:16:13 - camelot - INFO - Processing page-3
+02-05-2025 15:16:13 - camelot - INFO - Processing page-4
+02-05-2025 15:16:13 - camelot - INFO - Processing page-5
+02-05-2025 15:16:14 - camelot - INFO - Processing page-6
+02-05-2025 15:16:14 - camelot - INFO - Processing page-7
+02-05-2025 15:16:14 - camelot - INFO - Processing page-8
+02-05-2025 15:16:14 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 15:16:14 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 414
+02-05-2025 15:16:14 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 15:16:21 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 15:16:21 - database - INFO - Подключение к БД успешно
+02-05-2025 15:16:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 15:16:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 15:16:21 - database - INFO - Начало сохранения 173 транзакций для user_id=198451926
+02-05-2025 15:16:21 - database - ERROR - Ошибка при работе с БД: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+Traceback (most recent call last):
+  File "/app/database.py", line 59, in get_cursor
+    yield cursor
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+
+02-05-2025 15:16:21 - database - ERROR - Ошибка при сохранении транзакций: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+Traceback (most recent call last):
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+
+02-05-2025 15:16:21 - root - ERROR - Ошибка БД: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+Traceback (most recent call last):
+  File "/app/bot.py", line 1357, in handle_save_confirmation
+    stats = db.save_transactions(pending_data['df'], query.from_user.id)
+  File "/app/database.py", line 171, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "transactions_transaction_date_cash_source_amount_key"
+DETAIL:  Key (transaction_date, cash_source, amount)=(2025-04-15 11:04:00, Тинькофф. Платинум, 2000.00) already exists.
+
+02-05-2025 15:16:21 - database - INFO - Соединение с БД закрыто
+02-05-2025 15:16:21 - root - INFO - Удален временный файл: /tmp/tmpcia49rm_.pdf
+02-05-2025 15:16:21 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 15:16:21 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 15:16:21 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 16:06:25 - root - INFO - Запуск бота в Docker-контейнере
+02-05-2025 16:06:26 - telegram.ext.Application - INFO - Application started
+02-05-2025 16:11:11 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 16:11:11 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 86586 байт
+02-05-2025 16:11:11 - root - INFO - Используются настройки: return_files=0
+02-05-2025 16:11:12 - camelot - INFO - Processing page-1
+02-05-2025 16:11:12 - camelot - INFO - Processing page-2
+02-05-2025 16:11:12 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 16:11:12 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 23
+02-05-2025 16:11:12 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:11:44 - root - INFO - Удален временный файл: /tmp/tmpose2v8qh.pdf
+02-05-2025 16:11:44 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 16:11:44 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:11:44 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 16:11:44 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+02-05-2025 16:17:19 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 16:17:20 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 86586 байт
+02-05-2025 16:17:20 - root - INFO - Используются настройки: return_files=0
+02-05-2025 16:17:20 - camelot - INFO - Processing page-1
+02-05-2025 16:17:20 - camelot - INFO - Processing page-2
+02-05-2025 16:17:20 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 16:17:20 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 23
+02-05-2025 16:17:20 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:17:54 - root - INFO - Удален временный файл: /tmp/tmp4yyt_iwt.pdf
+02-05-2025 16:17:54 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 16:17:54 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:17:54 - root - INFO - Удален временный файл: /tmp/result.csv
+02-05-2025 16:18:38 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+02-05-2025 16:18:38 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 86586 байт
+02-05-2025 16:18:38 - root - INFO - Используются настройки: return_files=0
+02-05-2025 16:18:39 - camelot - INFO - Processing page-1
+02-05-2025 16:18:39 - camelot - INFO - Processing page-2
+02-05-2025 16:18:39 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+02-05-2025 16:18:39 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 23
+02-05-2025 16:18:39 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:20:49 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+02-05-2025 16:20:49 - database - INFO - Подключение к БД успешно
+02-05-2025 16:20:49 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
+02-05-2025 16:20:49 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
+02-05-2025 16:20:49 - database - INFO - Начало сохранения 10 транзакций для user_id=198451926
+02-05-2025 16:20:49 - database - INFO - Добавлено 10 новых записей
+02-05-2025 16:20:49 - root - INFO - Сохранено: новых - 10, дубликатов - 0
+02-05-2025 16:20:50 - database - INFO - Соединение с БД закрыто
+02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/tmp2x__ohr4.pdf
+02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+02-05-2025 16:20:50 - root - INFO - Удален временный файл: /tmp/result.csv

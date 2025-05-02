@@ -62,6 +62,9 @@ categories:
       - WAXANDGO
   - name: Стрижка
     patterns:
+      - BUKLYA
+  - name: Стрижка
+    patterns:
       - LIVECURLY
   - name: Домашние животные
     patterns:
@@ -134,6 +137,7 @@ categories:
     patterns:
       - ALIEXPRESS
       - ПЕРЕВОД ПО НОМЕРУ ТЕЛЕФОНА \+79267660077
+      - ПЕРЕВОД ПО НОМЕРУ ТЕЛЕФОНА \+79015510531
   - name: Путешествия. Расходы на жилье
     patterns:
       - TRAVEL

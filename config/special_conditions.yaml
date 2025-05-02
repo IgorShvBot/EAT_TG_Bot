@@ -78,3 +78,9 @@ special_conditions:
     actions:
       - field: "Контрагент"
         value: "! Наташа"
+
+  - condition: "BUKLYA"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Даниил"

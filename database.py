@@ -117,7 +117,6 @@ class Database:
             """, (user_id,))
             return [row[0] for row in cur.fetchall()]
 
-
     def _execute_sql_file(self, filepath):
         """Загружает и выполняет SQL-файл из указанного пути"""
         try:
@@ -131,66 +130,61 @@ class Database:
             raise
 
     def save_transactions(self, df, user_id):
-        """Массовая вставка транзакций с обновлением дубликатов по полям"""
+        """Массовая вставка транзакций с возвратом статистики"""
+        stats = {'new': 0, 'duplicates': 0, 'updated': 0, 'duplicates_list': []}
+        
         if not isinstance(df, pd.DataFrame) or df.empty:
             logger.error("Передан пустой DataFrame или не DataFrame")
             raise ValueError("Передан пустой DataFrame")
 
         logger.info(f"Начало сохранения {len(df)} транзакций для user_id={user_id}")
 
-        if not self.check_connection():
-            logger.warning("Соединение разорвано, переподключаемся...")
-            self.reconnect()
-
         try:
             with self.get_cursor() as cur:
-                # Генерируем import_id
                 cur.execute("SELECT nextval('import_id_seq')")
                 import_id = cur.fetchone()[0]
-                logger.debug(f"Сгенерирован import_id={import_id}")
 
-                # Валидация данных
                 df['Дата'] = pd.to_datetime(df['Дата'], errors='coerce')
                 df['Сумма'] = pd.to_numeric(df['Сумма'], errors='coerce')
                 df.dropna(subset=['Дата', 'Сумма'], inplace=True)
 
                 if df.empty:
                     logger.warning("DataFrame стал пустым после очистки")
-                    return False
+                    return stats
 
-                data = []
+                # Разделяем данные на новые и дубликаты
+                new_data = []
+                duplicates = []
+                
                 for _, row in df.iterrows():
-                    data.append((
-                        import_id,
-                        user_id,
-                        row['Дата'],
-                        row['Сумма'],
-                        row['Наличность'],
-                        row['Категория'],
-                        row['Описание'],
-                        row['Контрагент'],
-                        row['Чек #'],
-                        row['Тип транзакции']
-                    ))
+                    if self.check_duplicate(row['Дата'], row['Наличность'], row['Сумма']):
+                        duplicates.append(row)
+                        stats['duplicates'] += 1
+                    else:
+                        new_data.append((
+                            import_id, user_id, row['Дата'], row['Сумма'],
+                            row['Наличность'], row['Категория'], row['Описание'],
+                            row['Контрагент'], row['Чек #'], row['Тип транзакции']
+                        ))
+                        stats['new'] += 1
 
-                execute_batch(
-                    cur,
-                    """
-                    INSERT INTO transactions (
-                        import_id, user_id, transaction_date, amount,
-                        cash_source, category, description, counterparty,
-                        check_num, transaction_type
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (transaction_date, cash_source, amount) 
-                    DO UPDATE SET 
-                        category = EXCLUDED.category,
-                        description = EXCLUDED.description
-                    """,
-                    data,
-                    page_size=100
-                )
-                logger.info(f"Сохранено {len(data)} транзакций (import_id={import_id})")
-                return True
+                # Вставляем только НОВЫЕ данные
+                if new_data:
+                    execute_batch(
+                        cur,
+                        """INSERT INTO transactions (
+                            import_id, user_id, transaction_date, amount, 
+                            cash_source, category, description, 
+                            counterparty, check_num, transaction_type
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                        new_data,  # Только новые данные без дубликатов
+                        page_size=100
+                    )
+                    logger.info(f"Добавлено {len(new_data)} новых записей")
+
+                stats['duplicates_list'] = duplicates
+                return stats
+                
         except Exception as e:
             logger.error(f"Ошибка при сохранении транзакций: {e}", exc_info=True)
             raise
