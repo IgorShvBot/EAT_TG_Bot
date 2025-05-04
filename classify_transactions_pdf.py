@@ -58,7 +58,7 @@ def apply_special_conditions(row: pd.Series, conditions: List[Dict[str, Any]], r
                 elif value == "-$CURRENT":
                     current_value = result.at[row.name, 'Сумма']
                     clean_value = current_value.replace(' ', '').replace('₽', '').replace('P', '')
-                    value = f"-{clean_value} ₽"
+                    value = f"-{clean_value}"
                 elif value == "$CURRENT":
                     current_value = result.at[row.name, field]
                     comment = action.get('comment', '')
@@ -160,7 +160,9 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
         result.loc[result['Категория'] == 'Ком. платежи. Вернадского 54', 'Контрагент'] = 'Квартира_Ипотека'
         # 9. Чек #
         result['Чек #'] = df['Номер карты'].astype(str)
-        result.loc[df['Номер карты'] == "2578", 'Контрагент'] = '! Наташа'
+        # result.loc[result['Чек #'] == "2578", 'Контрагент'] = '! Наташа'
+        result.loc[result['Чек #'].str.contains("2578"), 'Контрагент'] = '! Наташа'
+        # result.loc[df['Номер карты'] == "2578", 'Контрагент'] = '! Наташа'
         # 10. Класс
         result['Класс'] = user_settings.get('Класс', {}).get('value', settings.get('class', '01 Личное'))
         # Применение специальных условий

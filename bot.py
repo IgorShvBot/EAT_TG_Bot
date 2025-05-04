@@ -1,4 +1,4 @@
-__version__ = "3.1.1"
+__version__ = "3.2.0"
 
 import os
 import logging
@@ -217,7 +217,7 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings))
         self.application.add_handler(CommandHandler("settings", self.show_settings))
-        self.application.add_handler(CommandHandler("export", self.export_data))
+        self.application.add_handler(CommandHandler("export", self.export_start))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
 
         # self.application.add_handler(CallbackQueryHandler(self.set_filter, pattern='^set_'))
@@ -225,11 +225,17 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input))
         self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
+        self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
+        self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))
+        self.application.add_handler(CallbackQueryHandler(self.set_category, pattern='^set_category$'))
+        self.application.add_handler(CallbackQueryHandler(self.set_type, pattern='^set_type$'))
         self.application.add_handler(CallbackQueryHandler(self.set_cash_source, pattern='^set_cash_source'))
         self.application.add_handler(CallbackQueryHandler(self.set_counterparty, pattern='^set_counterparty'))
         self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
         self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
-        
+        self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
+        # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'))
+
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
             self.handle_document
@@ -346,18 +352,92 @@ class TransactionProcessorBot:
         await self.show_filters_menu(update, context)
 
     @admin_only
-    # Добавим новые методы для получения уникальных значений
-    def get_unique_values(self, column_name, user_id):
-        self.cursor.execute(f"""
-            SELECT DISTINCT {column_name} FROM transactions 
-            WHERE user_id = %s AND {column_name} IS NOT NULL
-            ORDER BY {column_name}
-        """, (user_id,))
-        return [row[0] for row in self.cursor.fetchall()]
+    async def set_start_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        logger.info("Вызов set_start_date для user_id=%s", update.effective_user.id)
+        query = update.callback_query
+        await query.answer()
+        await query.message.reply_text("📅 Введите *дату начала* в формате `ГГГГ-ММ-ДД`:", parse_mode="Markdown")
+        context.user_data["awaiting_start_date"] = True
+
+    @admin_only
+    async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        logger.info("Вызов set_end_date для user_id=%s", update.effective_user.id)
+        query = update.callback_query
+        await query.answer()
+        await query.message.reply_text("📅 Введите *дату окончания* в формате `ГГГГ-ММ-ДД`:", parse_mode="Markdown")
+        context.user_data["awaiting_end_date"] = True
+
+    @admin_only
+    async def set_category(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        logger.info("Обработчик set_category вызван для user_id=%s", update.effective_user.id)
+        query = update.callback_query
+        await query.answer()
+
+        user_id = query.from_user.id
+        db = Database()
+        try:
+            categories = ['Все'] + db.get_unique_values("category", user_id)
+            logger.info("Полученные категории: %s", categories)
+
+            if not categories or categories == ['Все']:
+                try:
+                    await query.edit_message_text(
+                        "Категории не найдены. Убедитесь, что в базе данных есть транзакции с категориями."
+                    )
+                except telegram.error.BadRequest as e:
+                    logger.warning(f"Ошибка Telegram API: {e}")
+                    await query.message.reply_text(
+                        "Категории не найдены. Убедитесь, что в базе данных есть транзакции с категориями."
+                    )
+                return
+
+            keyboard = []
+            for cat in categories:
+                safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "")[:50]
+                keyboard.append([InlineKeyboardButton(cat, callback_data=f"cat_{safe_cat}")])
+            keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            try:
+                await query.edit_message_text("Выберите категорию:", reply_markup=reply_markup)
+            except telegram.error.BadRequest as e:
+                logger.warning(f"Ошибка Telegram API при обновлении сообщения: {e}")
+                await query.message.reply_text("Выберите категорию:", reply_markup=reply_markup)
+
+        except Exception as e:
+            logger.error("Ошибка в set_category: %s", e, exc_info=True)
+            try:
+                await query.edit_message_text("❌ Ошибка при загрузке категорий. Попробуйте позже.")
+            except telegram.error.BadRequest as e:
+                logger.warning(f"Ошибка Telegram API: {e}")
+                await query.message.reply_text("❌ Ошибка при загрузке категорий. Попробуйте позже.")
+        finally:
+            db.close()
+
+    @admin_only
+    async def set_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        logger.info("Обработчик set_type вызван")
+        query = update.callback_query
+        await query.answer()
+
+        # Получение типов из базы
+        user_id = query.from_user.id
+        db = Database()
+        types = ['Все'] + db.get_unique_values("transaction_type", user_id)
+        db.close()
+
+        keyboard = [
+            [InlineKeyboardButton(type, callback_data=f"type_{type}")]
+            for type in types
+        ]
+        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.edit_message_text("Выберите тип транзакции:", reply_markup=reply_markup)
 
     @admin_only
     async def set_cash_source(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Наличности"""
+        logger.info("Обработчик set_cash_source вызван")
         query = update.callback_query
         await query.answer()
         
@@ -380,6 +460,7 @@ class TransactionProcessorBot:
     @admin_only      
     async def set_counterparty(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Контрагента"""
+        logger.info("Обработчик set_counterparty вызван")
         query = update.callback_query
         await query.answer()
         
@@ -391,6 +472,7 @@ class TransactionProcessorBot:
     @admin_only
     async def set_check_num(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Чека"""
+        logger.info("Обработчик set_check_num вызван")
         query = update.callback_query
         await query.answer()
         
@@ -402,6 +484,7 @@ class TransactionProcessorBot:
     @admin_only
     async def set_class(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Класса"""
+        logger.info("Обработчик set_class вызван")
         query = update.callback_query
         await query.answer()
         
@@ -421,35 +504,86 @@ class TransactionProcessorBot:
             reply_markup=InlineKeyboardMarkup(keyboard))
 
     @admin_only
+    async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        await query.answer()
+        context.user_data.pop('export_filters', None)
+        await query.edit_message_text("Экспорт отменен.")
+
+    @admin_only
+    async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        logger.info("Получен callback: %s", query.data)
+        await query.answer()
+
     # Обновим обработчик текстового ввода
+    @admin_only
     async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_data = context.user_data
-        if 'awaiting_input' not in user_data:
-            return
-        
         text = update.message.text.strip()
+        logger.info("Получен текст: %s, user_data: %s", text, user_data)
+
         if not text:
             await update.message.reply_text("Пожалуйста, введите непустое значение")
             return
-        
-        filter_type = user_data['awaiting_input']
-        user_data['export_filters'][filter_type] = text
-        del user_data['awaiting_input']
-        
-        await self.show_filters_menu(update, context)
+
+        if user_data.get('awaiting_start_date'):
+            try:
+                datetime.strptime(text, '%Y-%m-%d')
+                user_data['export_filters']['start_date'] = text
+                logger.info("Установлена дата начала: %s", text)
+                del user_data['awaiting_start_date']
+                await self.show_filters_menu(update, context)
+            except ValueError:
+                await update.message.reply_text(
+                    "❌ Неверный формат даты. Используйте ГГГГ-ММ-ДД (например, 2025-01-01)"
+                )
+            return
+
+        if user_data.get('awaiting_end_date'):
+            try:
+                datetime.strptime(text, '%Y-%m-%d')
+                user_data['export_filters']['end_date'] = text
+                logger.info("Установлена дата окончания: %s", text)
+                del user_data['awaiting_end_date']
+                await self.show_filters_menu(update, context)
+            except ValueError:
+                await update.message.reply_text(
+                    "❌ Неверный формат даты. Используйте ГГГГ-ММ-ДД (например, 2025-01-01)"
+                )
+            return
+
+        # Обработка других текстовых вводов (Контрагент, Чек)
+        if 'awaiting_input' in user_data:
+            filter_type = user_data['awaiting_input']
+            user_data['export_filters'][filter_type] = text
+            del user_data['awaiting_input']
+            await self.show_filters_menu(update, context)
 
     @admin_only
-    # Обновим обработчик callback-запросов
     async def handle_filter_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
         
-        data = query.data.split('_')
+        data = query.data.split('_', 1)  # Разделяем только на первую часть
         filter_type = data[0]
-        value = '_'.join(data[1:])
+        value = data[1] if len(data) > 1 else ''
         
+        # Для категории ищем оригинальное значение в базе
         if filter_type == 'cat':
-            context.user_data['export_filters']['category'] = value
+            db = Database()
+            try:
+                categories = db.get_unique_values("category", query.from_user.id)
+                # Ищем категорию, соответствующую safe_value
+                safe_value = value
+                original_value = next((cat for cat in categories if cat.replace(" ", "_").replace("'", "").replace('"', "")[:50] == safe_value), safe_value)
+                context.user_data['export_filters']['category'] = original_value
+            except Exception as e:
+                logger.error("Ошибка при получении категорий: %s", e)
+                await query.edit_message_text("❌ Ошибка при выборе категории.")
+                return
+            finally:
+                db.close()
         elif filter_type == 'type':
             context.user_data['export_filters']['transaction_type'] = value
         elif filter_type == 'source':
@@ -467,7 +601,8 @@ class TransactionProcessorBot:
         
         user_data = context.user_data
         filters = user_data['export_filters']
-        
+        logger.info("Генерация отчета с фильтрами: %s", filters)
+
         db_filters = {}
         for key in ['category', 'transaction_type', 'cash_source', 'counterparty', 'check_num', 'transaction_class']:
             if filters[key] != 'Все':
@@ -481,31 +616,107 @@ class TransactionProcessorBot:
                 end_date=filters['end_date'],
                 filters=db_filters if db_filters else None
             )
+            logger.info("Получено %d записей из базы данных", len(df))
             
             if df.empty:
                 await query.edit_message_text("⚠ По вашему запросу ничего не найдено")
+                db.close()
+                if 'export_filters' in context.user_data:
+                    del context.user_data['export_filters']
                 return
+
+            df.fillna('', inplace=True)
+            df.replace('NaN', '', inplace=True) # Дополнительная замена строки "NaN"
+            
+            logger.info("Значения NaN (и другие отсутствующие) заменены на пустые строки.")
+            
+            # Словарь для переименования столбцов
+            column_mapping = {
+                'id': 'ID',
+                'transaction_date': 'Дата',
+                'amount': 'Сумма',
+                'cash_source': 'Наличность',
+                'category': 'Категория',
+                'description': 'Описание',
+                'counterparty': 'Контрагент',
+                'check_num': 'Чек #',
+                'transaction_type': 'Тип транзакции',
+                'transaction_class': 'Класс',
+                'target_amount': 'Сумма (куда)',
+                'target_cash_source': 'Наличность (куда)'
+            }
+            
+            # Переименовываем столбцы
+            # df = df.rename(columns=column_mapping)
+            df_renamed = df.rename(columns=column_mapping)
+            logger.info("Столбцы после переименования: %s", df.columns.tolist())
+            
+            with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
+                df_renamed.to_csv(tmp.name, index=False, encoding='utf-8', sep=',')
                 
-            with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
-                df.to_csv(tmp.name, index=False)
+            try:    
                 await context.bot.send_document(
                     chat_id=query.from_user.id,
                     document=open(tmp.name, 'rb'),
                     caption=f"Отчет за {filters['start_date']} - {filters['end_date']}"
                 )
-                
-            await query.edit_message_text("✅ Отчет успешно сформирован")
+                # os.unlink(tmp.name)  # Удаляем временный файл
             
+                # --- ФОРМИРОВАНИЕ СВОДКИ ПО ФИЛЬТРАМ ---
+                filter_summary_lines = []
+                # Добавляем диапазон дат (он всегда есть)
+                filter_summary_lines.append(f"📅 Период: {filters.get('start_date', 'N/A')} - {filters.get('end_date', 'N/A')}")
+
+                # Словарь для красивых названий фильтров
+                filter_display_names = {
+                    'category': '🏷 Категория',
+                    'transaction_type': '🔀 Тип',
+                    'cash_source': '💳 Наличность',
+                    'counterparty': '👥 Контрагент',
+                    'check_num': '🧾 Чек',
+                    'transaction_class': '📊 Класс'
+                }
+
+                # Добавляем остальные активные фильтры (те, что не 'Все')
+                for key, display_name in filter_display_names.items():
+                    filter_value = filters.get(key)
+                    # Показываем фильтр, если он был задан и не равен 'Все'
+                    if filter_value and filter_value != 'Все':
+                        filter_summary_lines.append(f"{display_name}: {filter_value}")
+
+                filter_summary = "\n".join(filter_summary_lines)
+                # -----------------------------------------
+
+                # --- ОБНОВЛЕНИЕ СООБЩЕНИЯ ОБ УСПЕХЕ ---
+                success_message = "✅ Отчет успешно сформирован."
+                # Добавляем сводку по фильтрам, если она не пустая
+                if filter_summary:
+                    success_message += "\n\n<b>Примененные фильтры:</b>\n" + filter_summary
+
+                # Используем parse_mode='HTML' для жирного шрифта
+                await query.edit_message_text(success_message, parse_mode='HTML')
+                # -----------------------------------------
+
+            # await query.edit_message_text("✅ Отчет успешно сформирован") 
+
+            except Exception as send_error:
+                # ... (обработка ошибки отправки) ...
+                logger.error(f"Ошибка отправки файла отчета: {send_error}", exc_info=True)
+                await query.edit_message_text("❌ Ошибка при отправке файла отчета.")
+            finally:
+                # ... (удаление временного файла) ...
+                if os.path.exists(tmp.name):
+                    os.unlink(tmp.name)
+
         except Exception as e:
-            logger.error(f"Ошибка генерации отчета: {e}")
+            logger.error("Ошибка генерации отчета: %s", e, exc_info=True)
             await query.edit_message_text("❌ Ошибка при формировании отчета")
-        
-        db.close()
-        del user_data['export_filters']
-
-
-
-
+        finally:
+            # Гарантированно закрываем соединение с БД
+            if db:
+                db.close()
+            # Гарантированно очищаем фильтры из user_data *после* их использования
+            context.user_data.pop('export_filters', None)
 
     @admin_only
     async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -870,7 +1081,8 @@ class TransactionProcessorBot:
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE):
         """Логирует ошибки и уведомляет пользователя"""
         error = context.error
-        
+        logger.error("Ошибка: %s, update: %s", error, update, exc_info=True)
+
         if isinstance(error, telegram.error.Forbidden):
             logger.error("Бот заблокирован пользователем")
             return
@@ -1173,20 +1385,20 @@ class TransactionProcessorBot:
         for handler in self.config_handlers:
             self.application.remove_handler(handler)
 
-    @admin_only
-    async def export_data(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        db = Database()
-        df = db.get_transactions(
-            user_id=update.effective_user.id,
-            start_date=datetime(2025, 4, 1),
-            end_date=datetime.now(),
-            filters={"category": "Еда"}
-        )
-        db.close()
+    # @admin_only
+    # async def export_data(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    #     db = Database()
+    #     df = db.get_transactions(
+    #         user_id=update.effective_user.id,
+    #         start_date=datetime(2025, 4, 1),
+    #         end_date=datetime.now(),
+    #         filters={"category": "Еда"}
+    #     )
+    #     db.close()
     
-        with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
-            df.to_csv(tmp.name, index=False)
-            await update.message.reply_document(document=open(tmp.name, 'rb'))
+    #     with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
+    #         df.to_csv(tmp.name, index=False)
+    #         await update.message.reply_document(document=open(tmp.name, 'rb'))
 
     # Обработка документов
     @admin_only
@@ -1351,6 +1563,7 @@ class TransactionProcessorBot:
             await query.edit_message_text("Время подтверждения истекло (максимум 5 минут)")
             return
 
+        logger.info("Сохранение данных в БД: %s", pending_data['df'][['Дата']].head().to_dict())
         db = None
         try:
             db = Database()

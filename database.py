@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extras import execute_batch
 from psycopg2 import sql  # Для безопасной работы с SQL-идентификаторами
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import os
 import logging
@@ -33,9 +33,9 @@ class Database:
         REQUIRED_ENV_VARS = ['DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST']
         missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
         if missing_vars:
+            logger.error(f"Отсутствуют обязательные переменные окружения: {missing_vars}")
             raise EnvironmentError(f"Отсутствуют обязательные переменные окружения: {missing_vars}")
 
-        """Устанавливает соединение с БД через переменные окружения"""
         logger.info(f"Попытка подключения к БД: host={os.getenv('DB_HOST')}, dbname={os.getenv('DB_NAME')}")
         try:
             self.conn = psycopg2.connect(
@@ -43,18 +43,20 @@ class Database:
                 user=os.getenv('DB_USER'),
                 password=os.getenv('DB_PASSWORD'),
                 host=os.getenv('DB_HOST'),
-                port=os.getenv('DB_PORT', '5432'),  # По умолчанию 5432
+                port=os.getenv('DB_PORT', '5432'),
                 connect_timeout=int(os.getenv('DB_CONNECT_TIMEOUT', '5'))
             )
             logger.info("Подключение к БД успешно")
         except Exception as e:
-            logger.error(f"Ошибка подключения к БД: {e}")
+            logger.error(f"Ошибка подключения к БД: {e}", exc_info=True)
             raise
 
     @contextmanager
-    def get_cursor(self):
+    def get_cursor(self, dict_cursor: bool = False):
         """Контекстный менеджер для безопасной работы с курсором"""
-        cursor = self.conn.cursor()
+        cursor_factory = psycopg2.extras.DictCursor if dict_cursor else None
+        cursor = self.conn.cursor(cursor_factory=cursor_factory)
+        # cursor = self.conn.cursor()
         try:
             yield cursor
             self.conn.commit()
@@ -64,6 +66,43 @@ class Database:
             raise
         finally:
             cursor.close()
+
+    def fetchall(self, query: str, params: tuple = ()) -> list[dict]:
+        with self.get_cursor(dict_cursor=True) as cur:
+            cur.execute(query, params)
+            return cur.fetchall()
+
+    def get_unique_values(self, column: str, user_id: int) -> list[str]:
+        logger.info(f"Вызов get_unique_values для column={column}, user_id={user_id}")
+        logger.info(f"Проверка наличия fetchall: {hasattr(self, 'fetchall')}")
+        
+        # Проверяем существование столбца
+        with self.get_cursor() as cur:
+            cur.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'transactions' AND column_name = %s
+            """, (column,))
+            if not cur.fetchone():
+                logger.error(f"Столбец {column} не существует в таблице transactions")
+                raise ValueError(f"Столбец {column} не существует в таблице transactions")        
+
+        query = sql.SQL("""
+            SELECT DISTINCT {column}
+            FROM transactions
+            WHERE user_id = %s AND {column} IS NOT NULL
+            ORDER BY {column}
+        """).format(column=sql.Identifier(column))
+        logger.info(f"Выполняется запрос: {query.as_string(self.conn)} с параметром user_id={user_id}")
+        
+        try:
+            rows = self.fetchall(query, (user_id,))
+            result = [row[column] for row in rows]
+            logger.info(f"Получено {len(result)} уникальных значений для столбца {column}")
+            return result
+        except Exception as e:
+            logger.error(f"Ошибка при получении уникальных значений для {column}: {e}", exc_info=True)
+            raise
 
     def _create_tables(self):
         """Создаёт таблицы из SQL-файлов"""
@@ -142,7 +181,9 @@ class Database:
                 import_id = cur.fetchone()[0]
 
                 # Преобразование и валидация данных
-                df['дата'] = pd.to_datetime(df['дата'], errors='coerce')
+                # Указываем формат даты ДД-ММ-ГГГГ, если это формат в CSV
+                df['дата'] = pd.to_datetime(df['дата'], format='%d.%m.%Y %H:%M', errors='coerce')
+                # df['дата'] = pd.to_datetime(df['дата'], errors='coerce')
                 df['сумма'] = pd.to_numeric(df['сумма'], errors='coerce')
                 if 'сумма (куда)' in df.columns:
                     df['сумма (куда)'] = pd.to_numeric(df['сумма (куда)'], errors='coerce')
@@ -150,7 +191,13 @@ class Database:
                 df.dropna(subset=['дата', 'сумма'], inplace=True)
 
                 if df.empty:
+                    logger.warning("DataFrame пуст после преобразования дат и сумм")
                     return stats
+
+                # --- ДОБАВЛЯЕМ СОРТИРОВКУ ЗДЕСЬ ---
+                logger.info(f"Сортировка {len(df)} записей по дате (от новых к старым)...")
+                df.sort_values(by='дата', ascending=False, inplace=True)
+                # ---------------------------------
 
                 new_data = []
                 for _, row in df.iterrows():
@@ -179,6 +226,7 @@ class Database:
                         new_data,
                         page_size=100
                     )
+                logger.info("Вставлено %d новых транзакций", stats['new'])
 
                 return stats
                 
@@ -198,31 +246,97 @@ class Database:
             return cur.fetchone()[0] > 0
 
     def get_transactions(self, user_id, start_date, end_date, filters=None):
-        """Получает транзакции с фильтрацией"""
-        query = sql.SQL("""
-            SELECT 
+        """Получает транзакции с фильтрацией и сортировкой по дате (новые сначала),
+           включая начальную и конечную даты полностью."""
+
+        # --- КОРРЕКТИРОВКА КОНЕЧНОЙ ДАТЫ ДЛЯ ПОЛНОГО ВКЛЮЧЕНИЯ ---
+        try:
+            # Преобразуем строку конечной даты в объект date
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+            # Вычисляем начало следующего дня
+            end_date_exclusive = end_date_obj + timedelta(days=1)
+            logger.info(f"Диапазон дат для запроса: >= {start_date} и < {end_date_exclusive}")
+        except ValueError:
+            # Обработка ошибки, если формат даты неправильный
+            logger.error(f"Неверный формат конечной даты: {end_date}. Запрос может вернуть некорректные данные.")
+            # В случае ошибки используем оригинальную дату + 1 день, но это рискованно
+            # Лучше убедиться, что даты валидируются раньше в bot.py
+            # Для примера, оставляем как есть, но это нужно улучшить
+            # end_date_exclusive = end_date # Это вернет старое поведение при ошибке
+            # Правильнее было бы здесь либо выбросить исключение, либо использовать +1 день к строке,
+            # но это не гарантирует корректность. Примем, что дата валидна.
+            # Если формат гарантированно YYYY-MM-DD, эта ошибка не должна происходить.
+            # Если все же произошла, используем дату "как есть" + 1 день, что может быть неверно:
+            try:
+                 # Попытка добавить день к строке (не рекомендуется, но как запасной вариант)
+                 year, month, day = map(int, end_date.split('-'))
+                 temp_date = datetime(year, month, day) + timedelta(days=1)
+                 end_date_exclusive = temp_date.strftime('%Y-%m-%d')
+            except:
+                 end_date_exclusive = end_date # Если все сломалось, используем как есть
+
+        # Используем список для безопасного формирования запроса частями
+        query_parts = [
+            # Заменяем BETWEEN на >= start_date AND < end_date_exclusive
+            sql.SQL("""
+            SELECT
                 id, transaction_date, amount, cash_source,
                 category, description, counterparty,
                 check_num, transaction_type,
                 transaction_class, target_amount, target_cash_source
-            FROM transactions 
-            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s
-        """)
-        params = [user_id, start_date, end_date]
+            FROM transactions
+            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
+            """)
+        ]
+        # Обновляем список параметров с скорректированной конечной датой
+        params = [user_id, start_date, end_date_exclusive] # Используем вычисленный следующий день
 
         if filters:
-            conditions = []
+            # Используем ОТДЕЛЬНЫЙ список для SQL объектов фильтров
+            filter_conditions = []
             for key, value in filters.items():
-                if key in ['transaction_class', 'target_cash_source']:  # Поддержка новых полей
+                # Используем безопасные идентификаторы и параметры
+                if key in ['category', 'transaction_type', 'cash_source', 'transaction_class', 'target_cash_source']:
                     col = sql.Identifier(key)
-                    conditions.append(sql.SQL("{0} = %s").format(col))
+                    filter_conditions.append(sql.SQL("{0} = %s").format(col))
                     params.append(value)
-                # ... остальная логика фильтрации
+                elif key == 'check_num' and value:
+                    # Частичное совпадение для check_num без учета регистра
+                    filter_conditions.append(sql.SQL("check_num ILIKE %s"))
+                    params.append(f"%{value}%")
+                elif key == 'counterparty' and value:
+                     # Частичное совпадение для counterparty без учета регистра
+                    filter_conditions.append(sql.SQL("counterparty ILIKE %s"))
+                    params.append(f"%{value}%")
+                # Добавьте сюда другие elif для обработки других ключей фильтров, если они есть
 
-        with self.get_cursor() as cur:
-            cur.execute(query, params)
-            columns = [desc[0] for desc in cur.description]
-            return pd.DataFrame(cur.fetchall(), columns=columns)
+            # --- КОРРЕКТНОЕ ДОБАВЛЕНИЕ ФИЛЬТРОВ к ОСНОВНОМУ ЗАПРОСУ ---
+            if filter_conditions:
+                # Добавляем ключевое слово AND как sql.SQL объект
+                query_parts.append(sql.SQL("AND"))
+                # Добавляем все условия фильтрации, безопасно объединенные через ' AND '
+                query_parts.append(sql.SQL(' AND ').join(filter_conditions))
+            # ---------------------------------------------------------
+
+        # --- ORDER BY ДОБАВЛЯЕТСЯ ПОСЛЕ ВСЕХ УСЛОВИЙ WHERE ---
+        query_parts.append(sql.SQL("ORDER BY transaction_date DESC"))
+        # ------------------------------------------------------
+
+        # Собираем финальный запрос (эта строка у вас уже правильная)
+        final_query = sql.SQL(' ').join(query_parts)
+
+        # Логирование (у вас уже правильное)
+        logger.info("Выполняется запрос: %s с параметрами %s", final_query.as_string(self.conn), params)
+
+        # Выполнение запроса (у вас уже правильное)
+        try:
+            with self.get_cursor(dict_cursor=True) as cur:
+                cur.execute(final_query, params)
+                columns = [desc[0] for desc in cur.description]
+                return pd.DataFrame(cur.fetchall(), columns=columns)
+        except Exception as e:
+            logger.error("Ошибка выполнения запроса: %s", e, exc_info=True) # Добавьте exc_info для полного traceback
+            raise
 
     def close(self):
         """Закрывает соединение с БД"""
