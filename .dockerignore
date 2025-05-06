@@ -4,5 +4,6 @@ __pycache__
 *.log
 logs/
 tmp/
+txt_versions/
 .env
 .DS_Store

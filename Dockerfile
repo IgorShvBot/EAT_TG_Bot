@@ -14,6 +14,9 @@ RUN apt-get update && \
 WORKDIR /app
 COPY requirements.txt .
 
+# Обновляем pip и основные инструменты сборки
+# RUN pip install --upgrade pip setuptools wheel
+
 # Установка Python-зависимостей с кешированием
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --user -r requirements.txt
@@ -41,5 +44,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /app
 COPY . .
+
+# Установка прав для директории конфигурации
+# RUN chown -R 1000:1000 /app/config && chmod -R 775 /app/config
 
 CMD ["python", "bot.py"]

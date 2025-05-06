@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import execute_batch
 from psycopg2 import sql  # Для безопасной работы с SQL-идентификаторами
+import subprocess
 from datetime import datetime, timedelta
 import pandas as pd
 import os
@@ -10,6 +11,10 @@ from dotenv import load_dotenv
 
 # Загрузите переменные окружения из .env
 load_dotenv()
+
+# Настройка логгера
+logger = logging.getLogger('backup.database')
+logger.setLevel(logging.INFO)
 
 # Настройка логирования
 logger = logging.getLogger(__name__)
@@ -233,9 +238,11 @@ class Database:
         except Exception as e:
             logger.error(f"Ошибка при сохранении транзакций: {e}", exc_info=True)
             raise
-
+            
     def check_duplicate(self, transaction_date, cash_source, amount):
-        """Проверяет наличие дублирующейся транзакции"""
+        """Проверяет наличие дублирующейся транзакции, если не отключено в настройках"""
+        if os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true':
+            return False
         with self.get_cursor() as cur:
             cur.execute("""
                 SELECT COUNT(*) FROM transactions 
@@ -251,8 +258,9 @@ class Database:
 
         # --- КОРРЕКТИРОВКА КОНЕЧНОЙ ДАТЫ ДЛЯ ПОЛНОГО ВКЛЮЧЕНИЯ ---
         try:
+            start_date = start_date if isinstance(start_date, datetime) else datetime.strptime(start_date, '%d.%m.%Y')
             # Преобразуем строку конечной даты в объект date
-            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+            end_date_obj = end_date.date() if isinstance(end_date, datetime) else datetime.strptime(end_date, '%d.%m.%Y').date()
             # Вычисляем начало следующего дня
             end_date_exclusive = end_date_obj + timedelta(days=1)
             logger.info(f"Диапазон дат для запроса: >= {start_date} и < {end_date_exclusive}")
@@ -271,7 +279,8 @@ class Database:
                  # Попытка добавить день к строке (не рекомендуется, но как запасной вариант)
                  year, month, day = map(int, end_date.split('-'))
                  temp_date = datetime(year, month, day) + timedelta(days=1)
-                 end_date_exclusive = temp_date.strftime('%Y-%m-%d')
+                #  end_date_exclusive = temp_date.strftime('%Y-%m-%d')
+                 end_date_exclusive = temp_date.date()
             except:
                  end_date_exclusive = end_date # Если все сломалось, используем как есть
 
@@ -343,3 +352,50 @@ class Database:
         if hasattr(self, 'conn') and self.conn and not self.conn.closed:
             self.conn.close()
             logger.info("Соединение с БД закрыто")
+ 
+    """ Резервное копирование БД """
+    def create_backup(self, backup_dir: str = None):
+        """Создает резервную копию базы данных с именем в формате YYYY-MM-DD.backup"""
+        if backup_dir is None:
+            backup_dir = os.getenv('BACKUP_DIR', os.path.join(os.path.dirname(__file__), 'backups'))
+        
+        if not os.path.exists(backup_dir):
+            os.makedirs(backup_dir)
+        
+        backup_file = os.path.join(backup_dir, f"{datetime.now().strftime('%Y-%m-%d')}.backup")
+        db_params = {
+            'dbname': os.getenv('DB_NAME'),
+            'user': os.getenv('DB_USER'),
+            'password': os.getenv('DB_PASSWORD'),
+            'host': os.getenv('DB_HOST'),
+            'port': os.getenv('DB_PORT', '5432')
+        }
+        
+        try:
+            cmd = [
+                'pg_dump',
+                f"--dbname=postgresql://{db_params['user']}:{db_params['password']}@{db_params['host']}:{db_params['port']}/{db_params['dbname']}",
+                '-Fc',  # Формат custom для pg_restore
+                '-f', backup_file
+            ]
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            logger.info(f"Резервная копия создана: {backup_file}")
+            self.cleanup_old_backups(backup_dir)
+            return backup_file
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Ошибка создания резервной копии: {e.stderr}")
+            raise
+
+    def cleanup_old_backups(self, backup_dir: str):
+        """Удаляет резервные копии старше 30 дней"""
+        cutoff_date = datetime.now() - timedelta(days=30)
+        for file in os.listdir(backup_dir):
+            file_path = os.path.join(backup_dir, file)
+            if file.endswith('.backup'):
+                try:
+                    file_date = datetime.strptime(file.split('.')[0], '%Y-%m-%d')
+                    if file_date < cutoff_date:
+                        os.unlink(file_path)
+                        logger.info(f"Удалена старая резервная копия: {file_path}")
+                except ValueError:
+                    continue

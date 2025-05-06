@@ -1,5 +1,4 @@
 services:
-  
   postgres:
     image: postgres:14
     container_name: my_postgres
@@ -13,7 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./sql:/docker-entrypoint-initdb.d  # Автоматически запустит .sql
     restart: unless-stopped
-  
+
   telegram-bot:
     env_file: .env
     build: 
@@ -28,14 +27,63 @@ services:
       - DOCKER_MODE=true
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=DEBUG
+      - BACKUP_DIR=/backups
+      - DISABLE_DUPLICATE_CHECK=${DISABLE_DUPLICATE_CHECK:-false}
     volumes:
       - ./config:/app/config:rw
       - ./logs:/app/logs:rw
+      - ./backups:/backups
+    command: python bot.py
+    # command: >
+    #   bash -c "chown -R 1000:1000 /app/config && chmod -R 775 /app/config && python bot.py"
+    #   bash -c "chmod -R ugo+rw /app/config && python bot.py"
+    # или можно использовать chmod -R 777 /app/config для простоты, 
+    # но ugo+rw (эквивалент 666 для файлов и добавление прав на запись для всех к директориям) 
+    # будет достаточно для записи файлов.
+    # Если нужны права на исполнение для директорий (чтобы в них можно было входить),
+    # то что-то вроде chmod -R 775 или chmod -R 777 может быть проще в управлении через chmod.
+    # Для простоты и уверенности в правах на запись, особенно если владелец на хосте отличается,
+    # можно использовать более широкие права на время отладки, например:
+    # command: >
+    #   bash -c "chmod -R 777 /app/config && python bot.py"
     logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+        driver: json-file
+        options:
+          max-size: "10m"
+          max-file: "3"
+
+  # backup:
+  #   image: python:3.9-slim
+  #   container_name: backup-cron
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - .:/app
+  #     - ./backups:/backups
+  #     - ./logs:/app/logs
+  #   environment:
+  #     - DB_NAME=${DB_NAME}
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=postgres
+  #     - DB_PORT=5432
+  #     - BACKUP_DIR=/backups
+  #   command: >
+  #     bash -c "apt-get update &&
+  #              apt-get install -y --no-install-recommends postgresql-client cron &&
+  #              pip install --no-cache-dir psycopg2-binary python-dotenv pandas &&
+  #              pip list &&
+  #              until pg_isready -h postgres -p 5432; do sleep 1; done &&
+  #              echo '0 2 * * * python /app/backup_script.py >> /app/logs/backup.log 2>&1' > /etc/crontab &&
+  #              crontab /etc/crontab &&
+  #              echo 'Cron schedule installed' &&
+  #              cron -f"
+  #   restart: unless-stopped
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
 
 volumes:
   postgres_data:

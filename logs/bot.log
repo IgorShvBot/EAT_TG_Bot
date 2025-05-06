@@ -1,1116 +1,592 @@
-04-05-2025 10:42:57 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 10:42:57 - telegram.ext.Application - INFO - Application started
-04-05-2025 10:43:29 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 10:43:29 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 10:43:29 - database - INFO - Подключение к БД успешно
-04-05-2025 10:43:29 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 10:43:29 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 10:43:29 - database - INFO - Выполняется запрос: SQL('\n            SELECT \n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions \n            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s\n            ') с параметрами [198451926, '2025-04-04', '2025-05-04']
-04-05-2025 10:43:29 - root - INFO - Получено 10 записей из базы данных
-04-05-2025 10:43:29 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 10:43:29 - database - INFO - Соединение с БД закрыто
-04-05-2025 14:27:08 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 14:27:08 - telegram.ext.Application - INFO - Application started
-04-05-2025 14:33:14 - root - INFO - Получен callback: set_category
-04-05-2025 14:33:31 - root - INFO - Обработчик set_type вызван
-04-05-2025 14:33:37 - root - ERROR - Ошибка: Timed out, update: Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='set_type', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535648460935', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 4, 11, 33, 12, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1098, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='set_start_date', text='📅 Дата начала: 2025-04-04'),), (InlineKeyboardButton(callback_data='set_end_date', text='📅 Дата окончания: 2025-05-04'),), (InlineKeyboardButton(callback_data='set_category', text='🏷 Категория: Все'),), (InlineKeyboardButton(callback_data='set_type', text='🔀 Тип: Все'),), (InlineKeyboardButton(callback_data='set_cash_source', text='💳 Наличность: Все'),), (InlineKeyboardButton(callback_data='set_counterparty', text='👥 Контрагент: Все'),), (InlineKeyboardButton(callback_data='set_check_num', text='🧾 Чек: Все'),), (InlineKeyboardButton(callback_data='set_class', text='📊 Класс: Все'),), (InlineKeyboardButton(callback_data='generate_report', text='✅ Сформировать отчет'),), (InlineKeyboardButton(callback_data='cancel_export', text='❌ Отмена'),))), supergroup_chat_created=False, text='⚙ Настройте параметры отчета:')), update_id=341836976)
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 155, in _call_sslobject_method
-    result = func(*args)
-  File "/usr/local/lib/python3.10/ssl.py", line 975, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLWantReadError: The operation did not complete (read) (_ssl.c:1017)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 115, in fail_after
-    yield cancel_scope
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 69, in start_tls
-    ssl_stream = await anyio.streams.tls.TLSStream.wrap(
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 147, in wrap
-    await wrapper._call_sslobject_method(ssl_object.do_handshake)
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
-    data = await self.transport_stream.receive()
-  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1254, in receive
-    await self._protocol.read_event.wait()
-  File "/usr/local/lib/python3.10/asyncio/locks.py", line 214, in wait
-    await fut
-asyncio.exceptions.CancelledError: Cancelled by cancel scope ffff85d2d510
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 78, in start_tls
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 68, in start_tls
-    with anyio.fail_after(timeout):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 118, in fail_after
-    raise TimeoutError
-TimeoutError
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
-    response = await connection.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 92, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 69, in handle_async_request
-    stream = await self._connect(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 149, in _connect
-    stream = await stream.start_tls(**kwargs)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 66, in start_tls
-    with map_exceptions(exc_map):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
-    res = await self._client.request(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
-    response = await self._send_handling_auth(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
-    response = await self._send_handling_redirects(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
-    response = await self._send_single_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
-    response = await transport.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
-    with map_httpcore_exceptions():
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 406, in set_type
-    await query.answer()
-  File "/root/.local/lib/python3.10/site-packages/telegram/_callbackquery.py", line 180, in answer
-    return await self.get_bot().answer_callback_query(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 773, in answer_callback_query
-    return await super().answer_callback_query(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
-    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3306, in answer_callback_query
-    return await self._post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
-    return await self._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
-    return await super()._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
-    return await request.post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
-    result = await self._request_wrapper(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
-    code, payload = await self.do_request(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 233, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
-04-05-2025 14:33:37 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 155, in _call_sslobject_method
-    result = func(*args)
-  File "/usr/local/lib/python3.10/ssl.py", line 975, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLWantReadError: The operation did not complete (read) (_ssl.c:1017)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 115, in fail_after
-    yield cancel_scope
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 69, in start_tls
-    ssl_stream = await anyio.streams.tls.TLSStream.wrap(
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 147, in wrap
-    await wrapper._call_sslobject_method(ssl_object.do_handshake)
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
-    data = await self.transport_stream.receive()
-  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1254, in receive
-    await self._protocol.read_event.wait()
-  File "/usr/local/lib/python3.10/asyncio/locks.py", line 214, in wait
-    await fut
-asyncio.exceptions.CancelledError: Cancelled by cancel scope ffff85d2d510
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 78, in start_tls
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 68, in start_tls
-    with anyio.fail_after(timeout):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 118, in fail_after
-    raise TimeoutError
-TimeoutError
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
-    response = await connection.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 92, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 69, in handle_async_request
-    stream = await self._connect(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 149, in _connect
-    stream = await stream.start_tls(**kwargs)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 66, in start_tls
-    with map_exceptions(exc_map):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
-    res = await self._client.request(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
-    response = await self._send_handling_auth(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
-    response = await self._send_handling_redirects(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
-    response = await self._send_single_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
-    response = await transport.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
-    with map_httpcore_exceptions():
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
+06-05-2025 19:21:24 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281473065633344
+06-05-2025 19:21:24 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281472954072704
+06-05-2025 19:21:24 - root - INFO - Запуск бота в Docker-контейнере
+06-05-2025 19:21:24 - root - CRITICAL - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
+06-05-2025 19:21:24 - asyncio - DEBUG - Using selector: EpollSelector
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: get_me
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff877a05b0>
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8edb2440> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721150>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:24 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - User(api_kwargs={'can_connect_to_business': False, 'has_main_web_app': False}, can_join_groups=True, can_read_all_group_messages=False, first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, supports_inline_queries=False, username='INS_ExtrClassTrans_bot')
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Exiting: get_me
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - This Bot is already initialized.
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Updater started (polling)
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Start network loop retry bootstrap del webhook
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Deleting webhook
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: delete_webhook
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:24 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Exiting: delete_webhook
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Bootstrap done
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Waiting for polling to start
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Polling updates from Telegram started
+06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Start network loop retry getting Updates
+06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:21:24 - telegram.ext.Application - INFO - Application started
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8e1a4190>
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff895c9840> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721d20>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:35 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:35 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:35 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:21:37 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:37 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:47 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:47 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:47 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:21:49 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:49 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:57 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837193]
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1325, supergroup_chat_created=False, text='/config'), update_id=341837193),)
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:21:57 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1325, supergroup_chat_created=False, text='/config'), update_id=341837193)
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Entering: send_message
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - close.started
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - close.complete
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721c00>
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8edb2440> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:21:57 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87720a00>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:57 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
+06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1585'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837194]
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533947039570', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837194),)
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:21:59 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533947039570', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837194)
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')
+06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1350'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837195]
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195),)
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:22:01 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195)
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:22:01 - root - INFO - edit_menu_callback: Установлен editing_file: categories.yaml. Добавляю config_handlers в группу -1.
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'892'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 22, 1, tzinfo=<UTC>), entities=(MessageEntity(length=7, offset=92, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, supergroup_chat_created=False, text='Отправьте новое содержимое файла categories.yaml в виде текста или файлом YAML. Используйте /cancel для отмены.')
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
+06-05-2025 19:22:01 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_edit) с ID: 281473065633344 в группу -1.
+06-05-2025 19:22:01 - root - ERROR - Ошибка: Application.add_handler() got an unexpected keyword argument 'block', update: Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195)
 Traceback (most recent call last):
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
     await coroutine
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
     return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
+  File "/app/bot.py", line 104, in wrapper
     return await func(*args, **kwargs)
-  File "/app/bot.py", line 406, in set_type
-    await query.answer()
-  File "/root/.local/lib/python3.10/site-packages/telegram/_callbackquery.py", line 180, in answer
-    return await self.get_bot().answer_callback_query(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 773, in answer_callback_query
-    return await super().answer_callback_query(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
-    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3306, in answer_callback_query
-    return await self._post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
-    return await self._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
-    return await super()._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
-    return await request.post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
-    result = await self._request_wrapper(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
-    code, payload = await self.do_request(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 233, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
-04-05-2025 14:42:32 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 14:42:32 - telegram.ext.Application - INFO - Application started
-04-05-2025 14:43:01 - root - ERROR - Ошибка: Timed out, update: Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 4, 11, 42, 56, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1101, supergroup_chat_created=False, text='/export'), update_id=341836978)
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 155, in _call_sslobject_method
-    result = func(*args)
-  File "/usr/local/lib/python3.10/ssl.py", line 975, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLWantReadError: The operation did not complete (read) (_ssl.c:1017)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 115, in fail_after
-    yield cancel_scope
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 69, in start_tls
-    ssl_stream = await anyio.streams.tls.TLSStream.wrap(
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 147, in wrap
-    await wrapper._call_sslobject_method(ssl_object.do_handshake)
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
-    data = await self.transport_stream.receive()
-  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1254, in receive
-    await self._protocol.read_event.wait()
-  File "/usr/local/lib/python3.10/asyncio/locks.py", line 214, in wait
-    await fut
-asyncio.exceptions.CancelledError: Cancelled by cancel scope ffff787ecd00
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 78, in start_tls
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 68, in start_tls
-    with anyio.fail_after(timeout):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 118, in fail_after
-    raise TimeoutError
-TimeoutError
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
-    response = await connection.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 92, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 69, in handle_async_request
-    stream = await self._connect(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 149, in _connect
-    stream = await stream.start_tls(**kwargs)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 66, in start_tls
-    with map_exceptions(exc_map):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
-    res = await self._client.request(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
-    response = await self._send_handling_auth(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
-    response = await self._send_handling_redirects(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
-    response = await self._send_single_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
-    response = await transport.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
-    with map_httpcore_exceptions():
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
+  File "/app/bot.py", line 1262, in edit_menu_callback
+    self.application.add_handler(handler_obj, group=-1, block=False)
+TypeError: Application.add_handler() got an unexpected keyword argument 'block'
+06-05-2025 19:22:01 - root - ERROR - Исключение при обработке запроса:
 Traceback (most recent call last):
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
     await coroutine
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
     return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
+  File "/app/bot.py", line 104, in wrapper
     return await func(*args, **kwargs)
-  File "/app/bot.py", line 349, in export_start
-    await self.show_filters_menu(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 329, in show_filters_menu
-    await update.message.reply_text(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_message.py", line 1074, in reply_text
-    return await self.get_bot().send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 2633, in send_message
-    return await super().send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
-    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 807, in send_message
-    return await self._send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 507, in _send_message
-    result = await super()._send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 559, in _send_message
-    result = await self._post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
-    return await self._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
-    return await super()._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
-    return await request.post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
-    result = await self._request_wrapper(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
-    code, payload = await self.do_request(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 233, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
-04-05-2025 14:43:01 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 155, in _call_sslobject_method
-    result = func(*args)
-  File "/usr/local/lib/python3.10/ssl.py", line 975, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLWantReadError: The operation did not complete (read) (_ssl.c:1017)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 115, in fail_after
-    yield cancel_scope
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 69, in start_tls
-    ssl_stream = await anyio.streams.tls.TLSStream.wrap(
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 147, in wrap
-    await wrapper._call_sslobject_method(ssl_object.do_handshake)
-  File "/root/.local/lib/python3.10/site-packages/anyio/streams/tls.py", line 162, in _call_sslobject_method
-    data = await self.transport_stream.receive()
-  File "/root/.local/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 1254, in receive
-    await self._protocol.read_event.wait()
-  File "/usr/local/lib/python3.10/asyncio/locks.py", line 214, in wait
-    await fut
-asyncio.exceptions.CancelledError: Cancelled by cancel scope ffff787ecd00
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 10, in map_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 78, in start_tls
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 68, in start_tls
-    with anyio.fail_after(timeout):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/anyio/_core/_tasks.py", line 118, in fail_after
-    raise TimeoutError
-TimeoutError
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
-    yield
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
-    resp = await self._pool.handle_async_request(req)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
-    response = await connection.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 92, in handle_async_request
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 69, in handle_async_request
-    stream = await self._connect(request)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 149, in _connect
-    stream = await stream.start_tls(**kwargs)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 66, in start_tls
-    with map_exceptions(exc_map):
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-    raise to_exc(exc) from exc
-httpcore.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
-    res = await self._client.request(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
-    response = await self._send_handling_auth(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
-    response = await self._send_handling_redirects(
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
-    response = await self._send_single_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
-    response = await transport.handle_async_request(request)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
-    with map_httpcore_exceptions():
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectTimeout
-
-The above exception was the direct cause of the following exception:
-
+  File "/app/bot.py", line 1262, in edit_menu_callback
+    self.application.add_handler(handler_obj, group=-1, block=False)
+TypeError: Application.add_handler() got an unexpected keyword argument 'block'
+06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:02 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:02 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:02 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:02 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:22:02 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:22:03 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:03 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:05 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'531'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:05 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:05 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837196]
+06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196),)
+06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:22:05 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196)
+06-05-2025 19:22:05 - root - DEBUG - handle_config_edit: editing_file = categories.yaml
+06-05-2025 19:22:05 - root - DEBUG - handle_config_edit: Получен текст от пользователя
+06-05-2025 19:22:05 - root - ERROR - Ошибка: local variable 'filepath' referenced before assignment, update: Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196)
 Traceback (most recent call last):
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
     await coroutine
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
     return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
+  File "/app/bot.py", line 104, in wrapper
     return await func(*args, **kwargs)
-  File "/app/bot.py", line 349, in export_start
-    await self.show_filters_menu(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 329, in show_filters_menu
-    await update.message.reply_text(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_message.py", line 1074, in reply_text
-    return await self.get_bot().send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 2633, in send_message
-    return await super().send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
-    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 807, in send_message
-    return await self._send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 507, in _send_message
-    result = await super()._send_message(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 559, in _send_message
-    result = await self._post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
-    return await self._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
-    return await super()._do_post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
-    return await request.post(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
-    result = await self._request_wrapper(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
-    raise exc
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
-    code, payload = await self.do_request(
-  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 233, in do_request
-    raise TimedOut from err
-telegram.error.TimedOut: Timed out
-04-05-2025 14:45:56 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 14:45:56 - telegram.ext.Application - INFO - Application started
-04-05-2025 14:48:27 - root - INFO - Получен callback: set_category
-04-05-2025 14:48:32 - root - INFO - Обработчик set_type вызван
-04-05-2025 14:48:32 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 14:48:32 - database - INFO - Подключение к БД успешно
-04-05-2025 14:48:32 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 14:48:32 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 14:48:32 - database - INFO - Вызов get_unique_values для column=transaction_type, user_id=198451926
-04-05-2025 14:48:32 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 14:48:32 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "transaction_type"
-            FROM transactions
-            WHERE user_id = %s AND "transaction_type" IS NOT NULL
-            ORDER BY "transaction_type"
-         с параметром user_id=198451926
-04-05-2025 14:48:32 - database - INFO - Получено 1 уникальных значений для столбца transaction_type
-04-05-2025 14:48:32 - database - INFO - Соединение с БД закрыто
-04-05-2025 14:48:39 - root - INFO - Обработчик set_cash_source вызван
-04-05-2025 14:48:39 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 14:48:39 - database - INFO - Подключение к БД успешно
-04-05-2025 14:48:39 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 14:48:39 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 14:48:39 - database - INFO - Вызов get_unique_values для column=cash_source, user_id=198451926
-04-05-2025 14:48:39 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 14:48:39 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "cash_source"
-            FROM transactions
-            WHERE user_id = %s AND "cash_source" IS NOT NULL
-            ORDER BY "cash_source"
-         с параметром user_id=198451926
-04-05-2025 14:48:39 - database - INFO - Получено 1 уникальных значений для столбца cash_source
-04-05-2025 14:48:39 - database - INFO - Соединение с БД закрыто
-04-05-2025 14:48:50 - root - INFO - Обработчик set_counterparty вызван
-04-05-2025 14:49:04 - root - INFO - Получен текст: Наташа, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_input': 'counterparty'}
-04-05-2025 14:49:14 - root - INFO - Обработчик set_check_num вызван
-04-05-2025 14:49:31 - root - INFO - Получен текст: Номер, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Наташа', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_input': 'check_num'}
-04-05-2025 14:49:35 - root - INFO - Обработчик set_class вызван
-04-05-2025 14:49:35 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 14:49:35 - database - INFO - Подключение к БД успешно
-04-05-2025 14:49:35 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 14:49:35 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 14:49:35 - database - INFO - Вызов get_unique_values для column=transaction_class, user_id=198451926
-04-05-2025 14:49:35 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 14:49:35 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "transaction_class"
-            FROM transactions
-            WHERE user_id = %s AND "transaction_class" IS NOT NULL
-            ORDER BY "transaction_class"
-         с параметром user_id=198451926
-04-05-2025 14:49:35 - database - INFO - Получено 1 уникальных значений для столбца transaction_class
-04-05-2025 14:49:35 - database - INFO - Соединение с БД закрыто
-04-05-2025 14:49:45 - root - INFO - Получен callback: set_start_date
-04-05-2025 14:49:50 - root - INFO - Получен callback: set_end_date
-04-05-2025 14:49:52 - root - INFO - Получен callback: set_category
-04-05-2025 15:40:54 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 15:40:55 - telegram.ext.Application - INFO - Application started
-04-05-2025 15:42:10 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 15:42:13 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 15:42:15 - root - INFO - Обработчик set_category вызван для user_id=198451926
-04-05-2025 15:42:15 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 15:42:15 - database - INFO - Подключение к БД успешно
-04-05-2025 15:42:15 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 15:42:15 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 15:42:15 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 15:42:15 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 15:42:15 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 15:42:15 - database - INFO - Получено 7 уникальных значений для столбца category
-04-05-2025 15:42:15 - root - INFO - Полученные категории: ['Все', 'AppStore | подписки', 'Аппаратура', 'Дети. Одежда', 'Еда', 'Кафе, посиделки', 'Одежда', 'Стрижка']
-04-05-2025 15:42:15 - database - INFO - Соединение с БД закрыто
-04-05-2025 15:43:12 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 15:43:33 - root - INFO - Обработчик set_category вызван для user_id=198451926
-04-05-2025 15:43:33 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 15:43:33 - database - INFO - Подключение к БД успешно
-04-05-2025 15:43:33 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 15:43:33 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 15:43:33 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 15:43:33 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 15:43:33 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 15:43:33 - database - INFO - Получено 7 уникальных значений для столбца category
-04-05-2025 15:43:33 - root - INFO - Полученные категории: ['Все', 'AppStore | подписки', 'Аппаратура', 'Дети. Одежда', 'Еда', 'Кафе, посиделки', 'Одежда', 'Стрижка']
-04-05-2025 15:43:33 - database - INFO - Соединение с БД закрыто
-04-05-2025 15:44:19 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 15:44:19 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 15:44:19 - database - INFO - Подключение к БД успешно
-04-05-2025 15:44:19 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 15:44:19 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 15:44:19 - database - INFO - Выполняется запрос: SQL('\n            SELECT \n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions \n            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s\n            ') с параметрами [198451926, '2025-04-04', '2025-05-04']
-04-05-2025 15:44:19 - root - INFO - Получено 10 записей из базы данных
-04-05-2025 15:44:19 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 15:44:20 - database - INFO - Соединение с БД закрыто
-04-05-2025 15:51:36 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 15:51:37 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 15:51:37 - root - INFO - Используются настройки: return_files=0
-04-05-2025 15:51:37 - camelot - INFO - Processing page-1
-04-05-2025 15:51:37 - camelot - INFO - Processing page-2
-04-05-2025 15:51:37 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 15:51:37 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 15:51:37 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 15:52:23 - root - INFO - Удален временный файл: /tmp/tmpza19jf51.pdf
-04-05-2025 15:52:23 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 15:52:23 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 15:52:23 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 15:52:23 - root - INFO - Удален временный файл: /tmp/unclassified.csv
-04-05-2025 15:53:05 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 15:53:06 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 15:53:06 - root - INFO - Используются настройки: return_files=0
-04-05-2025 15:53:06 - camelot - INFO - Processing page-1
-04-05-2025 15:53:06 - camelot - INFO - Processing page-2
-04-05-2025 15:53:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 15:53:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 15:53:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 15:53:56 - root - INFO - Удален временный файл: /tmp/tmpuyvkpf_l.pdf
-04-05-2025 15:53:56 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 15:53:56 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 15:53:56 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 16:04:19 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 16:04:20 - telegram.ext.Application - INFO - Application started
-04-05-2025 16:04:32 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 16:04:32 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 16:04:32 - root - INFO - Используются настройки: return_files=0
-04-05-2025 16:04:33 - camelot - INFO - Processing page-1
-04-05-2025 16:04:33 - camelot - INFO - Processing page-2
-04-05-2025 16:04:33 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 16:04:33 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 16:04:33 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:05:35 - root - INFO - Удален временный файл: /tmp/tmpaknhyiln.pdf
-04-05-2025 16:05:35 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 16:05:35 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:05:35 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 16:16:32 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 16:16:33 - telegram.ext.Application - INFO - Application started
-04-05-2025 16:16:39 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 16:16:39 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 16:16:39 - root - INFO - Используются настройки: return_files=0
-04-05-2025 16:16:40 - camelot - INFO - Processing page-1
-04-05-2025 16:16:40 - camelot - INFO - Processing page-2
-04-05-2025 16:16:40 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 16:16:40 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 16:16:40 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:17:03 - root - ERROR - Ошибка: "None of [Index(['дата'], dtype='object')] are in the [columns]", update: Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='save_yes', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344532680175487', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 4, 13, 16, 40, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1132, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='save_yes', text='Да ✅'), InlineKeyboardButton(callback_data='save_no', text='Нет ❌')),)), supergroup_chat_created=False, text='Сохранить эти данные в базу данных?')), update_id=341837013)
+  File "/app/bot.py", line 1325, in handle_config_edit
+    logger.info(f"Путь к файлу: {filepath}")
+UnboundLocalError: local variable 'filepath' referenced before assignment
+06-05-2025 19:22:05 - root - ERROR - Исключение при обработке запроса:
 Traceback (most recent call last):
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
     await coroutine
   File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
     return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
+  File "/app/bot.py", line 104, in wrapper
     return await func(*args, **kwargs)
-  File "/app/bot.py", line 1509, in handle_save_confirmation
-    logger.info("Сохранение данных в БД: %s", pending_data['df'][['дата']].head().to_dict())
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/frame.py", line 3767, in __getitem__
-    indexer = self.columns._get_indexer_strict(key, "columns")[1]
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 5877, in _get_indexer_strict
-    self._raise_if_missing(keyarr, indexer, axis_name)
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 5938, in _raise_if_missing
-    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
-KeyError: "None of [Index(['дата'], dtype='object')] are in the [columns]"
-04-05-2025 16:17:03 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 1509, in handle_save_confirmation
-    logger.info("Сохранение данных в БД: %s", pending_data['df'][['дата']].head().to_dict())
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/frame.py", line 3767, in __getitem__
-    indexer = self.columns._get_indexer_strict(key, "columns")[1]
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 5877, in _get_indexer_strict
-    self._raise_if_missing(keyarr, indexer, axis_name)
-  File "/root/.local/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 5938, in _raise_if_missing
-    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
-KeyError: "None of [Index(['дата'], dtype='object')] are in the [columns]"
-04-05-2025 16:22:38 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 16:22:39 - telegram.ext.Application - INFO - Application started
-04-05-2025 16:23:23 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 16:23:23 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 16:23:23 - root - INFO - Используются настройки: return_files=0
-04-05-2025 16:23:24 - camelot - INFO - Processing page-1
-04-05-2025 16:23:24 - camelot - INFO - Processing page-2
-04-05-2025 16:23:24 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 16:23:24 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 16:23:24 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:23:38 - root - INFO - Сохранение данных в БД: {'Дата': {0: '03.05.2025 17:25', 1: '03.05.2025 13:53', 2: '03.05.2025 12:42', 3: '03.05.2025 11:59', 4: '03.05.2025 10:58'}}
-04-05-2025 16:23:38 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:23:38 - database - INFO - Подключение к БД успешно
-04-05-2025 16:23:38 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:23:38 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:23:38 - database - WARNING - DataFrame пуст после преобразования дат и сумм
-04-05-2025 16:23:38 - root - INFO - Сохранено: новых - 0, дубликатов - 0
-04-05-2025 16:23:39 - database - INFO - Соединение с БД закрыто
-04-05-2025 16:23:39 - root - INFO - Удален временный файл: /tmp/tmpu4tk68vb.pdf
-04-05-2025 16:23:39 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 16:23:39 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:23:39 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 16:33:47 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 16:33:48 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 16:33:48 - root - INFO - Используются настройки: return_files=0
-04-05-2025 16:33:48 - camelot - INFO - Processing page-1
-04-05-2025 16:33:48 - camelot - INFO - Processing page-2
-04-05-2025 16:33:48 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 16:33:48 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 16:33:48 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:33:52 - root - INFO - Сохранение данных в БД: {'Дата': {0: '03.05.2025 17:25', 1: '03.05.2025 13:53', 2: '03.05.2025 12:42', 3: '03.05.2025 11:59', 4: '03.05.2025 10:58'}}
-04-05-2025 16:33:52 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:33:52 - database - INFO - Подключение к БД успешно
-04-05-2025 16:33:52 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:33:52 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:33:52 - database - WARNING - DataFrame пуст после преобразования дат и сумм
-04-05-2025 16:33:52 - root - INFO - Сохранено: новых - 0, дубликатов - 0
-04-05-2025 16:33:52 - database - INFO - Соединение с БД закрыто
-04-05-2025 16:33:52 - root - INFO - Удален временный файл: /tmp/tmpf4lzqom0.pdf
-04-05-2025 16:33:52 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 16:33:52 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:33:52 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 16:33:54 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 16:33:54 - telegram.ext.Application - INFO - Application started
-04-05-2025 16:36:18 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-04-05-2025 16:36:18 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 87570 байт
-04-05-2025 16:36:18 - root - INFO - Используются настройки: return_files=0
-04-05-2025 16:36:19 - camelot - INFO - Processing page-1
-04-05-2025 16:36:19 - camelot - INFO - Processing page-2
-04-05-2025 16:36:19 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-04-05-2025 16:36:19 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 28
-04-05-2025 16:36:19 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:36:33 - root - INFO - Сохранение данных в БД: {'Дата': {0: '03.05.2025 17:25', 1: '03.05.2025 13:53', 2: '03.05.2025 12:42', 3: '03.05.2025 11:59', 4: '03.05.2025 10:58'}}
-04-05-2025 16:36:33 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:36:33 - database - INFO - Подключение к БД успешно
-04-05-2025 16:36:33 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:36:33 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:36:33 - database - INFO - Вставлено 12 новых транзакций
-04-05-2025 16:36:33 - root - INFO - Сохранено: новых - 12, дубликатов - 0
-04-05-2025 16:36:33 - database - INFO - Соединение с БД закрыто
-04-05-2025 16:36:33 - root - INFO - Удален временный файл: /tmp/tmpnqxuk9cz.pdf
-04-05-2025 16:36:33 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-04-05-2025 16:36:33 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-04-05-2025 16:36:33 - root - INFO - Удален временный файл: /tmp/result.csv
-04-05-2025 16:43:48 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 16:44:00 - root - INFO - Получен текст: 2025-05-03, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_start_date': True}
-04-05-2025 16:44:00 - root - INFO - Установлена дата начала: 2025-05-03
-04-05-2025 16:44:08 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-05-03', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 16:44:08 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:44:08 - database - INFO - Подключение к БД успешно
-04-05-2025 16:44:08 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:44:08 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:44:08 - database - INFO - Выполняется запрос: SQL('\n            SELECT \n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions \n            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s\n            ') с параметрами [198451926, '2025-05-03', '2025-05-04']
-04-05-2025 16:44:08 - root - INFO - Получено 5 записей из базы данных
-04-05-2025 16:44:08 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 16:44:09 - database - INFO - Соединение с БД закрыто
-04-05-2025 16:45:59 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 16:46:15 - root - INFO - Получен текст: 2025-05-02, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_start_date': True}
-04-05-2025 16:46:15 - root - INFO - Установлена дата начала: 2025-05-02
-04-05-2025 16:46:17 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 16:46:26 - root - INFO - Получен текст: 2025-05-03, user_data: {'export_filters': {'start_date': '2025-05-02', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_end_date': True}
-04-05-2025 16:46:26 - root - INFO - Установлена дата окончания: 2025-05-03
-04-05-2025 16:46:37 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-05-02', 'end_date': '2025-05-03', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 16:46:37 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:46:37 - database - INFO - Подключение к БД успешно
-04-05-2025 16:46:37 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:46:37 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:46:37 - database - INFO - Выполняется запрос: SQL('\n            SELECT \n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions \n            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s\n            ') с параметрами [198451926, '2025-05-02', '2025-05-03']
-04-05-2025 16:46:37 - root - INFO - Получено 7 записей из базы данных
-04-05-2025 16:46:37 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 16:46:37 - database - INFO - Соединение с БД закрыто
-04-05-2025 16:47:27 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 16:47:34 - root - INFO - Получен текст: 2025-05-04, user_data: {'awaiting_end_date': True}
-04-05-2025 16:47:34 - root - ERROR - Ошибка: 'export_filters', update: Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 4, 13, 47, 34, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1161, supergroup_chat_created=False, text='2025-05-04'), update_id=341837032)
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 546, in handle_text_input
-    user_data['export_filters']['end_date'] = text
-KeyError: 'export_filters'
-04-05-2025 16:47:34 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 102, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 546, in handle_text_input
-    user_data['export_filters']['end_date'] = text
-KeyError: 'export_filters'
-04-05-2025 16:47:50 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 16:47:58 - root - INFO - Получен текст: 2025-05-04, user_data: {'awaiting_end_date': True, 'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}}
-04-05-2025 16:47:58 - root - INFO - Установлена дата окончания: 2025-05-04
-04-05-2025 16:48:01 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 16:48:07 - root - INFO - Получен текст: 2025-05-02, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_start_date': True}
-04-05-2025 16:48:07 - root - INFO - Установлена дата начала: 2025-05-02
-04-05-2025 16:48:15 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-05-02', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 16:48:15 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 16:48:15 - database - INFO - Подключение к БД успешно
-04-05-2025 16:48:15 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 16:48:15 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 16:48:15 - database - INFO - Выполняется запрос: SQL('\n            SELECT \n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions \n            WHERE user_id = %s AND transaction_date BETWEEN %s AND %s\n            ') с параметрами [198451926, '2025-05-02', '2025-05-04']
-04-05-2025 16:48:15 - root - INFO - Получено 12 записей из базы данных
-04-05-2025 16:48:15 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 16:48:16 - database - INFO - Соединение с БД закрыто
-04-05-2025 19:48:28 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 19:48:29 - telegram.ext.Application - INFO - Application started
-04-05-2025 19:48:58 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 19:49:10 - root - INFO - Получен текст: 2025-05-03, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_end_date': True}
-04-05-2025 19:49:10 - root - INFO - Установлена дата окончания: 2025-05-03
-04-05-2025 19:49:13 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-03', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 19:49:13 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 19:49:13 - database - INFO - Подключение к БД успешно
-04-05-2025 19:49:13 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 19:49:13 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 19:49:13 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-04
-04-05-2025 19:49:13 - root - ERROR - Ошибка генерации отчета: sequence item 0: expected str instance, SQL found
-Traceback (most recent call last):
-  File "/app/bot.py", line 613, in generate_report
-    df = db.get_transactions(
-  File "/app/database.py", line 315, in get_transactions
-    query = sql.SQL("".join(query_parts))
-TypeError: sequence item 0: expected str instance, SQL found
-04-05-2025 19:49:13 - database - INFO - Соединение с БД закрыто
-04-05-2025 19:56:07 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 19:56:08 - telegram.ext.Application - INFO - Application started
-04-05-2025 20:05:26 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 20:05:40 - root - INFO - Получен текст: 2025-05-03, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_end_date': True}
-04-05-2025 20:05:40 - root - INFO - Установлена дата окончания: 2025-05-03
-04-05-2025 20:05:43 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-03', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 20:05:43 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 20:05:43 - database - INFO - Подключение к БД успешно
-04-05-2025 20:05:43 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 20:05:43 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 20:05:43 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-04
-04-05-2025 20:05:43 - database - INFO - Выполняется запрос: Composed([SQL('\n            SELECT\n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions\n            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s\n            ')]) с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 4)]
-04-05-2025 20:05:43 - root - INFO - Получено 22 записей из базы данных
-04-05-2025 20:05:43 - root - INFO - Столбцы после переименования: ['ID', 'Дата', 'Сумма', 'Наличность', 'Категория', 'Описание', 'Контрагент', 'Чек #', 'Тип транзакции', 'Класс', 'Сумма (куда)', 'Наличность (куда)']
-04-05-2025 20:05:43 - database - INFO - Соединение с БД закрыто
-04-05-2025 20:22:55 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 20:22:56 - telegram.ext.Application - INFO - Application started
-04-05-2025 20:29:01 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 20:29:08 - root - INFO - Получен текст: 2025-05-03, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_end_date': True}
-04-05-2025 20:29:08 - root - INFO - Установлена дата окончания: 2025-05-03
-04-05-2025 20:29:11 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 20:29:16 - root - INFO - Получен текст: 2025-05-02, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-03', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_start_date': True}
-04-05-2025 20:29:16 - root - INFO - Установлена дата начала: 2025-05-02
-04-05-2025 20:29:22 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-05-02', 'end_date': '2025-05-03', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 20:29:22 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 20:29:22 - database - INFO - Подключение к БД успешно
-04-05-2025 20:29:22 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 20:29:22 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 20:29:22 - database - INFO - Диапазон дат для запроса: >= 2025-05-02 и < 2025-05-04
-04-05-2025 20:29:22 - database - INFO - Выполняется запрос: Composed([SQL('\n            SELECT\n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions\n            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s\n            ')]) с параметрами [198451926, '2025-05-02', datetime.date(2025, 5, 4)]
-04-05-2025 20:29:22 - root - INFO - Получено 12 записей из базы данных
-04-05-2025 20:29:22 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 20:29:22 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 20:29:22 - database - INFO - Соединение с БД закрыто
-04-05-2025 21:40:04 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 21:40:04 - telegram.ext.Application - INFO - Application started
-04-05-2025 21:46:02 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 21:46:02 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 21:46:02 - database - INFO - Подключение к БД успешно
-04-05-2025 21:46:02 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 21:46:02 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 21:46:02 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 21:46:02 - database - INFO - Выполняется запрос: Composed([SQL('\n            SELECT\n                id, transaction_date, amount, cash_source,\n                category, description, counterparty,\n                check_num, transaction_type,\n                transaction_class, target_amount, target_cash_source\n            FROM transactions\n            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s\n            ')]) с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5)]
-04-05-2025 21:46:02 - root - INFO - Получено 22 записей из базы данных
-04-05-2025 21:46:02 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 21:46:02 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 21:46:02 - database - INFO - Соединение с БД закрыто
-04-05-2025 21:54:44 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 21:54:45 - telegram.ext.Application - INFO - Application started
-04-05-2025 21:54:57 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 21:54:57 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 21:54:57 - database - INFO - Подключение к БД успешно
-04-05-2025 21:54:57 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 21:54:57 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 21:54:57 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 21:54:57 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5)]
-04-05-2025 21:54:57 - database - ERROR - Ошибка при работе с БД: name 'query' is not defined
-Traceback (most recent call last):
-  File "/app/database.py", line 61, in get_cursor
-    yield cursor
-  File "/app/database.py", line 322, in get_transactions
-    cur.execute(query, params)
-NameError: name 'query' is not defined
-04-05-2025 21:54:57 - database - ERROR - Ошибка выполнения запроса: name 'query' is not defined
-04-05-2025 21:54:57 - root - ERROR - Ошибка генерации отчета: name 'query' is not defined
-Traceback (most recent call last):
-  File "/app/bot.py", line 613, in generate_report
-    df = db.get_transactions(
-  File "/app/database.py", line 322, in get_transactions
-    cur.execute(query, params)
-NameError: name 'query' is not defined
-04-05-2025 21:54:57 - database - INFO - Соединение с БД закрыто
-04-05-2025 21:56:04 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 21:56:04 - telegram.ext.Application - INFO - Application started
-04-05-2025 21:56:14 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 21:56:14 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 21:56:14 - database - INFO - Подключение к БД успешно
-04-05-2025 21:56:14 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 21:56:14 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 21:56:14 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 21:56:14 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5)]
-04-05-2025 21:56:14 - root - INFO - Получено 22 записей из базы данных
-04-05-2025 21:56:14 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 21:56:14 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 21:56:15 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:02:00 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 22:02:01 - telegram.ext.Application - INFO - Application started
-04-05-2025 22:02:11 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 22:02:11 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:02:11 - database - INFO - Подключение к БД успешно
-04-05-2025 22:02:11 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:02:11 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:02:11 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 22:02:11 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             ORDER BY transaction_date DESC с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5)]
-04-05-2025 22:02:11 - root - INFO - Получено 22 записей из базы данных
-04-05-2025 22:02:11 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 22:02:11 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 22:02:11 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:02:46 - root - INFO - Обработчик set_cash_source вызван
-04-05-2025 22:02:46 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:02:46 - database - INFO - Подключение к БД успешно
-04-05-2025 22:02:46 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:02:46 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:02:46 - database - INFO - Вызов get_unique_values для column=cash_source, user_id=198451926
-04-05-2025 22:02:46 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 22:02:46 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "cash_source"
-            FROM transactions
-            WHERE user_id = %s AND "cash_source" IS NOT NULL
-            ORDER BY "cash_source"
-         с параметром user_id=198451926
-04-05-2025 22:02:46 - database - INFO - Получено 1 уникальных значений для столбца cash_source
-04-05-2025 22:02:46 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:02:52 - root - INFO - Обработчик set_category вызван для user_id=198451926
-04-05-2025 22:02:52 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:02:52 - database - INFO - Подключение к БД успешно
-04-05-2025 22:02:52 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:02:52 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:02:52 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 22:02:52 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 22:02:52 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 22:02:52 - database - INFO - Получено 8 уникальных значений для столбца category
-04-05-2025 22:02:52 - root - INFO - Полученные категории: ['Все', 'AppStore | подписки', 'Аппаратура', 'Дети. Одежда', 'Еда', 'Кафе, посиделки', 'Одежда', 'Праздники, Подарки', 'Стрижка']
-04-05-2025 22:02:52 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:02:54 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:02:54 - database - INFO - Подключение к БД успешно
-04-05-2025 22:02:54 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:02:54 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:02:54 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 22:02:54 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 22:02:54 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 22:02:54 - database - INFO - Получено 8 уникальных значений для столбца category
-04-05-2025 22:02:54 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:02:56 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Аппаратура', 'transaction_type': 'Все', 'cash_source': 'Тинькофф. Платинум', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 22:02:56 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:02:56 - database - INFO - Подключение к БД успешно
-04-05-2025 22:02:56 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:02:56 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:02:56 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 22:02:56 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             AND "category" = %s AND "cash_source" = %s ORDER BY transaction_date DESC с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5), 'Аппаратура', 'Тинькофф. Платинум']
-04-05-2025 22:02:56 - root - INFO - Получено 1 записей из базы данных
-04-05-2025 22:02:56 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 22:02:56 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 22:02:57 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:27:15 - root - INFO - Запуск бота в Docker-контейнере
-04-05-2025 22:27:15 - telegram.ext.Application - INFO - Application started
-04-05-2025 22:28:21 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 22:28:21 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:28:21 - database - INFO - Подключение к БД успешно
-04-05-2025 22:28:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:28:21 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:28:21 - database - INFO - Диапазон дат для запроса: >= 2025-04-04 и < 2025-05-05
-04-05-2025 22:28:21 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             ORDER BY transaction_date DESC с параметрами [198451926, '2025-04-04', datetime.date(2025, 5, 5)]
-04-05-2025 22:28:21 - root - INFO - Получено 22 записей из базы данных
-04-05-2025 22:28:21 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 22:28:21 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 22:28:22 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:28:38 - root - INFO - Вызов set_start_date для user_id=198451926
-04-05-2025 22:28:48 - root - INFO - Получен текст: 2025-05-02, user_data: {'export_filters': {'start_date': '2025-04-04', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_start_date': True}
-04-05-2025 22:28:48 - root - INFO - Установлена дата начала: 2025-05-02
-04-05-2025 22:28:58 - root - INFO - Вызов set_end_date для user_id=198451926
-04-05-2025 22:29:01 - root - INFO - Получен текст: 2025-05-02, user_data: {'export_filters': {'start_date': '2025-05-02', 'end_date': '2025-05-04', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}, 'awaiting_end_date': True}
-04-05-2025 22:29:01 - root - INFO - Установлена дата окончания: 2025-05-02
-04-05-2025 22:29:18 - root - INFO - Обработчик set_category вызван для user_id=198451926
-04-05-2025 22:29:19 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:29:19 - database - INFO - Подключение к БД успешно
-04-05-2025 22:29:19 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:29:19 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:29:19 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 22:29:19 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 22:29:19 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 22:29:19 - database - INFO - Получено 8 уникальных значений для столбца category
-04-05-2025 22:29:19 - root - INFO - Полученные категории: ['Все', 'AppStore | подписки', 'Аппаратура', 'Дети. Одежда', 'Еда', 'Кафе, посиделки', 'Одежда', 'Праздники, Подарки', 'Стрижка']
-04-05-2025 22:29:19 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:29:26 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:29:26 - database - INFO - Подключение к БД успешно
-04-05-2025 22:29:26 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:29:26 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:29:26 - database - INFO - Вызов get_unique_values для column=category, user_id=198451926
-04-05-2025 22:29:26 - database - INFO - Проверка наличия fetchall: True
-04-05-2025 22:29:26 - database - INFO - Выполняется запрос: 
-            SELECT DISTINCT "category"
-            FROM transactions
-            WHERE user_id = %s AND "category" IS NOT NULL
-            ORDER BY "category"
-         с параметром user_id=198451926
-04-05-2025 22:29:26 - database - INFO - Получено 8 уникальных значений для столбца category
-04-05-2025 22:29:26 - database - INFO - Соединение с БД закрыто
-04-05-2025 22:29:28 - root - INFO - Генерация отчета с фильтрами: {'start_date': '2025-05-02', 'end_date': '2025-05-02', 'category': 'Еда', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-04-05-2025 22:29:28 - database - INFO - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-04-05-2025 22:29:28 - database - INFO - Подключение к БД успешно
-04-05-2025 22:29:28 - database - INFO - Выполнен SQL-скрипт: /app/sql/tables.sql
-04-05-2025 22:29:28 - database - INFO - Выполнен SQL-скрипт: /app/sql/indexes.sql
-04-05-2025 22:29:28 - database - INFO - Диапазон дат для запроса: >= 2025-05-02 и < 2025-05-03
-04-05-2025 22:29:28 - database - INFO - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             AND "category" = %s ORDER BY transaction_date DESC с параметрами [198451926, '2025-05-02', datetime.date(2025, 5, 3), 'Еда']
-04-05-2025 22:29:28 - root - INFO - Получено 4 записей из базы данных
-04-05-2025 22:29:28 - root - INFO - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-04-05-2025 22:29:28 - root - INFO - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-04-05-2025 22:29:28 - database - INFO - Соединение с БД закрыто
+  File "/app/bot.py", line 1325, in handle_config_edit
+    logger.info(f"Путь к файлу: {filepath}")
+UnboundLocalError: local variable 'filepath' referenced before assignment
+06-05-2025 19:22:07 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:07 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:22:17 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:22:17 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:22:19 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:22:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:58 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281473109674816
+06-05-2025 19:33:58 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281473109675392
+06-05-2025 19:33:58 - root - INFO - Запуск бота в Docker-контейнере
+06-05-2025 19:33:58 - root - CRITICAL - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
+06-05-2025 19:33:58 - asyncio - DEBUG - Using selector: EpollSelector
+06-05-2025 19:33:58 - telegram.ext.ExtBot - DEBUG - Entering: get_me
+06-05-2025 19:33:58 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a1a05b0>
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff917b2340> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125150>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:33:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - User(api_kwargs={'can_connect_to_business': False, 'has_main_web_app': False}, can_join_groups=True, can_read_all_group_messages=False, first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, supports_inline_queries=False, username='INS_ExtrClassTrans_bot')
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Exiting: get_me
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - This Bot is already initialized.
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Updater started (polling)
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Start network loop retry bootstrap del webhook
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Deleting webhook
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Entering: delete_webhook
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:33:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Exiting: delete_webhook
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Bootstrap done
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Waiting for polling to start
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Polling updates from Telegram started
+06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Start network loop retry getting Updates
+06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:33:59 - telegram.ext.Application - INFO - Application started
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff90ba3b50>
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8bfcd740> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125d20>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:09 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:09 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:11 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:11 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:15 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837197]
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1328, supergroup_chat_created=False, text='/config'), update_id=341837197),)
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:15 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1328, supergroup_chat_created=False, text='/config'), update_id=341837197)
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Entering: send_message
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - close.started
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - close.complete
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125ab0>
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff917b2340> server_hostname='api.telegram.org' timeout=5.0
+06-05-2025 19:34:15 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a1ed510>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:15 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
+06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1585'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837198]
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535037825154', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837198),)
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:17 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535037825154', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837198)
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:18 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:18 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:18 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:18 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')
+06-05-2025 19:34:18 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1350'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837199]
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535982609491', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837199),)
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:19 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535982609491', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837199)
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - True
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
+06-05-2025 19:34:19 - root - INFO - edit_menu_callback: Установлен editing_file: categories.yaml. Добавляю config_handlers в группу -1.
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'892'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 19, tzinfo=<UTC>), entities=(MessageEntity(length=7, offset=92, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, supergroup_chat_created=False, text='Отправьте новое содержимое файла categories.yaml в виде текста или файлом YAML. Используйте /cancel для отмены.')
+06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
+06-05-2025 19:34:19 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_edit) с ID: 281473109674816 в группу -1.
+06-05-2025 19:34:19 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_upload) с ID: 281473109675392 в группу -1.
+06-05-2025 19:34:19 - root - INFO - edit_menu_callback: Добавлено 2 обработчиков из self.config_handlers в группу -1.
+06-05-2025 19:34:21 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:21 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'531'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837200]
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1330, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837200),)
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:23 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1330, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837200)
+06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: editing_file = categories.yaml
+06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: Получен текст от пользователя
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Редактируется файл: categories.yaml
+06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: Получено новое содержимое:
+categories:
+  - name: Еда
+    patterns:
+      - PAYINFOTECH
+      - McDonalds
+  - name: Транспорт
+    patterns:
+      - Uber...
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Попытка парсинга YAML...
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Путь для сохранения файла: /app/config/categories.yaml
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Попытка записи файла...
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Файл categories.yaml успешно сохранен по пути: /app/config/categories.yaml
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Entering: send_message
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'494'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1331, supergroup_chat_created=False, text='✅ Файл categories.yaml успешно обновлен!')
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Entering: send_message
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1332, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
+06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
+06-05-2025 19:34:23 - root - INFO - handle_config_edit: Удаление обработчиков и 'editing_file'.
+06-05-2025 19:34:23 - root - INFO - remove_config_handlers: Удаляю config_handlers из группы -1.
+06-05-2025 19:34:23 - root - DEBUG - remove_config_handlers: Удаляю config_handler (handle_config_edit) с ID: 281473109674816 из группы -1.
+06-05-2025 19:34:23 - root - DEBUG - remove_config_handlers: Удаляю config_handler (handle_config_upload) с ID: 281473109675392 из группы -1.
+06-05-2025 19:34:25 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:25 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:35 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:35 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:35 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:37 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:37 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:47 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_body.complete
+06-05-2025 19:34:47 - httpcore.http11 - DEBUG - response_closed.started
+06-05-2025 19:34:47 - httpcore.http11 - DEBUG - response_closed.complete
+06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - No new updates found.
+06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - ()
+06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
+06-05-2025 19:34:49 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
+06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_headers.complete
+06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_body.complete
+06-05-2025 19:34:49 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>

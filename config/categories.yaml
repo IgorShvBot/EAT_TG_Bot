@@ -77,6 +77,7 @@ categories:
       - POPOVA YU.V. Khrabrovo
       - YANTARNAYA ZARYA
       - tortbar
+      - KHMYZOV
   - name: Транспорт. Транспорт
     patterns:
       - METRO
@@ -89,6 +90,7 @@ categories:
   - name: Транспорт. Каршеринг
     patterns:
       - CITYDRIVE
+      - DELIMOBIL
   - name: Доставка
     patterns:
       - DOSTAVKA
@@ -107,6 +109,7 @@ categories:
   - name: Электричество
     patterns:
       - MOSENERGOSBYT
+      - Прием платежей mos.ru
   - name: Дом. Аренда
     patterns:
       - SKLADNO

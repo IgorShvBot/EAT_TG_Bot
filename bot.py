@@ -1,4 +1,4 @@
-__version__ = "3.2.0"
+__version__ = "3.3.0"
 
 import os
 import logging
@@ -57,13 +57,15 @@ def setup_logging():
        
     # Основной логгер
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    # logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
     
     # Дополнительные настройки для конкретных логгеров
     logging.getLogger('httpx').setLevel(logging.WARNING)  # Уменьшаем логи httpx
     logging.getLogger('telegram').setLevel(logging.INFO)  # Настраиваем логи telegram
+    logging.getLogger("telegram").setLevel(logging.DEBUG) # Добавлено
     
     return logger
 
@@ -166,6 +168,17 @@ class TransactionProcessorBot:
         self._is_restarting = False  # Флаг перезагрузки  
         self._in_docker = os.getenv('DOCKER_MODE') is not None
 
+        # Обработчики для редактирования конфига
+        self.config_handlers = [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),
+            MessageHandler(filters.Document.ALL, self.handle_config_upload)
+        ]
+
+        # Логируем ID созданных хендлеров для отладки
+        for i, handler_obj in enumerate(self.config_handlers):
+            handler_name = "handle_config_edit" if i == 0 else "handle_config_upload"
+            logger.debug(f"__init__: Создан config_handler ({handler_name}) с ID: {id(handler_obj)}")
+
         if not self._in_docker:
             # Проверка на дублирующийся запуск только вне Docker
             try:
@@ -192,12 +205,6 @@ class TransactionProcessorBot:
         # Регистрация обработчиков
         self.setup_handlers()
         
-        # Обработчики для редактирования конфига
-        self.config_handlers = [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),
-            MessageHandler(filters.Document.ALL, self.handle_config_upload)
-        ]
-
         self.application.add_handler(CallbackQueryHandler(
             self.config_selection_callback,
             pattern='^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'
@@ -223,7 +230,7 @@ class TransactionProcessorBot:
         # self.application.add_handler(CallbackQueryHandler(self.set_filter, pattern='^set_'))
         self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input))
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),group=-1)
         self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
         self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
         self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))
@@ -339,8 +346,8 @@ class TransactionProcessorBot:
         """Начало процесса экспорта с предзаполненными фильтрами"""
         user_data = context.user_data
         user_data['export_filters'] = {
-            'start_date': (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d'),
-            'end_date': datetime.now().strftime('%Y-%m-%d'),
+            'start_date': datetime.now().replace(day=1).strftime('%d.%m.%Y'),
+            'end_date': datetime.now().strftime('%d.%m.%Y'),
             'category': 'Все',
             'transaction_type': 'Все',
             'cash_source': 'Все',
@@ -356,7 +363,7 @@ class TransactionProcessorBot:
         logger.info("Вызов set_start_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        await query.message.reply_text("📅 Введите *дату начала* в формате `ГГГГ-ММ-ДД`:", parse_mode="Markdown")
+        await query.message.reply_text("📅 Введите *дату начала* в формате `ДД.ММ.ГГГГ`:", parse_mode="Markdown")
         context.user_data["awaiting_start_date"] = True
 
     @admin_only
@@ -364,7 +371,7 @@ class TransactionProcessorBot:
         logger.info("Вызов set_end_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        await query.message.reply_text("📅 Введите *дату окончания* в формате `ГГГГ-ММ-ДД`:", parse_mode="Markdown")
+        await query.message.reply_text("📅 Введите *дату окончания* в формате `ДД.ММ.ГГГГ`:", parse_mode="Markdown")
         context.user_data["awaiting_end_date"] = True
 
     @admin_only
@@ -519,9 +526,22 @@ class TransactionProcessorBot:
     # Обновим обработчик текстового ввода
     @admin_only
     async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        # Сначала проверяем, не находимся ли мы в режиме редактирования конфига
+        if context.user_data.get('editing_file'):
+            # Мы ожидаем, что handle_config_edit перехватит это сообщение.
+            # Если же оно дошло сюда, значит, что-то не так с приоритетами
+            # или регистрацией handle_config_edit.
+            # Логируем это как потенциальную проблему, но не обрабатываем здесь,
+            # чтобы дать шанс handle_config_edit (если он все же как-то сработает позже
+            # или если проблема в другом).
+            logger.warning(f"handle_text_input: Получен текст, но мы в режиме редактирования файла '{context.user_data['editing_file']}'. "
+                           f"Ожидался вызов handle_config_edit. Текст: {update.message.text[:100]}...")
+            return # Явно выходим, чтобы не обрабатывать это сообщение как обычный текст
+
+        user_id = update.message.from_user.id
+        text = update.message.text
         user_data = context.user_data
-        text = update.message.text.strip()
-        logger.info("Получен текст: %s, user_data: %s", text, user_data)
+        logger.info("Получен текст от user_id %s: %s, user_data: %s", user_id, text, user_data) # user_id теперь используется
 
         if not text:
             await update.message.reply_text("Пожалуйста, введите непустое значение")
@@ -529,27 +549,27 @@ class TransactionProcessorBot:
 
         if user_data.get('awaiting_start_date'):
             try:
-                datetime.strptime(text, '%Y-%m-%d')
+                datetime.strptime(text, '%d.%m.%Y')
                 user_data['export_filters']['start_date'] = text
                 logger.info("Установлена дата начала: %s", text)
                 del user_data['awaiting_start_date']
                 await self.show_filters_menu(update, context)
             except ValueError:
                 await update.message.reply_text(
-                    "❌ Неверный формат даты. Используйте ГГГГ-ММ-ДД (например, 2025-01-01)"
+                    "❌ Неверный формат даты. Используйте ДД.ММ.ГГГГ (например, 01.01.2025)"
                 )
             return
 
         if user_data.get('awaiting_end_date'):
             try:
-                datetime.strptime(text, '%Y-%m-%d')
+                datetime.strptime(text, '%d.%m.%Y')
                 user_data['export_filters']['end_date'] = text
                 logger.info("Установлена дата окончания: %s", text)
                 del user_data['awaiting_end_date']
                 await self.show_filters_menu(update, context)
             except ValueError:
                 await update.message.reply_text(
-                    "❌ Неверный формат даты. Используйте ГГГГ-ММ-ДД (например, 2025-01-01)"
+                    "❌ Неверный формат даты. Используйте ДД.ММ.ГГГГ (например, 01.01.2025)"
                 )
             return
 
@@ -608,6 +628,9 @@ class TransactionProcessorBot:
             if filters[key] != 'Все':
                 db_filters[key] = filters[key]
         
+        filters['start_date'] = datetime.strptime(filters['start_date'], '%d.%m.%Y')
+        filters['end_date'] = datetime.strptime(filters['end_date'], '%d.%m.%Y')
+
         db = Database()
         try:
             df = db.get_transactions(
@@ -626,6 +649,7 @@ class TransactionProcessorBot:
                 return
 
             df.fillna('', inplace=True)
+            df['transaction_date'] = pd.to_datetime(df['transaction_date']).dt.strftime('%d.%m.%Y %H:%M')
             df.replace('NaN', '', inplace=True) # Дополнительная замена строки "NaN"
             
             logger.info("Значения NaN (и другие отсутствующие) заменены на пустые строки.")
@@ -658,15 +682,14 @@ class TransactionProcessorBot:
                 await context.bot.send_document(
                     chat_id=query.from_user.id,
                     document=open(tmp.name, 'rb'),
-                    caption=f"Отчет за {filters['start_date']} - {filters['end_date']}"
+                    caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} - {filters['end_date'].strftime('%d.%m.%Y')}"
                 )
                 # os.unlink(tmp.name)  # Удаляем временный файл
             
                 # --- ФОРМИРОВАНИЕ СВОДКИ ПО ФИЛЬТРАМ ---
                 filter_summary_lines = []
                 # Добавляем диапазон дат (он всегда есть)
-                filter_summary_lines.append(f"📅 Период: {filters.get('start_date', 'N/A')} - {filters.get('end_date', 'N/A')}")
-
+                filter_summary_lines.append(f"📅 Период: {filters.get('start_date').strftime('%d.%m.%Y')} - {filters.get('end_date').strftime('%d.%m.%Y')}")
                 # Словарь для красивых названий фильтров
                 filter_display_names = {
                     'category': '🏷 Категория',
@@ -1031,6 +1054,7 @@ class TransactionProcessorBot:
     async def send_single_config_file(self, query, filename):
         """Отправляет один выбранный конфигурационный файл"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
+        # config_dir = '/app/config'
         filepath = os.path.join(config_dir, filename)
         
         descriptions = {
@@ -1209,22 +1233,30 @@ class TransactionProcessorBot:
             'edit_categories': 'categories.yaml',
             'edit_special': 'special_conditions.yaml',
             'edit_pdf_patterns': 'pdf_patterns.yaml',
-            'edit_timeouts': 'timeouts.yaml'
+            'edit_timeouts': 'timeouts.yaml',
+            'edit_class_contractor.yaml': 'class_contractor.yaml'
         }
-        
         filename = config_map.get(query.data)
+
         if not filename:
-            await query.edit_message_text("Неизвестный тип конфига")
+            await query.edit_message_text("Ошибка: Неизвестный файл для редактирования.")
             return
-        
+
         context.user_data['editing_file'] = filename
+        logger.info(f"edit_menu_callback: Установлен editing_file: {filename}. Добавляю config_handlers в группу -1.")
+
         await query.edit_message_text(
             text=f"Отправьте новое содержимое файла {filename} в виде текста "
-                "или файлом YAML. Используйте /cancel для отмены."
+                 "или файлом YAML. Используйте /cancel для отмены."
         )
-        # Активируем обработчики редактирования
-        for handler in self.config_handlers:
-            self.application.add_handler(handler)
+        
+        handlers_added_count = 0
+        for handler_obj in self.config_handlers: # handler_obj чтобы не путать с переменной handler из PTB
+            handler_name = "handle_config_edit" if handler_obj.callback == self.handle_config_edit else "handle_config_upload"
+            logger.debug(f"edit_menu_callback: Добавляю config_handler ({handler_name}) с ID: {id(handler_obj)} в группу -1.")
+            self.application.add_handler(handler_obj, group=-1)
+            handlers_added_count += 1
+        logger.info(f"edit_menu_callback: Добавлено {handlers_added_count} обработчиков из self.config_handlers в группу -1.")
 
     @admin_only
     async def show_edit_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1249,6 +1281,7 @@ class TransactionProcessorBot:
     async def send_config_files(self, query):
         """Отправляет содержимое конфигов как текстовые сообщения"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
+        # config_dir = '/app/config'
         
         config_files = {
             'categories.yaml': 'Категории транзакций',
@@ -1282,44 +1315,102 @@ class TransactionProcessorBot:
     @admin_only
     async def handle_config_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает текстовое редактирование конфига"""
+        logger.debug("handle_config_edit: editing_file = %s", context.user_data.get('editing_file'))
+        logger.debug("handle_config_edit: Получен текст от пользователя")
+        # logger.info(f"Путь к файлу: {filepath}")
+        # logger.info(f"Файл существует: {os.path.exists(filepath)}")
+        # logger.info(f"Директория доступна для записи: {os.access(config_dir, os.W_OK)}")
+        # logger.info(f"Файл доступен для записи: {os.path.exists(filepath) and os.access(filepath, os.W_OK)}")
+        logger.info("handle_config_edit: Начало обработки текстового редактирования.") # Добавлено
+        
         if 'editing_file' not in context.user_data:
+            logger.warning("handle_config_edit: 'editing_file' не найден в user_data.") # Добавлено
             await update.message.reply_text("Не выбрано файл для редактирования")
             return
             
         filename = context.user_data['editing_file']
-        new_content = update.message.text
-        
+        new_content_text = update.message.text # Получаем текст
+
+        logger.info(f"handle_config_edit: Редактируется файл: {filename}") # Добавлено
+        logger.debug(f"handle_config_edit: Получено новое содержимое:\n{new_content_text[:500]}...") # Добавлено (первые 500 символов)
+
         try:
+            logger.info("handle_config_edit: Попытка парсинга YAML...") # Добавлено
             # Проверяем валидность YAML
-            parsed = yaml.safe_load(new_content)
-            if not isinstance(parsed, dict):  # Проверяем, что это словарь
-                raise yaml.YAMLError("Конфиг должен быть в формате YAML словаря")
+            parsed_data = yaml.safe_load(new_content_text)
+            # Можно добавить более строгую проверку структуры, если нужно
+            if parsed_data is None:
+                 await update.message.reply_text("Ошибка: Не удалось распознать YAML.")
+                 return
+            if not isinstance(parsed_data, dict): # Проверка, что корень - словарь
+                 await update.message.reply_text("Ошибка: Корневой элемент YAML должен быть словарем (например, начинаться с 'categories:')")
+                 return
+            # Дополнительная проверка для categories.yaml
+            if filename == 'categories.yaml' and ('categories' not in parsed_data or not isinstance(parsed_data['categories'], list)):
+                await update.message.reply_text("Ошибка: Файл categories.yaml должен содержать ключ 'categories' со списком категорий.")
+                return
             
             # Получаем абсолютный путь к файлу конфигурации
             config_dir = os.path.join(os.path.dirname(__file__), 'config')
+            # config_dir = '/app/config'
             filepath = os.path.join(config_dir, filename)
+            logger.info(f"handle_config_edit: Путь для сохранения файла: {filepath}") # Добавлено
+            # logger.info(f"Попытка сохранения файла в: {filepath}")
             
             # Проверяем существование директории
             if not os.path.exists(config_dir):
-                os.makedirs(config_dir)
-            
+                try:
+                    os.makedirs(config_dir, mode=0o775)
+                    logger.info(f"Создана директория: {config_dir}")
+                except OSError as e:
+                    logger.error(f"Ошибка создания директории {config_dir}: {e}")
+                    await update.message.reply_text(f"Ошибка создания директории: {e}")
+                    return
+
+            # Проверяем права доступа
+            if not os.access(config_dir, os.W_OK):
+                logger.error(f"Нет прав на запись в директорию {config_dir}")
+                await update.message.reply_text(f"Нет прав на запись в директорию {config_dir}")
+                return
+
+            # Проверяем права доступа к файлу (добавлено)
+            if os.path.exists(filepath) and not os.access(filepath, os.W_OK):
+                logger.error(f"Нет прав на запись в файл {filepath}")
+                await update.message.reply_text(f"Нет прав на запись в файл {filepath}")
+                return
+
             # Сохраняем изменения
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(new_content)
-            
-            logger.info(f"Файл {filename} успешно обновлен по пути: {filepath}")
-            await update.message.reply_text(f"Файл {filename} успешно обновлен!")
-            
-            # Удаляем обработчики редактирования
-            self.remove_config_handlers()
-            del context.user_data['editing_file']
-            
+            try:
+                # Преобразуем Python объект обратно в YAML строку с правильным форматированием
+                # ensure_ascii=False для поддержки кириллицы, allow_unicode=True тоже полезно
+                logger.info("handle_config_edit: Попытка записи файла...") # Добавлено
+                yaml_to_write = yaml.dump(parsed_data, allow_unicode=True, sort_keys=False, indent=2)
+
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(yaml_to_write) # <-- Пишем отформатированный YAML
+                logger.info(f"handle_config_edit: Файл {filename} успешно сохранен по пути: {filepath}")
+                # !!! Добавляем сообщение об успехе !!!
+                await update.message.reply_text(f"✅ Файл {filename} успешно обновлен!")
+
+            except (IOError, PermissionError) as e:
+                logger.error(f"Ошибка сохранения файла {filepath}: {e}")
+                await update.message.reply_text(f"Ошибка сохранения файла: {e}")
+                return
+                        
         except yaml.YAMLError as e:
-            logger.error(f"Ошибка в YAML: {str(e)}")
+            logger.error(f"handle_config_edit: Ошибка парсинга YAML: {str(e)}", exc_info=True) # Добавлено exc_info
             await update.message.reply_text(f"Ошибка в YAML: {str(e)}\nПопробуйте еще раз")
         except Exception as e:
-            logger.error(f"Ошибка при сохранении файла: {str(e)}")
+            logger.error(f"handle_config_edit: Ошибка при сохранении файла: {str(e)}", exc_info=True) # Добавлено exc_info
             await update.message.reply_text(f"Ошибка при сохранении файла: {str(e)}")
+
+        finally: # Добавлено
+            logger.info("handle_config_edit: Удаление обработчиков и 'editing_file'.") # Добавлено
+            self.remove_config_handlers() # Убедитесь, что это вызывается
+            if 'editing_file' in context.user_data:
+                del context.user_data['editing_file']
+            # Возвращаем в главное меню
+            # await self.show_config_menu(update, context) # Возможно, это не нужно здесь, или нужно update.message
 
     @admin_only
     async def handle_config_upload(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1338,6 +1429,7 @@ class TransactionProcessorBot:
         try:
             # Получаем абсолютный путь
             config_dir = os.path.join(os.path.dirname(__file__), 'config')
+            # config_dir = '/app/config'
             filepath = os.path.join(config_dir, filename)
             
             # Скачиваем временный файл
@@ -1357,17 +1449,18 @@ class TransactionProcessorBot:
             
             # Проверяем существование директории
             if not os.path.exists(config_dir):
-                os.makedirs(config_dir)
-            
+                try:
+                    os.makedirs(config_dir)
+                except OSError as e:
+                    logger.error(f"Ошибка создания директории {config_dir}: {e}")
+                    await update.message.reply_text(f"Ошибка создания директории: {e}")
+                    return
+
             # Сохраняем файл
             os.replace(downloaded_file, filepath)
-            
+
             logger.info(f"Файл {filename} успешно обновлен по пути: {filepath}")
-            await update.message.reply_text(f"Файл {filename} успешно обновлен!")
-            
-            # Удаляем обработчики редактирования
-            self.remove_config_handlers()
-            del context.user_data['editing_file']
+            await update.message.reply_text(f"✅ Файл {filename} успешно обновлен!")
             
         except yaml.YAMLError as e:
             logger.error(f"Ошибка в YAML: {str(e)}")
@@ -1379,26 +1472,20 @@ class TransactionProcessorBot:
             await update.message.reply_text(f"Ошибка: {str(e)}")
             if os.path.exists(downloaded_file):
                 os.unlink(downloaded_file)
-                
+
+        finally: # Добавлено
+            logger.info("handle_config_upload: Удаление обработчиков и 'editing_file'.") # Добавлено
+            self.remove_config_handlers() # Убедитесь, что это вызывается
+            if 'editing_file' in context.user_data:
+                del context.user_data['editing_file']
+
     def remove_config_handlers(self):
         """Удаляет обработчики редактирования конфига"""
-        for handler in self.config_handlers:
-            self.application.remove_handler(handler)
-
-    # @admin_only
-    # async def export_data(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #     db = Database()
-    #     df = db.get_transactions(
-    #         user_id=update.effective_user.id,
-    #         start_date=datetime(2025, 4, 1),
-    #         end_date=datetime.now(),
-    #         filters={"category": "Еда"}
-    #     )
-    #     db.close()
-    
-    #     with NamedTemporaryFile(suffix='.csv', delete=False) as tmp:
-    #         df.to_csv(tmp.name, index=False)
-    #         await update.message.reply_document(document=open(tmp.name, 'rb'))
+        logger.info("remove_config_handlers: Удаляю config_handlers из группы -1.")
+        for handler_obj in self.config_handlers: # handler_obj
+            handler_name = "handle_config_edit" if handler_obj.callback == self.handle_config_edit else "handle_config_upload"
+            logger.debug(f"remove_config_handlers: Удаляю config_handler ({handler_name}) с ID: {id(handler_obj)} из группы -1.")
+            self.application.remove_handler(handler_obj, group=-1)
 
     # Обработка документов
     @admin_only
@@ -1913,17 +2000,16 @@ class TransactionProcessorBot:
             logger.info("Запуск бота")
         
         try:
+            logger.critical("!!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!") # Отладочный лог
             self.application.run_polling(
                 poll_interval=2.0,
                 timeout=self.request_timeout,
-                close_loop=False,
-                stop_signals=None
+                # close_loop=False, # Это по умолчанию True, можно попробовать убрать или оставить
+                stop_signals=None # Убедитесь, что никакие сигналы не прерывают его случайно
             )
         except Exception as e:
-            logger.error(f"Ошибка при работе бота: {e}")
-            if not self._in_docker:
-                sys.exit(1)
-        
+            logger.error(f"Ошибка при работе бота: {e}", exc_info=True) # Добавлено exc_info
+           
 def docker_healthcheck():
     """Простая проверка здоровья для Docker"""
     try:
