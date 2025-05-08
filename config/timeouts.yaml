@@ -1,5 +1,5 @@
 timeouts:
   download_timeout: 10 # Таймаут загрузки файла (секунды)
-  processing_timeout: 20 # Таймаут обработки файла (секунды)
+  processing_timeout: 10 # Таймаут обработки файла (секунды)
   request_timeout: 10 # Таймаут для обычных запросов (секунды)
-  delay_between_operations: 5 # Задержка между операциями (секунды)
+  delay_between_operations: 3 # Задержка между операциями (секунды)

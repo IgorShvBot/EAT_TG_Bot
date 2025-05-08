@@ -26,7 +26,9 @@ services:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - DOCKER_MODE=true
       - PYTHONUNBUFFERED=1
-      - LOG_LEVEL=DEBUG
+      - LOG_LEVEL=INFO
+      # - LOG_LEVEL=DEBUG # Или DEBUG для более подробных логов
+      # - LOG_LEVEL=WARNING # Или WARNING для менее подробных
       - BACKUP_DIR=/backups
       - DISABLE_DUPLICATE_CHECK=${DISABLE_DUPLICATE_CHECK:-false}
     volumes:

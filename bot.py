@@ -1,4 +1,4 @@
-__version__ = "3.3.0"
+__version__ = "3.4.0"
 
 import os
 import logging
@@ -27,6 +27,8 @@ import telegram
 import re
 from database import Database
 from datetime import datetime, timedelta
+from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
+from telegram.ext.filters import BaseFilter
 
 # Настройка логирования
 def setup_logging():
@@ -57,16 +59,31 @@ def setup_logging():
        
     # Основной логгер
     logger = logging.getLogger()
-    # logger.setLevel(logging.INFO)
-    logger.setLevel(logging.DEBUG)
+
+    # Читаем уровень логирования из переменной окружения, по умолчанию INFO
+    log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
+    log_level_mapping = {
+        'CRITICAL': logging.CRITICAL,
+        'ERROR': logging.ERROR,
+        'WARNING': logging.WARNING,
+        'INFO': logging.INFO,
+        'DEBUG': logging.DEBUG,
+        'NOTSET': logging.NOTSET
+    }
+    log_level = log_level_mapping.get(log_level_str, logging.INFO) # Устанавливаем INFO по умолчанию, если значение неверное
+    logger.setLevel(log_level)
+
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
     
     # Дополнительные настройки для конкретных логгеров
     logging.getLogger('httpx').setLevel(logging.WARNING)  # Уменьшаем логи httpx
     logging.getLogger('telegram').setLevel(logging.INFO)  # Настраиваем логи telegram
-    logging.getLogger("telegram").setLevel(logging.DEBUG) # Добавлено
-    
+    # logging.getLogger("telegram").setLevel(logging.DEBUG) # Добавлено
+
+    # Логируем установленный уровень
+    logger.info(f"Уровень логирования для BOT установлен в: {logging.getLevelName(logger.level)}")
+
     return logger
 
 logger = setup_logging()
@@ -81,25 +98,40 @@ ALLOWED_USERS = load_admins()
 
 # Декоратор для проверки доступа
 def admin_only(func):
-    """Декоратор для ограничения доступа только админам"""
     async def wrapper(*args, **kwargs):
-        # Пропускаем проверку, если update не передан
-        if 'update' not in kwargs and not any(isinstance(arg, Update) for arg in args):
-            return await func(*args, **kwargs)
+        # ... (логика определения update)
+        # update = args[1] if len(args) >= 2 else (kwargs.get('update') or args[0]) # Упрощенный пример
         
-        # Определяем update из аргументов
-        if len(args) >= 2:
-            update = args[1]  # Для методов класса (self, update, context)
-        else:
-            update = kwargs.get('update') or args[0]  # Для обычных функций
-        
+        # Определяем update из аргументов (код из вашего файла)
+        if len(args) >= 2 and isinstance(args[1], Update): # Проверка для методов класса
+            update = args[1]
+        elif len(args) >= 1 and isinstance(args[0], Update): # Проверка для обычных функций
+             update = args[0]
+        elif 'update' in kwargs and isinstance(kwargs['update'], Update):
+            update = kwargs['update']
+        else: # Попытка найти Update, если он не первый или не именованный аргумент
+            found_update = next((arg for arg in args if isinstance(arg, Update)), None)
+            if not found_update:
+                 logger.error("admin_only: Не удалось найти объект Update в аргументах.")
+                 # В зависимости от строгости, можно либо пропустить, либо вернуть ошибку
+                 return await func(*args, **kwargs) # Или вернуть ошибку доступа
+            update = found_update
+
+        if not update or not hasattr(update, 'effective_user') or not update.effective_user:
+            logger.error("admin_only: Объект Update или effective_user не найден или некорректен.")
+            # Решите, как обрабатывать эту ситуацию: пропустить проверку или запретить доступ
+            return await func(*args, **kwargs) # Пример: пропуск проверки, если нет пользователя
+
         user_id = update.effective_user.id
+        logger.debug(f"admin_only: Проверка доступа для user_id: {user_id}. Входит в ALLOWED_USERS: {user_id in ALLOWED_USERS}") # <--- ДОБАВЬТЕ ЭТОТ ЛОГ
+
         if user_id not in ALLOWED_USERS:
             logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id}")
             if hasattr(update, 'message') and update.message:
                 await update.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
             elif hasattr(update, 'callback_query') and update.callback_query:
                 await update.callback_query.answer("Доступ запрещен")
+                logger.debug(f"admin_only: Отправлен ответ 'Доступ запрещен' пользователю {user_id}") # <--- ДОБАВЬТЕ ЭТОТ ЛОГ
             return
         return await func(*args, **kwargs)
     return wrapper
@@ -205,9 +237,14 @@ class TransactionProcessorBot:
         # Регистрация обработчиков
         self.setup_handlers()
         
+        # self.application.add_handler(CallbackQueryHandler(
+        #     self.config_selection_callback,
+        #     pattern='^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'
+        # ))
+
         self.application.add_handler(CallbackQueryHandler(
             self.config_selection_callback,
-            pattern='^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'
+            pattern=re.compile(r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$')
         ))
 
         # Обработчик для ввода паттерна
@@ -228,12 +265,14 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
 
         # self.application.add_handler(CallbackQueryHandler(self.set_filter, pattern='^set_'))
+        # self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^calendar:"),group=0)
+        self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),group=-1)
         self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
         self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
-        self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))
+        self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))     
         self.application.add_handler(CallbackQueryHandler(self.set_category, pattern='^set_category$'))
         self.application.add_handler(CallbackQueryHandler(self.set_type, pattern='^set_type$'))
         self.application.add_handler(CallbackQueryHandler(self.set_cash_source, pattern='^set_cash_source'))
@@ -241,7 +280,19 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
         self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
         self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
-        # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'))
+        self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'))
+
+        # Регистрируем обработчик календаря, используя безопасную обертку, определенную в классе
+        # Он регистрируется здесь после других обработчиков, чтобы гарантировать проверку обработчиков с более высоким приоритетом первыми.
+        # self.application.add_handler(
+        #     CallbackQueryHandler(
+        #         self.handle_calendar_callback,
+        #         pattern=self.safe_calendar_pattern_wrapper(DetailedTelegramCalendar.func())
+        #     ),
+        #     group=1
+        # )
+
+        # self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^calendar:"),group=0)
 
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
@@ -360,19 +411,63 @@ class TransactionProcessorBot:
 
     @admin_only
     async def set_start_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.info("Вызов set_start_date для user_id=%s", update.effective_user.id)
+        logger.debug("Создание календаря для выбора даты начала")
+        logger.debug("Вызов set_start_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        await query.message.reply_text("📅 Введите *дату начала* в формате `ДД.ММ.ГГГГ`:", parse_mode="Markdown")
-        context.user_data["awaiting_start_date"] = True
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.message.reply_text(
+            f"📅 Выберите дату начала ({LSTEP[step]}):",  # Используем LSTEP для отображения текущего шага (год/месяц/день)
+            reply_markup=calendar
+        )
+        context.user_data["calendar_context"] = "start_date" 
 
     @admin_only
     async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info("Вызов set_end_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        await query.message.reply_text("📅 Введите *дату окончания* в формате `ДД.ММ.ГГГГ`:", parse_mode="Markdown")
-        context.user_data["awaiting_end_date"] = True
+        calendar, step = DetailedTelegramCalendar().build()
+        await query.message.reply_text(
+            f"📅 Выберите дату окончания ({LSTEP[step]}):", # Используем LSTEP для отображения текущего шага
+            reply_markup=calendar
+        )
+        context.user_data["calendar_context"] = "end_date"
+
+    @admin_only
+    async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        logger.debug(f"Raw callback data: {update.callback_query.data}")
+        logger.info(f"Calendar data received: {query.data}")
+        logger.debug(f"Получен callback от календаря: {query.data}")
+        await query.answer()
+        result, key, step = DetailedTelegramCalendar().process(query.data)
+
+        calendar_context = context.user_data.get("calendar_context") # Получаем контекст (start_date или end_date)
+
+        if not result and key:
+            # Если дата еще не выбрана (пользователь выбирает год/месяц), обновляем календарь
+            await query.edit_message_text(f"📅 Выберите {calendar_context.replace('_', ' ')} ({LSTEP[step]}):", reply_markup=key)
+        elif result:
+            # Если дата выбрана (result - это объект datetime.date)
+            selected_date_str = result.strftime('%d.%m.%Y') # Форматируем дату как строку
+
+            if calendar_context == "start_date":
+                context.user_data['export_filters']['start_date'] = selected_date_str
+                logger.info("Установлена дата начала через календарь: %s", selected_date_str)
+            elif calendar_context == "end_date":
+                context.user_data['export_filters']['end_date'] = selected_date_str
+                logger.info("Установлена дата окончания через календарь: %s", selected_date_str)
+
+            # Очищаем временный контекст календаря
+            if "calendar_context" in context.user_data:
+                del context.user_data["calendar_context"]
+
+            # Можно уведомить пользователя о выбранной дате (опционально, т.к. сразу покажем меню)
+            # await query.edit_message_text(f"Выбрана дата: {selected_date_str}")
+
+            # Возвращаемся к меню фильтров, где будет отображена выбранная дата
+            await self.show_filters_menu(update, context)
 
     @admin_only
     async def set_category(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -521,6 +616,7 @@ class TransactionProcessorBot:
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         logger.info("Получен callback: %s", query.data)
+        logger.debug(f"DEBUG_CALLBACK: Получен callback_data: '{query.data}' от user_id: {query.from_user.id}") # Улучшенный лог
         await query.answer()
 
     # Обновим обработчик текстового ввода
@@ -545,32 +641,6 @@ class TransactionProcessorBot:
 
         if not text:
             await update.message.reply_text("Пожалуйста, введите непустое значение")
-            return
-
-        if user_data.get('awaiting_start_date'):
-            try:
-                datetime.strptime(text, '%d.%m.%Y')
-                user_data['export_filters']['start_date'] = text
-                logger.info("Установлена дата начала: %s", text)
-                del user_data['awaiting_start_date']
-                await self.show_filters_menu(update, context)
-            except ValueError:
-                await update.message.reply_text(
-                    "❌ Неверный формат даты. Используйте ДД.ММ.ГГГГ (например, 01.01.2025)"
-                )
-            return
-
-        if user_data.get('awaiting_end_date'):
-            try:
-                datetime.strptime(text, '%d.%m.%Y')
-                user_data['export_filters']['end_date'] = text
-                logger.info("Установлена дата окончания: %s", text)
-                del user_data['awaiting_end_date']
-                await self.show_filters_menu(update, context)
-            except ValueError:
-                await update.message.reply_text(
-                    "❌ Неверный формат даты. Используйте ДД.ММ.ГГГГ (например, 01.01.2025)"
-                )
             return
 
         # Обработка других текстовых вводов (Контрагент, Чек)
@@ -621,7 +691,7 @@ class TransactionProcessorBot:
         
         user_data = context.user_data
         filters = user_data['export_filters']
-        logger.info("Генерация отчета с фильтрами: %s", filters)
+        logger.debug("Генерация отчета с фильтрами: %s", filters)
 
         db_filters = {}
         for key in ['category', 'transaction_type', 'cash_source', 'counterparty', 'check_num', 'transaction_class']:
@@ -652,7 +722,7 @@ class TransactionProcessorBot:
             df['transaction_date'] = pd.to_datetime(df['transaction_date']).dt.strftime('%d.%m.%Y %H:%M')
             df.replace('NaN', '', inplace=True) # Дополнительная замена строки "NaN"
             
-            logger.info("Значения NaN (и другие отсутствующие) заменены на пустые строки.")
+            logger.debug("Значения NaN (и другие отсутствующие) заменены на пустые строки.")
             
             # Словарь для переименования столбцов
             column_mapping = {
@@ -673,7 +743,7 @@ class TransactionProcessorBot:
             # Переименовываем столбцы
             # df = df.rename(columns=column_mapping)
             df_renamed = df.rename(columns=column_mapping)
-            logger.info("Столбцы после переименования: %s", df.columns.tolist())
+            logger.debug("Столбцы после переименования: %s", df.columns.tolist())
             
             with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
                 df_renamed.to_csv(tmp.name, index=False, encoding='utf-8', sep=',')
@@ -917,6 +987,22 @@ class TransactionProcessorBot:
             filters.TEXT & ~filters.COMMAND,
             self.handle_pattern_input
         ))
+
+    @admin_only
+    def safe_calendar_pattern_wrapper(self, original_pattern_callable):
+        """Безопасно обрабатывает проверки паттернов календаря, перехватывая AttributeErrors."""
+        def wrapper(data: str) -> bool:
+            try:
+                # Вызываем оригинальную функцию проверки паттерна календаря
+                return original_pattern_callable(data)
+            except AttributeError as e:
+                # Перехватываем конкретную ошибку, указывающую на строку без .data
+                if "'str' object has no attribute 'data'" in str(e):
+                    return False # Считаем, что это не паттерн календаря
+                # Перевызываем другие AttributeErrors
+                raise
+            # Не перехватываем TypeError и другие исключения
+        return wrapper
 
     @admin_only
     async def handle_pattern_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2000,7 +2086,7 @@ class TransactionProcessorBot:
             logger.info("Запуск бота")
         
         try:
-            logger.critical("!!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!") # Отладочный лог
+            logger.debug("!!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!") # Отладочный лог
             self.application.run_polling(
                 poll_interval=2.0,
                 timeout=self.request_timeout,

@@ -1,592 +1,417 @@
-06-05-2025 19:21:24 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281473065633344
-06-05-2025 19:21:24 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281472954072704
-06-05-2025 19:21:24 - root - INFO - Запуск бота в Docker-контейнере
-06-05-2025 19:21:24 - root - CRITICAL - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
-06-05-2025 19:21:24 - asyncio - DEBUG - Using selector: EpollSelector
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: get_me
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff877a05b0>
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8edb2440> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721150>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:24 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - User(api_kwargs={'can_connect_to_business': False, 'has_main_web_app': False}, can_join_groups=True, can_read_all_group_messages=False, first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, supports_inline_queries=False, username='INS_ExtrClassTrans_bot')
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Exiting: get_me
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - This Bot is already initialized.
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Updater started (polling)
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Start network loop retry bootstrap del webhook
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Deleting webhook
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: delete_webhook
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:24 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Exiting: delete_webhook
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Bootstrap done
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Waiting for polling to start
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Polling updates from Telegram started
-06-05-2025 19:21:24 - telegram.ext.Updater - DEBUG - Start network loop retry getting Updates
-06-05-2025 19:21:24 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:21:24 - telegram.ext.Application - INFO - Application started
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8e1a4190>
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff895c9840> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:21:24 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721d20>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:35 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:35 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:35 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:35 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:21:35 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:21:37 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:37 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:37 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:47 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:47 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:47 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:47 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:21:47 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:21:49 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:49 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:49 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:57 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837193]
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1325, supergroup_chat_created=False, text='/config'), update_id=341837193),)
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:21:57 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1325, supergroup_chat_created=False, text='/config'), update_id=341837193)
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Entering: send_message
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - close.started
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - close.complete
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87721c00>
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8edb2440> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:21:57 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff87720a00>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:57 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:57 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
-06-05-2025 19:21:57 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1585'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837194]
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533947039570', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837194),)
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:21:59 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533947039570', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837194)
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:21:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:21:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')
-06-05-2025 19:21:59 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1350'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837195]
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195),)
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:22:01 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195)
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:22:01 - root - INFO - edit_menu_callback: Установлен editing_file: categories.yaml. Добавляю config_handlers в группу -1.
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:01 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'892'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 22, 1, tzinfo=<UTC>), entities=(MessageEntity(length=7, offset=92, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, supergroup_chat_created=False, text='Отправьте новое содержимое файла categories.yaml в виде текста или файлом YAML. Используйте /cancel для отмены.')
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
-06-05-2025 19:22:01 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_edit) с ID: 281473065633344 в группу -1.
-06-05-2025 19:22:01 - root - ERROR - Ошибка: Application.add_handler() got an unexpected keyword argument 'block', update: Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344533390885304', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 21, 57, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 21, 59, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1326, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837195)
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 104, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 1262, in edit_menu_callback
-    self.application.add_handler(handler_obj, group=-1, block=False)
-TypeError: Application.add_handler() got an unexpected keyword argument 'block'
-06-05-2025 19:22:01 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 104, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 1262, in edit_menu_callback
-    self.application.add_handler(handler_obj, group=-1, block=False)
-TypeError: Application.add_handler() got an unexpected keyword argument 'block'
-06-05-2025 19:22:01 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:01 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:02 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:02 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:02 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:02 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:02 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:22:02 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:22:03 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:03 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:03 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:05 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'531'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:05 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:05 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:05 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837196]
-06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196),)
-06-05-2025 19:22:05 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:22:05 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196)
-06-05-2025 19:22:05 - root - DEBUG - handle_config_edit: editing_file = categories.yaml
-06-05-2025 19:22:05 - root - DEBUG - handle_config_edit: Получен текст от пользователя
-06-05-2025 19:22:05 - root - ERROR - Ошибка: local variable 'filepath' referenced before assignment, update: Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 22, 5, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1327, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837196)
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 104, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 1325, in handle_config_edit
-    logger.info(f"Путь к файлу: {filepath}")
-UnboundLocalError: local variable 'filepath' referenced before assignment
-06-05-2025 19:22:05 - root - ERROR - Исключение при обработке запроса:
-Traceback (most recent call last):
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_application.py", line 1124, in process_update
-    await coroutine
-  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_handler.py", line 141, in handle_update
-    return await self.callback(update, context)
-  File "/app/bot.py", line 104, in wrapper
-    return await func(*args, **kwargs)
-  File "/app/bot.py", line 1325, in handle_config_edit
-    logger.info(f"Путь к файлу: {filepath}")
-UnboundLocalError: local variable 'filepath' referenced before assignment
-06-05-2025 19:22:07 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:07 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:07 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:22:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:22:17 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:22:17 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:22:17 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:22:17 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:22:19 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:22:19 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:22:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:58 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281473109674816
-06-05-2025 19:33:58 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281473109675392
-06-05-2025 19:33:58 - root - INFO - Запуск бота в Docker-контейнере
-06-05-2025 19:33:58 - root - CRITICAL - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
-06-05-2025 19:33:58 - asyncio - DEBUG - Using selector: EpollSelector
-06-05-2025 19:33:58 - telegram.ext.ExtBot - DEBUG - Entering: get_me
-06-05-2025 19:33:58 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a1a05b0>
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff917b2340> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125150>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:33:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - User(api_kwargs={'can_connect_to_business': False, 'has_main_web_app': False}, can_join_groups=True, can_read_all_group_messages=False, first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, supports_inline_queries=False, username='INS_ExtrClassTrans_bot')
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Exiting: get_me
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - This Bot is already initialized.
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Updater started (polling)
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Start network loop retry bootstrap del webhook
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Deleting webhook
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Entering: delete_webhook
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:33:59 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Exiting: delete_webhook
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Bootstrap done
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Waiting for polling to start
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Polling updates from Telegram started
-06-05-2025 19:33:59 - telegram.ext.Updater - DEBUG - Start network loop retry getting Updates
-06-05-2025 19:33:59 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:33:59 - telegram.ext.Application - INFO - Application started
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff90ba3b50>
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff8bfcd740> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:33:59 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125d20>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:33:59 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:09 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:09 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:09 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:34:09 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:11 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:11 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:11 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:15 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837197]
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1328, supergroup_chat_created=False, text='/config'), update_id=341837197),)
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:15 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, entities=(MessageEntity(length=7, offset=0, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1328, supergroup_chat_created=False, text='/config'), update_id=341837197)
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Entering: send_message
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - close.started
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - close.complete
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a125ab0>
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff917b2340> server_hostname='api.telegram.org' timeout=5.0
-06-05-2025 19:34:15 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff8a1ed510>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:15 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:15 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
-06-05-2025 19:34:15 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1585'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837198]
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535037825154', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837198),)
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:17 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_config', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535037825154', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')), update_id=341837198)
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:17 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:34:17 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:17 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:18 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:18 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:18 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:18 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:18 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')
-06-05-2025 19:34:18 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1350'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837199]
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - (Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535982609491', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837199),)
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:19 - telegram.ext.Application - DEBUG - Processing update Update(callback_query=CallbackQuery(chat_instance='7314396038372118458', data='edit_categories', from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), id='852344535982609491', message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 18, tzinfo=<UTC>), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='edit_categories', text='Категории'),), (InlineKeyboardButton(callback_data='edit_special', text='Спец. условия'),), (InlineKeyboardButton(callback_data='edit_pdf_patterns', text='PDF паттерны'),), (InlineKeyboardButton(callback_data='edit_timeouts', text='Таймауты'),), (InlineKeyboardButton(callback_data='cancel', text='Отмена'),))), supergroup_chat_created=False, text='Выберите файл для редактирования:')), update_id=341837199)
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: answer_callback_query
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - True
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: answer_callback_query
-06-05-2025 19:34:19 - root - INFO - edit_menu_callback: Установлен editing_file: categories.yaml. Добавляю config_handlers в группу -1.
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Entering: edit_message_text
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:19 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'892'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:19 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 15, tzinfo=<UTC>), delete_chat_photo=False, edit_date=datetime.datetime(2025, 5, 6, 16, 34, 19, tzinfo=<UTC>), entities=(MessageEntity(length=7, offset=92, type=<MessageEntityType.BOT_COMMAND>),), from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1329, supergroup_chat_created=False, text='Отправьте новое содержимое файла categories.yaml в виде текста или файлом YAML. Используйте /cancel для отмены.')
-06-05-2025 19:34:19 - telegram.ext.ExtBot - DEBUG - Exiting: edit_message_text
-06-05-2025 19:34:19 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_edit) с ID: 281473109674816 в группу -1.
-06-05-2025 19:34:19 - root - DEBUG - edit_menu_callback: Добавляю config_handler (handle_config_upload) с ID: 281473109675392 в группу -1.
-06-05-2025 19:34:19 - root - INFO - edit_menu_callback: Добавлено 2 обработчиков из self.config_handlers в группу -1.
-06-05-2025 19:34:21 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:21 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:21 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'531'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Getting updates: [341837200]
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - (Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1330, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837200),)
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:23 - telegram.ext.Application - DEBUG - Processing update Update(message=Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='Igor', id=198451926, is_bot=False, language_code='ru', last_name='Shvyrkin', username='INShvyrkin'), group_chat_created=False, message_id=1330, supergroup_chat_created=False, text='categories:\n  - name: Еда\n    patterns:\n      - PAYINFOTECH\n      - McDonalds\n  - name: Транспорт\n    patterns:\n      - Uber'), update_id=341837200)
-06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: editing_file = categories.yaml
-06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: Получен текст от пользователя
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Редактируется файл: categories.yaml
-06-05-2025 19:34:23 - root - DEBUG - handle_config_edit: Получено новое содержимое:
-categories:
-  - name: Еда
-    patterns:
-      - PAYINFOTECH
-      - McDonalds
-  - name: Транспорт
-    patterns:
-      - Uber...
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Попытка парсинга YAML...
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Путь для сохранения файла: /app/config/categories.yaml
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Попытка записи файла...
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Файл categories.yaml успешно сохранен по пути: /app/config/categories.yaml
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Entering: send_message
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'494'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1331, supergroup_chat_created=False, text='✅ Файл categories.yaml успешно обновлен!')
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Entering: send_message
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:23 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:23 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Message(channel_chat_created=False, chat=Chat(first_name='Igor', id=198451926, last_name='Shvyrkin', type=<ChatType.PRIVATE>, username='INShvyrkin'), date=datetime.datetime(2025, 5, 6, 16, 34, 23, tzinfo=<UTC>), delete_chat_photo=False, from_user=User(first_name='INS Анализ выписок PDF', id=7444624327, is_bot=True, username='INS_ExtrClassTrans_bot'), group_chat_created=False, message_id=1332, reply_markup=InlineKeyboardMarkup(inline_keyboard=((InlineKeyboardButton(callback_data='view_config', text='Просмотреть конфиг'),), (InlineKeyboardButton(callback_data='edit_config', text='Редактировать конфиг'),), (InlineKeyboardButton(callback_data='add_pattern_interactive', text='Добавить Категорию - Паттерн'),), (InlineKeyboardButton(callback_data='view_logs', text='Просмотреть логи'),), (InlineKeyboardButton(callback_data='restart', text='Перезагрузить бота'),))), supergroup_chat_created=False, text='Управление конфигурацией:')
-06-05-2025 19:34:23 - telegram.ext.ExtBot - DEBUG - Exiting: send_message
-06-05-2025 19:34:23 - root - INFO - handle_config_edit: Удаление обработчиков и 'editing_file'.
-06-05-2025 19:34:23 - root - INFO - remove_config_handlers: Удаляю config_handlers из группы -1.
-06-05-2025 19:34:23 - root - DEBUG - remove_config_handlers: Удаляю config_handler (handle_config_edit) с ID: 281473109674816 из группы -1.
-06-05-2025 19:34:23 - root - DEBUG - remove_config_handlers: Удаляю config_handler (handle_config_upload) с ID: 281473109675392 из группы -1.
-06-05-2025 19:34:25 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:25 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:25 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:35 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:35 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:35 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:35 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:34:35 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:37 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:37 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:37 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Tue, 06 May 2025 16:34:47 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-06-05-2025 19:34:47 - httpcore.http11 - DEBUG - receive_response_body.complete
-06-05-2025 19:34:47 - httpcore.http11 - DEBUG - response_closed.started
-06-05-2025 19:34:47 - httpcore.http11 - DEBUG - response_closed.complete
-06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - No new updates found.
-06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - ()
-06-05-2025 19:34:47 - telegram.ext.ExtBot - DEBUG - Exiting: get_updates
-06-05-2025 19:34:49 - telegram.ext.ExtBot - DEBUG - Entering: get_updates
-06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_headers.complete
-06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-06-05-2025 19:34:49 - httpcore.http11 - DEBUG - send_request_body.complete
-06-05-2025 19:34:49 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:08 - root - INFO - Уровень логирования для BOT установлен в: DEBUG
+08-05-2025 17:58:08 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281472601230464
+08-05-2025 17:58:08 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281472526202496
+08-05-2025 17:58:08 - root - INFO - Запуск бота в Docker-контейнере
+08-05-2025 17:58:08 - root - DEBUG - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
+08-05-2025 17:58:08 - asyncio - DEBUG - Using selector: EpollSelector
+08-05-2025 17:58:08 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd148e0>
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb12d0>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:09 - telegram.ext.Application - INFO - Application started
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb1840>
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb7e40> server_hostname='api.telegram.org' timeout=5.0
+08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb1d80>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:12 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:12 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:12 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:12 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1783'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2054'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:14 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:14 - root - DEBUG - Создание календаря для выбора даты начала
+08-05-2025 17:58:14 - root - DEBUG - Вызов set_start_date для user_id=198451926
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'895'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1172'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:16 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:16 - root - DEBUG - Raw callback data: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:16 - root - INFO - Calendar data received: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:16 - root - DEBUG - Получен callback от календаря: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:18 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1594'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:22 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:22 - root - DEBUG - Raw callback data: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:22 - root - INFO - Calendar data received: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:22 - root - DEBUG - Получен callback от календаря: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - close.started
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - close.complete
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd6cb80>
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
+08-05-2025 17:58:22 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd6e9b0>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2779'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:29 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'3056'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:29 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:29 - root - DEBUG - Raw callback data: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:29 - root - INFO - Calendar data received: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:29 - root - DEBUG - Получен callback от календаря: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - close.started
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - close.complete
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd142e0>
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
+08-05-2025 17:58:29 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd16950>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:30 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:29 - root - INFO - Установлена дата начала через календарь: 03.05.2025
+08-05-2025 17:58:29 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:30 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1806'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:30 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:30 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:31 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2075'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:32 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:32 - root - INFO - Вызов set_end_date для user_id=198451926
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'913'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1190'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:34 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:34 - root - DEBUG - Raw callback data: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:34 - root - INFO - Calendar data received: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:34 - root - DEBUG - Получен callback от календаря: cbcal_0_s_y_2025_5_8
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1315'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1592'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:36 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:36 - root - DEBUG - Raw callback data: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:36 - root - INFO - Calendar data received: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:36 - root - DEBUG - Получен callback от календаря: cbcal_0_s_m_2025_5_8
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2777'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:38 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'3054'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:39 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:39 - root - DEBUG - Raw callback data: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:39 - root - INFO - Calendar data received: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:39 - root - DEBUG - Получен callback от календаря: cbcal_0_s_d_2025_5_3
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:39 - root - INFO - Установлена дата окончания через календарь: 03.05.2025
+08-05-2025 17:58:39 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1806'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:41 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:43 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:43 - root - DEBUG - Генерация отчета с фильтрами: {'start_date': '03.05.2025', 'end_date': '03.05.2025', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
+08-05-2025 17:58:43 - database - DEBUG - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
+08-05-2025 17:58:43 - database - INFO - Подключение к БД успешно
+08-05-2025 17:58:43 - database - DEBUG - Выполнен SQL-скрипт: /app/sql/tables.sql
+08-05-2025 17:58:43 - database - DEBUG - Выполнен SQL-скрипт: /app/sql/indexes.sql
+08-05-2025 17:58:43 - database - DEBUG - Диапазон дат для запроса: >= 2025-05-03 00:00:00 и < 2025-05-04
+08-05-2025 17:58:43 - database - DEBUG - Выполняется запрос: 
+            SELECT
+                id, transaction_date, amount, cash_source,
+                category, description, counterparty,
+                check_num, transaction_type,
+                transaction_class, target_amount, target_cash_source
+            FROM transactions
+            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
+             ORDER BY transaction_date DESC с параметрами [198451926, datetime.datetime(2025, 5, 3, 0, 0), datetime.date(2025, 5, 4)]
+08-05-2025 17:58:43 - root - INFO - Получено 5 записей из базы данных
+08-05-2025 17:58:43 - root - DEBUG - Значения NaN (и другие отсутствующие) заменены на пустые строки.
+08-05-2025 17:58:43 - root - DEBUG - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'626'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'768'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:43 - database - INFO - Соединение с БД закрыто
+08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:45 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:55 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
+08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_body.complete
+08-05-2025 17:58:55 - httpcore.http11 - DEBUG - response_closed.started
+08-05-2025 17:58:55 - httpcore.http11 - DEBUG - response_closed.complete
+08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_headers.complete
+08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_body.complete
+08-05-2025 17:58:57 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>

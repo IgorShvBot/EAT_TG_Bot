@@ -8,22 +8,57 @@ import os
 import logging
 from contextlib import contextmanager
 from dotenv import load_dotenv
+import sys # Импортируем sys для StreamHandler
 
 # Загрузите переменные окружения из .env
 load_dotenv()
 
-# Настройка логгера
-logger = logging.getLogger('backup.database')
-logger.setLevel(logging.INFO)
+# Настройка логгера для бэкапов (можно оставить INFO)
+backup_logger = logging.getLogger('backup.database')
+# backup_logger.setLevel(logging.INFO) # Можно оставить фиксированный уровень или тоже сделать через ENV
 
-# Настройка логирования
+# Основной логгер для этого файла
 logger = logging.getLogger(__name__)
+
+# Настройка логирования для основного логгера
 def setup_database_logging():
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # Удаляем все существующие обработчики (чтобы избежать дублирования)
+    logger.handlers.clear()
+
+    # Читаем уровень логирования из переменной окружения, по умолчанию INFO
+    log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
+    log_level_mapping = {
+        'CRITICAL': logging.CRITICAL,
+        'ERROR': logging.ERROR,
+        'WARNING': logging.WARNING,
+        'INFO': logging.INFO,
+        'DEBUG': logging.DEBUG,
+        'NOTSET': logging.NOTSET
+    }
+    # Устанавливаем уровень для основного логгера, INFO по умолчанию для database.py если ENV нет
+    # Или можно использовать INFO как дефолт для database.py, если ENV_VAR не установлен
+    # Давайте использовать ENV_VAR как основной, с дефолтом INFO если ENV_VAR отсутствует
+    log_level = log_level_mapping.get(log_level_str, logging.INFO)
+    logger.setLevel(log_level)
+    # >>> КОНЕЦ ИЗМЕНЕНИЯ <<<
+
+    # Единый формат даты (совпадает с bot.py)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%d-%m-%Y %H:%M:%S'  # Формат: "08-05-2025 11:21:06"
+    )
+
+    # Один обработчик с унифицированным форматом
+    handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
+    # Убедимся, что обработчик добавляется только один раз
+    if not logger.handlers:
+        logger.addHandler(handler)
+    
+    # Логируем установленный уровень
+    logger.info(f"Уровень логирования для DATABASE установлен в: {logging.getLevelName(logger.level)}")
 
 setup_database_logging()
 
@@ -41,7 +76,7 @@ class Database:
             logger.error(f"Отсутствуют обязательные переменные окружения: {missing_vars}")
             raise EnvironmentError(f"Отсутствуют обязательные переменные окружения: {missing_vars}")
 
-        logger.info(f"Попытка подключения к БД: host={os.getenv('DB_HOST')}, dbname={os.getenv('DB_NAME')}")
+        logger.debug(f"Попытка подключения к БД: host={os.getenv('DB_HOST')}, dbname={os.getenv('DB_NAME')}")
         try:
             self.conn = psycopg2.connect(
                 dbname=os.getenv('DB_NAME'),
@@ -78,8 +113,8 @@ class Database:
             return cur.fetchall()
 
     def get_unique_values(self, column: str, user_id: int) -> list[str]:
-        logger.info(f"Вызов get_unique_values для column={column}, user_id={user_id}")
-        logger.info(f"Проверка наличия fetchall: {hasattr(self, 'fetchall')}")
+        logger.debug(f"Вызов get_unique_values для column={column}, user_id={user_id}")
+        logger.debug(f"Проверка наличия fetchall: {hasattr(self, 'fetchall')}")
         
         # Проверяем существование столбца
         with self.get_cursor() as cur:
@@ -98,7 +133,7 @@ class Database:
             WHERE user_id = %s AND {column} IS NOT NULL
             ORDER BY {column}
         """).format(column=sql.Identifier(column))
-        logger.info(f"Выполняется запрос: {query.as_string(self.conn)} с параметром user_id={user_id}")
+        logger.debug(f"Выполняется запрос: {query.as_string(self.conn)} с параметром user_id={user_id}")
         
         try:
             rows = self.fetchall(query, (user_id,))
@@ -168,7 +203,7 @@ class Database:
                 sql_script = f.read()
             with self.get_cursor() as cur:
                 cur.execute(sql_script)
-            logger.info(f"Выполнен SQL-скрипт: {filepath}")
+            logger.debug(f"Выполнен SQL-скрипт: {filepath}")
         except Exception as e:
             logger.error(f"Ошибка выполнения SQL-скрипта {filepath}: {e}", exc_info=True)
             raise
@@ -200,7 +235,7 @@ class Database:
                     return stats
 
                 # --- ДОБАВЛЯЕМ СОРТИРОВКУ ЗДЕСЬ ---
-                logger.info(f"Сортировка {len(df)} записей по дате (от новых к старым)...")
+                logger.debug(f"Сортировка {len(df)} записей по дате (от новых к старым)...")
                 df.sort_values(by='дата', ascending=False, inplace=True)
                 # ---------------------------------
 
@@ -263,7 +298,7 @@ class Database:
             end_date_obj = end_date.date() if isinstance(end_date, datetime) else datetime.strptime(end_date, '%d.%m.%Y').date()
             # Вычисляем начало следующего дня
             end_date_exclusive = end_date_obj + timedelta(days=1)
-            logger.info(f"Диапазон дат для запроса: >= {start_date} и < {end_date_exclusive}")
+            logger.debug(f"Диапазон дат для запроса: >= {start_date} и < {end_date_exclusive}")
         except ValueError:
             # Обработка ошибки, если формат даты неправильный
             logger.error(f"Неверный формат конечной даты: {end_date}. Запрос может вернуть некорректные данные.")
@@ -335,7 +370,7 @@ class Database:
         final_query = sql.SQL(' ').join(query_parts)
 
         # Логирование (у вас уже правильное)
-        logger.info("Выполняется запрос: %s с параметрами %s", final_query.as_string(self.conn), params)
+        logger.debug("Выполняется запрос: %s с параметрами %s", final_query.as_string(self.conn), params)
 
         # Выполнение запроса (у вас уже правильное)
         try:
