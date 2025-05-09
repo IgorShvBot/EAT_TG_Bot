@@ -14,7 +14,7 @@ def process_tinkoff_platinum(input_csv_path: str) -> pd.DataFrame:
     try:
         # df = pd.read_csv(input_csv_path, header=None, skiprows=1)
         df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
-        logger.info(f"Успешно загружен CSV для Tinkoff Platinum, строк: {len(df)}")
+        logger.debug(f"Успешно загружен CSV для Tinkoff Platinum, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Tinkoff Platinum: {str(e)}")
         raise
@@ -224,7 +224,7 @@ def save_processed_data(df: pd.DataFrame, input_csv_path: str, suffix: str = "")
         os.makedirs(output_dir, exist_ok=True)
         output_csv_path = os.path.join(output_dir, f"transactions_processed_{suffix}.csv")
         df.to_csv(output_csv_path, index=False, encoding='utf-8-sig')
-        logger.info(f"Данные сохранены в {output_csv_path}")
+        logger.debug(f"Данные сохранены в {output_csv_path}")
         return output_csv_path
     except Exception as e:
         logger.error(f"Ошибка сохранения данных: {str(e)}")

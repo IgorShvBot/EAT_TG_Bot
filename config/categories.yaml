@@ -19,7 +19,6 @@ categories:
       - FRANK BY BASTA
       - BUKHANKA
       - RESTORAN
-      - LPITTORE
       - SURF
       - COFFEE
       - BURGER HEROES
@@ -40,6 +39,7 @@ categories:
     patterns:
       - "5814"
       - YAKITORIYA
+      - PITTORE
   - name: Обеды
     patterns:
       - FLOOR TEA
@@ -113,6 +113,9 @@ categories:
   - name: Дом. Аренда
     patterns:
       - SKLADNO
+  - name: Дом. Текущий ремонт и обслуживание
+    patterns:
+      - cadastr
   - name: Дети. Одежда
     patterns:
       - WB
@@ -162,4 +165,4 @@ categories:
       - Проценты по кредиту
   - name: AppStore | подписки
     patterns:
-      - inconnect.app
+      - inconnect

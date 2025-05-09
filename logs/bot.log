@@ -1,417 +1,138 @@
-08-05-2025 17:58:08 - root - INFO - Уровень логирования для BOT установлен в: DEBUG
-08-05-2025 17:58:08 - root - DEBUG - __init__: Создан config_handler (handle_config_edit) с ID: 281472601230464
-08-05-2025 17:58:08 - root - DEBUG - __init__: Создан config_handler (handle_config_upload) с ID: 281472526202496
-08-05-2025 17:58:08 - root - INFO - Запуск бота в Docker-контейнере
-08-05-2025 17:58:08 - root - DEBUG - !!!!!!!!!!!!!!!!! RUN_POLLING СТАРТУЕТ !!!!!!!!!!!!!!!!!
-08-05-2025 17:58:08 - asyncio - DEBUG - Using selector: EpollSelector
-08-05-2025 17:58:08 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd148e0>
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb12d0>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'339'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:09 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'68'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:09 - telegram.ext.Application - INFO - Application started
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb1840>
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb7e40> server_hostname='api.telegram.org' timeout=5.0
-08-05-2025 17:58:09 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6dbb1d80>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:09 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:12 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'405'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:12 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:12 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:12 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1783'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:12 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2054'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:14 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:14 - root - DEBUG - Создание календаря для выбора даты начала
-08-05-2025 17:58:14 - root - DEBUG - Вызов set_start_date для user_id=198451926
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:14 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'895'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:14 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1172'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:16 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:16 - root - DEBUG - Raw callback data: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:16 - root - INFO - Calendar data received: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:16 - root - DEBUG - Получен callback от календаря: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:16 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1317'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:16 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:18 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:18 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1594'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:22 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:22 - root - DEBUG - Raw callback data: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:22 - root - INFO - Calendar data received: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:22 - root - DEBUG - Получен callback от календаря: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - close.started
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - close.complete
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd6cb80>
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
-08-05-2025 17:58:22 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd6e9b0>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:22 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2779'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:22 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:24 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:24 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:29 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'3056'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:29 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:29 - root - DEBUG - Raw callback data: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:29 - root - INFO - Calendar data received: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:29 - root - DEBUG - Получен callback от календаря: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - close.started
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - close.complete
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - connect_tcp.started host='api.telegram.org' port=443 local_address=None timeout=5.0 socket_options=None
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd142e0>
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0xffff6dfb6440> server_hostname='api.telegram.org' timeout=5.0
-08-05-2025 17:58:29 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0xffff6bd16950>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:30 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:29 - root - INFO - Установлена дата начала через календарь: 03.05.2025
-08-05-2025 17:58:29 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:29 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:30 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1806'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:30 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:30 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:30 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:31 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:31 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2075'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:32 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:32 - root - INFO - Вызов set_end_date для user_id=198451926
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:32 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'913'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:32 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1190'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:34 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:34 - root - DEBUG - Raw callback data: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:34 - root - INFO - Calendar data received: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:34 - root - DEBUG - Получен callback от календаря: cbcal_0_s_y_2025_5_8
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:34 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1315'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:34 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1592'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:36 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:36 - root - DEBUG - Raw callback data: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:36 - root - INFO - Calendar data received: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:36 - root - DEBUG - Получен callback от календаря: cbcal_0_s_m_2025_5_8
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:36 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2777'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:36 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:38 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:38 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'3054'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:39 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:39 - root - DEBUG - Raw callback data: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:39 - root - INFO - Calendar data received: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:39 - root - DEBUG - Получен callback от календаря: cbcal_0_s_d_2025_5_3
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:39 - root - INFO - Установлена дата окончания через календарь: 03.05.2025
-08-05-2025 17:58:39 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:39 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'1806'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:39 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:41 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:41 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'2078'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:43 - root - DEBUG - admin_only: Проверка доступа для user_id: 198451926. Входит в ALLOWED_USERS: True
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'25'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:43 - root - DEBUG - Генерация отчета с фильтрами: {'start_date': '03.05.2025', 'end_date': '03.05.2025', 'category': 'Все', 'transaction_type': 'Все', 'cash_source': 'Все', 'counterparty': 'Все', 'check_num': 'Все', 'transaction_class': 'Все'}
-08-05-2025 17:58:43 - database - DEBUG - Попытка подключения к БД: host=host.docker.internal, dbname=finance_bot
-08-05-2025 17:58:43 - database - INFO - Подключение к БД успешно
-08-05-2025 17:58:43 - database - DEBUG - Выполнен SQL-скрипт: /app/sql/tables.sql
-08-05-2025 17:58:43 - database - DEBUG - Выполнен SQL-скрипт: /app/sql/indexes.sql
-08-05-2025 17:58:43 - database - DEBUG - Диапазон дат для запроса: >= 2025-05-03 00:00:00 и < 2025-05-04
-08-05-2025 17:58:43 - database - DEBUG - Выполняется запрос: 
-            SELECT
-                id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
-            FROM transactions
-            WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
-             ORDER BY transaction_date DESC с параметрами [198451926, datetime.datetime(2025, 5, 3, 0, 0), datetime.date(2025, 5, 4)]
-08-05-2025 17:58:43 - root - INFO - Получено 5 записей из базы данных
-08-05-2025 17:58:43 - root - DEBUG - Значения NaN (и другие отсутствующие) заменены на пустые строки.
-08-05-2025 17:58:43 - root - DEBUG - Столбцы после переименования: ['id', 'transaction_date', 'amount', 'cash_source', 'category', 'description', 'counterparty', 'check_num', 'transaction_type', 'transaction_class', 'target_amount', 'target_cash_source']
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'626'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:43 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'768'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:43 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:43 - database - INFO - Соединение с БД закрыто
-08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:45 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:45 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Server', b'nginx/1.18.0'), (b'Date', b'Thu, 08 May 2025 14:58:55 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'23'), (b'Connection', b'keep-alive'), (b'Strict-Transport-Security', b'max-age=31536000; includeSubDomains; preload'), (b'Access-Control-Allow-Origin', b'*'), (b'Access-Control-Allow-Methods', b'GET, POST, OPTIONS'), (b'Access-Control-Expose-Headers', b'Content-Length,Content-Type,Date,Server,Connection')])
-08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-08-05-2025 17:58:55 - httpcore.http11 - DEBUG - receive_response_body.complete
-08-05-2025 17:58:55 - httpcore.http11 - DEBUG - response_closed.started
-08-05-2025 17:58:55 - httpcore.http11 - DEBUG - response_closed.complete
-08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_headers.complete
-08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-08-05-2025 17:58:57 - httpcore.http11 - DEBUG - send_request_body.complete
-08-05-2025 17:58:57 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+08-05-2025 23:15:48 - root - INFO - Уровень логирования для BOT установлен в: INFO
+08-05-2025 23:15:48 - root - INFO - Запуск бота в Docker-контейнере
+08-05-2025 23:15:48 - telegram.ext.Application - INFO - Application started
+08-05-2025 23:16:53 - root - INFO - Successfully edited message in show_config_selection
+08-05-2025 23:16:55 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:16:59 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:19:05 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+08-05-2025 23:19:05 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 90974 байт
+08-05-2025 23:19:05 - root - INFO - Используются настройки: return_files=0
+08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:19:06 - camelot - INFO - Processing page-1
+08-05-2025 23:19:06 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:19:06 - camelot - INFO - Processing page-2
+08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 64
+08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:19:13 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/tmpb0hu6kiz.pdf
+08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/result.csv
+08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/unclassified.csv
+08-05-2025 23:24:01 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+08-05-2025 23:24:02 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 90974 байт
+08-05-2025 23:24:02 - root - INFO - Используются настройки: return_files=0
+08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:24:02 - camelot - INFO - Processing page-1
+08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:24:02 - camelot - INFO - Processing page-2
+08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 64
+08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:24:05 - root - INFO - Сохранение данных в БД: {'Дата': {0: '07.05.2025 19:08', 1: '07.05.2025 18:45', 2: '07.05.2025 18:17', 3: '07.05.2025 16:43', 4: '07.05.2025 10:25'}}
+08-05-2025 23:24:05 - database - INFO - Подключение к БД успешно
+08-05-2025 23:24:06 - database - INFO - Вставлено 29 новых транзакций
+08-05-2025 23:24:06 - root - INFO - Сохранено: новых - 29, дубликатов - 0
+08-05-2025 23:24:06 - database - INFO - Соединение с БД закрыто
+08-05-2025 23:24:06 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/tmpcu6trmha.pdf
+08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/result.csv
+08-05-2025 23:31:05 - root - INFO - Successfully edited message in show_config_selection
+08-05-2025 23:31:07 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:31:10 - root - INFO - Новое меню фильтров отправлено с message_id: 1487
+08-05-2025 23:31:27 - root - INFO - Обработчик set_counterparty вызван
+08-05-2025 23:31:34 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
+08-05-2025 23:31:34 - root - WARNING - handle_config_edit: 'editing_file' не найден в user_data.
+08-05-2025 23:31:51 - root - INFO - Новое меню фильтров отправлено с message_id: 1491
+08-05-2025 23:32:14 - database - INFO - Подключение к БД успешно
+08-05-2025 23:32:14 - root - INFO - Получено 5 записей из базы данных
+08-05-2025 23:32:14 - database - INFO - Соединение с БД закрыто
+08-05-2025 23:33:23 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+08-05-2025 23:33:24 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 123934 байт
+08-05-2025 23:33:24 - root - INFO - Используются настройки: return_files=0
+08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - camelot - INFO - Processing page-1
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - camelot - INFO - Processing page-2
+08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:25 - camelot - INFO - Processing page-3
+08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:26 - camelot - INFO - Processing page-4
+08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:26 - camelot - INFO - Processing page-5
+08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:26 - camelot - INFO - Processing page-6
+08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:26 - camelot - INFO - Processing page-7
+08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:26 - camelot - INFO - Processing page-8
+08-05-2025 23:33:27 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:27 - camelot - INFO - Processing page-9
+08-05-2025 23:33:27 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:33:27 - camelot - INFO - Processing page-10
+08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 476
+08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:36:22 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/tmp541akqdh.pdf
+08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/result.csv
+08-05-2025 23:47:09 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+08-05-2025 23:47:10 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 123934 байт
+08-05-2025 23:47:10 - root - INFO - Используются настройки: return_files=0
+08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - camelot - INFO - Processing page-1
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:11 - camelot - INFO - Processing page-2
+08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:12 - camelot - INFO - Processing page-3
+08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:12 - camelot - INFO - Processing page-4
+08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:12 - camelot - INFO - Processing page-5
+08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:12 - camelot - INFO - Processing page-6
+08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:12 - camelot - INFO - Processing page-7
+08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:13 - camelot - INFO - Processing page-8
+08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:13 - camelot - INFO - Processing page-9
+08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+08-05-2025 23:47:13 - camelot - INFO - Processing page-10
+08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 476
+08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:47:17 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
+08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/tmpuq082j5q.pdf
+08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
+08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
+08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/result.csv

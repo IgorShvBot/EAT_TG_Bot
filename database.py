@@ -138,7 +138,7 @@ class Database:
         try:
             rows = self.fetchall(query, (user_id,))
             result = [row[column] for row in rows]
-            logger.info(f"Получено {len(result)} уникальных значений для столбца {column}")
+            logger.debug(f"Получено {len(result)} уникальных значений для столбца {column}")
             return result
         except Exception as e:
             logger.error(f"Ошибка при получении уникальных значений для {column}: {e}", exc_info=True)

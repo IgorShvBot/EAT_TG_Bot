@@ -1,4 +1,4 @@
-__version__ = "3.4.0"
+__version__ = "3.4.1"
 
 import os
 import logging
@@ -236,16 +236,13 @@ class TransactionProcessorBot:
 
         # Регистрация обработчиков
         self.setup_handlers()
-        
-        # self.application.add_handler(CallbackQueryHandler(
-        #     self.config_selection_callback,
-        #     pattern='^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'
-        # ))
 
         self.application.add_handler(CallbackQueryHandler(
             self.config_selection_callback,
             pattern=re.compile(r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$')
-        ))
+        )
+        # , group=-1
+        )
 
         # Обработчик для ввода паттерна
         self.pattern_handler = MessageHandler(
@@ -264,8 +261,6 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("export", self.export_start))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
 
-        # self.application.add_handler(CallbackQueryHandler(self.set_filter, pattern='^set_'))
-        # self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^calendar:"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
@@ -280,19 +275,7 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
         self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
         self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
-        self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'))
-
-        # Регистрируем обработчик календаря, используя безопасную обертку, определенную в классе
-        # Он регистрируется здесь после других обработчиков, чтобы гарантировать проверку обработчиков с более высоким приоритетом первыми.
-        # self.application.add_handler(
-        #     CallbackQueryHandler(
-        #         self.handle_calendar_callback,
-        #         pattern=self.safe_calendar_pattern_wrapper(DetailedTelegramCalendar.func())
-        #     ),
-        #     group=1
-        # )
-
-        # self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^calendar:"),group=0)
+        # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
 
         self.application.add_handler(MessageHandler(
             filters.Document.ALL,
@@ -305,6 +288,8 @@ class TransactionProcessorBot:
                 self.main_menu_callback,
                 pattern='^(view_config|edit_config|restart|view_logs)$'
             )
+            # ,
+            # group=-1
         )
         
         self.application.add_handler(
@@ -312,6 +297,8 @@ class TransactionProcessorBot:
                 self.edit_menu_callback,
                 pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'
             )
+            # ,
+            # group=-1
         )
         
         self.application.add_handler(
@@ -363,8 +350,18 @@ class TransactionProcessorBot:
     @admin_only
     async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обновленное меню фильтров с новыми полями"""
-        user_data = context.user_data
-        filters = user_data['export_filters']
+        user_id = update.effective_user.id
+        logger.debug(f"show_export_filters_menu вызвана для user_id: {user_id}")
+        
+        # Получаем или инициализируем фильтры
+        if 'export_filters' not in context.user_data:
+            context.user_data['export_filters'] = self.get_default_filters()
+        filters = context.user_data['export_filters']
+
+        logger.debug(f"show_export_filters_menu: Используемые фильтры для генерации меню: {filters}")
+        
+        # user_data = context.user_data
+        # filters = user_data['export_filters']
         
         keyboard = [
             [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
@@ -378,19 +375,53 @@ class TransactionProcessorBot:
             [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
             [InlineKeyboardButton("❌ Отмена", callback_data='cancel_export')]
         ]
-        
+
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        if update.callback_query:
-            await update.callback_query.edit_message_text(
-                "⚙ Настройте параметры отчета:",
-                reply_markup=reply_markup
-            )
+        # Формируем базовый текст
+        base_message_text = "⚙ Настройте параметры отчета:"
+        current_message_id_text = "" # Для добавления ID при редактировании
+
+        if update.callback_query and update.callback_query.message:
+            # Если это редактирование, добавляем message_id в текст
+            current_message_id_text = f" (ID: {update.callback_query.message.message_id})"
+            message_text = f"{base_message_text}{current_message_id_text}" # Текст с ID
+
+            logger.debug(f"show_filters_menu: Попытка редактировать сообщение {update.callback_query.message.message_id}. Callback data: {update.callback_query.data}")
+            if update.callback_query.message.text: # Лог добавленный вами
+                 logger.debug(f"show_filters_menu: Текущий текст сообщения (часть): {update.callback_query.message.text[:100]}")
+            else: # Лог добавленный вами
+                 logger.debug(f"show_filters_menu: Текущий текст сообщения: None или пустой")
+            logger.debug(f"show_filters_menu: Новый текст (часть): {message_text[:100]}") # Лог добавленный вами
+            
+            try:
+                await update.callback_query.edit_message_text(
+                    text=message_text,
+                    reply_markup=reply_markup
+                )
+                logger.debug(f"Сообщение {update.callback_query.message.message_id} успешно отредактировано в show_filters_menu.")
+            except telegram.error.BadRequest as e:
+                logger.error(f"Ошибка BadRequest при редактировании сообщения в show_filters_menu: {e}")
+                if "message is not modified" in str(e).lower():
+                    logger.info("Сообщение не было изменено (message is not modified), пропуск редактирования.")
+                    await update.callback_query.answer() 
+                else:
+                    await update.callback_query.answer("Произошла ошибка при обновлении сообщения.")
+            except Exception as e:
+                logger.error(f"Общая ошибка при редактировании сообщения в show_filters_menu: {e}", exc_info=True)
+                await update.callback_query.answer("Произошла серьезная ошибка.")
         else:
-            await update.message.reply_text(
-                "⚙ Настройте параметры отчета:",
+            # Если это первая отправка, ID еще не известен, отправляем без него
+            message_text = base_message_text # Текст без ID
+            logger.debug("show_filters_menu: Отправка нового сообщения (не callback).")
+            logger.debug(f"show_filters_menu: Текст нового сообщения (часть): {message_text[:100]}")
+            sent_message = await update.message.reply_text( # Сохраняем отправленное сообщение
+                text=message_text,
                 reply_markup=reply_markup
             )
+            # Опционально: можно сохранить sent_message.message_id в context.user_data, если нужно будет на него ссылаться
+            # context.user_data['main_filter_menu_id'] = sent_message.message_id
+            logger.debug(f"Новое меню фильтров отправлено с message_id: {sent_message.message_id}")
 
     @admin_only
     async def export_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -415,21 +446,21 @@ class TransactionProcessorBot:
         logger.debug("Вызов set_start_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        calendar, step = DetailedTelegramCalendar().build()
-        await query.message.reply_text(
-            f"📅 Выберите дату начала ({LSTEP[step]}):",  # Используем LSTEP для отображения текущего шага (год/месяц/день)
+        calendar, step = DetailedTelegramCalendar(locale='ru').build()
+        await query.edit_message_text(
+            text=f"📅 Выберите дату начала ({LSTEP[step]}):",  # Используем LSTEP для отображения текущего шага (год/месяц/день)
             reply_markup=calendar
         )
         context.user_data["calendar_context"] = "start_date" 
 
     @admin_only
     async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.info("Вызов set_end_date для user_id=%s", update.effective_user.id)
+        logger.debug("Вызов set_end_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
         await query.answer()
-        calendar, step = DetailedTelegramCalendar().build()
-        await query.message.reply_text(
-            f"📅 Выберите дату окончания ({LSTEP[step]}):", # Используем LSTEP для отображения текущего шага
+        calendar, step = DetailedTelegramCalendar(locale='ru').build()
+        await query.edit_message_text(
+            text=f"📅 Выберите дату окончания ({LSTEP[step]}):", # Используем LSTEP для отображения текущего шага
             reply_markup=calendar
         )
         context.user_data["calendar_context"] = "end_date"
@@ -437,27 +468,38 @@ class TransactionProcessorBot:
     @admin_only
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
-        logger.debug(f"Raw callback data: {update.callback_query.data}")
-        logger.info(f"Calendar data received: {query.data}")
         logger.debug(f"Получен callback от календаря: {query.data}")
         await query.answer()
-        result, key, step = DetailedTelegramCalendar().process(query.data)
+        result, key, step = DetailedTelegramCalendar(locale='ru').process(query.data)
 
         calendar_context = context.user_data.get("calendar_context") # Получаем контекст (start_date или end_date)
 
         if not result and key:
             # Если дата еще не выбрана (пользователь выбирает год/месяц), обновляем календарь
-            await query.edit_message_text(f"📅 Выберите {calendar_context.replace('_', ' ')} ({LSTEP[step]}):", reply_markup=key)
+            # Определяем русский текст для контекста
+            if calendar_context == "start_date":
+                context_text_ru = "дату начала"
+            elif calendar_context == "end_date":
+                context_text_ru = "дату окончания"
+            else:
+                context_text_ru = "дату" # Запасной вариант
+
+            # Если дата еще не выбрана (пользователь выбирает год/месяц), обновляем календарь
+            await query.edit_message_text(f"📅 Выберите {context_text_ru} ({LSTEP[step]}):", reply_markup=key)
         elif result:
             # Если дата выбрана (result - это объект datetime.date)
             selected_date_str = result.strftime('%d.%m.%Y') # Форматируем дату как строку
 
+            logger.debug(f"handle_calendar_callback: Текущие фильтры ДО обновления даты: {context.user_data.get('export_filters')}")
+
             if calendar_context == "start_date":
                 context.user_data['export_filters']['start_date'] = selected_date_str
-                logger.info("Установлена дата начала через календарь: %s", selected_date_str)
+                logger.debug("Установлена дата начала через календарь: %s", selected_date_str)
             elif calendar_context == "end_date":
                 context.user_data['export_filters']['end_date'] = selected_date_str
-                logger.info("Установлена дата окончания через календарь: %s", selected_date_str)
+                logger.debug("Установлена дата окончания через календарь: %s", selected_date_str)
+
+            logger.debug(f"handle_calendar_callback: Фильтры ПОСЛЕ обновления даты: {context.user_data['export_filters']}")
 
             # Очищаем временный контекст календаря
             if "calendar_context" in context.user_data:
@@ -615,7 +657,7 @@ class TransactionProcessorBot:
     @admin_only
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
-        logger.info("Получен callback: %s", query.data)
+        # logger.info("Получен callback: %s", query.data)
         logger.debug(f"DEBUG_CALLBACK: Получен callback_data: '{query.data}' от user_id: {query.from_user.id}") # Улучшенный лог
         await query.answer()
 
@@ -1300,10 +1342,26 @@ class TransactionProcessorBot:
             [InlineKeyboardButton("Назад", callback_data='back_to_main')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(
-            text="Выберите конфигурационный файл для просмотра:",
-            reply_markup=reply_markup
-        )
+
+        try: # <-- Добавьте этот блок try
+            await query.edit_message_text(
+                text="Выберите конфигурационный файл для просмотра:",
+                reply_markup=reply_markup
+            )
+            logger.info("Successfully edited message in show_config_selection") # Опционально: добавьте логирование успешного действия
+        except telegram.error.BadRequest as e: # <-- Обработка специфичной ошибки Telegram
+            logger.error(f"Ошибка BadRequest при редактировании сообщения в show_config_selection: {e}", exc_info=True) # Логируйте ошибку
+            # Отправьте пользователю сообщение об ошибке, так как редактирование не удалось
+            try:
+                 await query.message.reply_text("Произошла ошибка при отображении меню. Попробуйте еще раз.")
+            except Exception as reply_error:
+                 logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
+        except Exception as e: # <-- Обработка любых других неожиданных ошибок
+            logger.error(f"Неожиданная ошибка в show_config_selection: {e}", exc_info=True) # Логируйте ошибку
+            try:
+                 await query.message.reply_text("Произошла непредвиденная ошибка.")
+            except Exception as reply_error:
+                 logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
 
     @admin_only
     async def edit_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1358,10 +1416,26 @@ class TransactionProcessorBot:
             [InlineKeyboardButton("Отмена", callback_data='cancel')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(
-            text="Выберите файл для редактирования:",
-            reply_markup=reply_markup
-        )
+
+        try: # <-- Добавьте этот блок try
+            await query.edit_message_text(
+                text="Выберите файл для редактирования:",
+                reply_markup=reply_markup
+            )
+            logger.info("Successfully edited message in show_config_selection") # Опционально: добавьте логирование успешного действия
+        except telegram.error.BadRequest as e: # <-- Обработка специфичной ошибки Telegram
+            logger.error(f"Ошибка BadRequest при редактировании сообщения в show_config_selection: {e}", exc_info=True) # Логируйте ошибку
+            # Отправьте пользователю сообщение об ошибке, так как редактирование не удалось
+            try:
+                 await query.message.reply_text("Произошла ошибка при отображении меню. Попробуйте еще раз.")
+            except Exception as reply_error:
+                 logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
+        except Exception as e: # <-- Обработка любых других неожиданных ошибок
+            logger.error(f"Неожиданная ошибка в show_edit_menu: {e}", exc_info=True) # Логируйте ошибку
+            try:
+                 await query.message.reply_text("Произошла непредвиденная ошибка.")
+            except Exception as reply_error:
+                 logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
 
     @admin_only
     async def send_config_files(self, query):
@@ -1838,7 +1912,7 @@ class TransactionProcessorBot:
             if path and os.path.exists(path) and os.path.isfile(path):
                 try:
                     await asyncio.to_thread(os.unlink, path)
-                    logger.info(f"Удален временный файл: {path}")
+                    logger.debug(f"Удален временный файл: {path}")
                 except Exception as e:
                     logger.error(f"Ошибка удаления {path}: {e}")
 

@@ -74,13 +74,32 @@ special_conditions:
       - field: "Контрагент"
         value: "Квартира_Ипотека"
 
-  - condition: "Номер карты 2578"
+  - condition: "MGTS"
     actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МГТС"
       - field: "Контрагент"
-        value: "! Наташа"
+        value: "Квартира_Ипотека"
+
+  - condition: "inconnect"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "VPN InConnect: 100 дней"
 
   - condition: "BUKLYA"
     actions:
       - field: "Чек #"
         value: "$CURRENT"
         comment: "Даниил"
+
+  - condition: "Прием платежей mos.ru"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МосЭнергоСбыт (МЭС)"
+      - field: "Контрагент"
+        value: "! М"
+      - field: "Класс"
+        value: "03 Родные, близкие"
