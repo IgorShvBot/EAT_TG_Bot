@@ -1,138 +1,19 @@
-08-05-2025 23:15:48 - root - INFO - Уровень логирования для BOT установлен в: INFO
-08-05-2025 23:15:48 - root - INFO - Запуск бота в Docker-контейнере
-08-05-2025 23:15:48 - telegram.ext.Application - INFO - Application started
-08-05-2025 23:16:53 - root - INFO - Successfully edited message in show_config_selection
-08-05-2025 23:16:55 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:16:59 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:19:05 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-08-05-2025 23:19:05 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 90974 байт
-08-05-2025 23:19:05 - root - INFO - Используются настройки: return_files=0
-08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:19:05 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:19:06 - camelot - INFO - Processing page-1
-08-05-2025 23:19:06 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:19:06 - camelot - INFO - Processing page-2
-08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 64
-08-05-2025 23:19:06 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:19:13 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/tmpb0hu6kiz.pdf
-08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/result.csv
-08-05-2025 23:19:13 - root - INFO - Удален временный файл: /tmp/unclassified.csv
-08-05-2025 23:24:01 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-08-05-2025 23:24:02 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 90974 байт
-08-05-2025 23:24:02 - root - INFO - Используются настройки: return_files=0
-08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:24:02 - camelot - INFO - Processing page-1
-08-05-2025 23:24:02 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:24:02 - camelot - INFO - Processing page-2
-08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 64
-08-05-2025 23:24:02 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:24:05 - root - INFO - Сохранение данных в БД: {'Дата': {0: '07.05.2025 19:08', 1: '07.05.2025 18:45', 2: '07.05.2025 18:17', 3: '07.05.2025 16:43', 4: '07.05.2025 10:25'}}
-08-05-2025 23:24:05 - database - INFO - Подключение к БД успешно
-08-05-2025 23:24:06 - database - INFO - Вставлено 29 новых транзакций
-08-05-2025 23:24:06 - root - INFO - Сохранено: новых - 29, дубликатов - 0
-08-05-2025 23:24:06 - database - INFO - Соединение с БД закрыто
-08-05-2025 23:24:06 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/tmpcu6trmha.pdf
-08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:24:06 - root - INFO - Удален временный файл: /tmp/result.csv
-08-05-2025 23:31:05 - root - INFO - Successfully edited message in show_config_selection
-08-05-2025 23:31:07 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:31:10 - root - INFO - Новое меню фильтров отправлено с message_id: 1487
-08-05-2025 23:31:27 - root - INFO - Обработчик set_counterparty вызван
-08-05-2025 23:31:34 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
-08-05-2025 23:31:34 - root - WARNING - handle_config_edit: 'editing_file' не найден в user_data.
-08-05-2025 23:31:51 - root - INFO - Новое меню фильтров отправлено с message_id: 1491
-08-05-2025 23:32:14 - database - INFO - Подключение к БД успешно
-08-05-2025 23:32:14 - root - INFO - Получено 5 записей из базы данных
-08-05-2025 23:32:14 - database - INFO - Соединение с БД закрыто
-08-05-2025 23:33:23 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-08-05-2025 23:33:24 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 123934 байт
-08-05-2025 23:33:24 - root - INFO - Используются настройки: return_files=0
-08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:24 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - camelot - INFO - Processing page-1
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - camelot - INFO - Processing page-2
-08-05-2025 23:33:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:25 - camelot - INFO - Processing page-3
-08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:26 - camelot - INFO - Processing page-4
-08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:26 - camelot - INFO - Processing page-5
-08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:26 - camelot - INFO - Processing page-6
-08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:26 - camelot - INFO - Processing page-7
-08-05-2025 23:33:26 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:26 - camelot - INFO - Processing page-8
-08-05-2025 23:33:27 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:27 - camelot - INFO - Processing page-9
-08-05-2025 23:33:27 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:33:27 - camelot - INFO - Processing page-10
-08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 476
-08-05-2025 23:33:27 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:36:22 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/tmp541akqdh.pdf
-08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:36:22 - root - INFO - Удален временный файл: /tmp/result.csv
-08-05-2025 23:47:09 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
-08-05-2025 23:47:10 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 123934 байт
-08-05-2025 23:47:10 - root - INFO - Используются настройки: return_files=0
-08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:10 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - camelot - INFO - Processing page-1
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:11 - camelot - INFO - Processing page-2
-08-05-2025 23:47:11 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:12 - camelot - INFO - Processing page-3
-08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:12 - camelot - INFO - Processing page-4
-08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:12 - camelot - INFO - Processing page-5
-08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:12 - camelot - INFO - Processing page-6
-08-05-2025 23:47:12 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:12 - camelot - INFO - Processing page-7
-08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:13 - camelot - INFO - Processing page-8
-08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:13 - camelot - INFO - Processing page-9
-08-05-2025 23:47:13 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
-08-05-2025 23:47:13 - camelot - INFO - Processing page-10
-08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
-08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Успешно загружен CSV для Tinkoff Platinum, строк: 476
-08-05-2025 23:47:13 - extract_transactions_pdf2 - INFO - Данные сохранены в /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:47:17 - root - ERROR - admin_only: Не удалось найти объект Update в аргументах.
-08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/tmpuq082j5q.pdf
-08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/transactions_Tinkoff_Platinum_temp.csv
-08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/transactions_processed_tinkoff_platinum.csv
-08-05-2025 23:47:17 - root - INFO - Удален временный файл: /tmp/result.csv
+11-05-2025 22:43:30 - root - INFO - Уровень логирования для BOT установлен в: INFO
+11-05-2025 22:43:30 - root - INFO - Запуск бота в Docker-контейнере
+11-05-2025 22:43:30 - telegram.ext.Application - INFO - Application started
+11-05-2025 22:43:58 - database - INFO - Подключение к БД успешно
+11-05-2025 22:43:58 - root - INFO - Получено 5 записей из базы данных
+11-05-2025 22:43:58 - database - INFO - Соединение с БД закрыто
+11-05-2025 22:44:28 - root - ERROR - Ошибка при редактировании сообщения: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+11-05-2025 22:44:38 - database - INFO - Подключение к БД успешно
+11-05-2025 22:44:38 - root - INFO - Редактирование по фильтру: найдено 5 ID. IDs: [23, 24, 25, 26, 27]...
+11-05-2025 22:44:38 - database - INFO - Соединение с БД закрыто
+11-05-2025 22:44:48 - root - INFO - handle_text_input: Обработка текста 'Калина 2244' для user_id 198451926. Режим: edit_mode
+11-05-2025 22:44:48 - database - INFO - Подключение к БД успешно
+11-05-2025 22:44:48 - root - INFO - User 198451926 edited 5 records. IDs: [23, 24, 25, 26, 27]. Changes: {'check_num': ('Калина 2244', 'append')}
+11-05-2025 22:44:49 - database - INFO - Соединение с БД закрыто
+11-05-2025 22:44:49 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
+11-05-2025 22:44:49 - root - WARNING - handle_config_edit: 'editing_file' не найден в user_data.
+11-05-2025 22:45:05 - database - INFO - Подключение к БД успешно
+11-05-2025 22:45:05 - root - INFO - Получено 5 записей из базы данных
+11-05-2025 22:45:05 - database - INFO - Соединение с БД закрыто

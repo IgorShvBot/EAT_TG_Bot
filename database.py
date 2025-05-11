@@ -382,6 +382,56 @@ class Database:
             logger.error("Ошибка выполнения запроса: %s", e, exc_info=True) # Добавьте exc_info для полного traceback
             raise
 
+    def update_transactions(self, user_id: int, ids: list[int], updates: dict) -> list[int]:
+        """Обновляет транзакции с логированием изменений
+        
+        Args:
+            user_id: ID пользователя, выполняющего редактирование
+            ids: Список ID записей для обновления
+            updates: Словарь вида {'field_name': ('new_value', 'mode')}
+                где mode может быть 'replace' или 'append'
+        
+        Returns:
+            Список фактически обновленных ID
+        """
+        if not ids:
+            return []
+        
+        with self.get_cursor() as cur:
+            # Формируем SET часть запроса
+            set_parts = []
+            params = []
+            for field, (value, mode) in updates.items():
+                if mode == 'replace':
+                    set_parts.append(f"{field} = %s")
+                elif mode == 'append':
+                    set_parts.append(f"{field} = CONCAT({field}, ', ', %s)")
+                params.append(value)
+            
+            # Добавляем метки редактирования
+            set_parts.append("edited_by = %s")
+            set_parts.append("edited_at = NOW()")
+            set_parts.append("edited_ids = %s")
+            params.extend([user_id, ids])
+            
+            # Формируем полный запрос
+            query = f"""
+                UPDATE transactions
+                SET {', '.join(set_parts)}
+                WHERE id = ANY(%s)
+                RETURNING id
+            """
+            params.append(ids)
+            
+            cur.execute(query, params)
+            return [row[0] for row in cur.fetchall()]
+
+    def check_existing_ids(self, ids: list[int]) -> list[int]:
+        """Проверяет существование ID в базе"""
+        with self.get_cursor() as cur:
+            cur.execute("SELECT id FROM transactions WHERE id = ANY(%s)", (ids,))
+            return [row[0] for row in cur.fetchall()]
+
     def close(self):
         """Закрывает соединение с БД"""
         if hasattr(self, 'conn') and self.conn and not self.conn.closed:

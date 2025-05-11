@@ -1,4 +1,4 @@
-__version__ = "3.4.1"
+__version__ = "3.5.0"
 
 import os
 import logging
@@ -25,10 +25,12 @@ import subprocess
 import shlex
 import telegram
 import re
+import psycopg2
 from database import Database
 from datetime import datetime, timedelta
 from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 from telegram.ext.filters import BaseFilter
+import inspect
 
 # Настройка логирования
 def setup_logging():
@@ -59,6 +61,16 @@ def setup_logging():
        
     # Основной логгер
     logger = logging.getLogger()
+
+    # # Логирование изменений в БД
+    # edit_handler = TimedRotatingFileHandler(
+    #     'logs/edits.log', 
+    #     when='midnight', 
+    #     backupCount=30,
+    #     encoding='utf-8')
+    
+    # edit_handler.setFormatter(logging.Formatter(log_format, date_format))
+    # logger.addHandler(edit_handler)
 
     # Читаем уровень логирования из переменной окружения, по умолчанию INFO
     log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -98,42 +110,56 @@ ALLOWED_USERS = load_admins()
 
 # Декоратор для проверки доступа
 def admin_only(func):
-    async def wrapper(*args, **kwargs):
-        # ... (логика определения update)
-        # update = args[1] if len(args) >= 2 else (kwargs.get('update') or args[0]) # Упрощенный пример
-        
-        # Определяем update из аргументов (код из вашего файла)
-        if len(args) >= 2 and isinstance(args[1], Update): # Проверка для методов класса
-            update = args[1]
-        elif len(args) >= 1 and isinstance(args[0], Update): # Проверка для обычных функций
-             update = args[0]
+    async def wrapper(*args, **kwargs): # Сам wrapper должен быть async
+        _update_ = None 
+
+        # --- Начало: Логика поиска объекта update и user_id ---
+        if len(args) >= 2 and isinstance(args[1], Update):
+            _update_ = args[1]
+        elif len(args) >= 1 and isinstance(args[0], Update):
+            _update_ = args[0]
         elif 'update' in kwargs and isinstance(kwargs['update'], Update):
-            update = kwargs['update']
-        else: # Попытка найти Update, если он не первый или не именованный аргумент
-            found_update = next((arg for arg in args if isinstance(arg, Update)), None)
-            if not found_update:
-                 logger.error("admin_only: Не удалось найти объект Update в аргументах.")
-                 # В зависимости от строгости, можно либо пропустить, либо вернуть ошибку
-                 return await func(*args, **kwargs) # Или вернуть ошибку доступа
-            update = found_update
+            _update_ = kwargs['update']
+        else:
+            _found_update_ = next((arg for arg in args if isinstance(arg, Update)), None)
+            if not _found_update_:
+                _found_update_ = next((val for val in kwargs.values() if isinstance(val, Update)), None)
 
-        if not update or not hasattr(update, 'effective_user') or not update.effective_user:
-            logger.error("admin_only: Объект Update или effective_user не найден или некорректен.")
-            # Решите, как обрабатывать эту ситуацию: пропустить проверку или запретить доступ
-            return await func(*args, **kwargs) # Пример: пропуск проверки, если нет пользователя
+            if _found_update_:
+                _update_ = _found_update_
+            else:
+                logger.error(f"admin_only ({func.__name__}): Не удалось найти объект Update в аргументах.")
+                # Если update не найден, все равно вызываем оригинальную функцию корректно
+                if inspect.iscoroutinefunction(func):
+                    return await func(*args, **kwargs)
+                else:
+                    return func(*args, **kwargs) # Вызов синхронной функции
 
-        user_id = update.effective_user.id
-        logger.debug(f"admin_only: Проверка доступа для user_id: {user_id}. Входит в ALLOWED_USERS: {user_id in ALLOWED_USERS}") # <--- ДОБАВЬТЕ ЭТОТ ЛОГ
+        if not _update_ or not hasattr(_update_, 'effective_user') or not _update_.effective_user:
+            logger.error(f"admin_only ({func.__name__}): Объект Update или effective_user не найден или некорректен.")
+            if inspect.iscoroutinefunction(func):
+                return await func(*args, **kwargs)
+            else:
+                return func(*args, **kwargs)
+
+        user_id = _update_.effective_user.id
+        logger.debug(f"admin_only ({func.__name__}): Проверка доступа для user_id: {user_id}. Входит в ALLOWED_USERS: {user_id in ALLOWED_USERS}")
 
         if user_id not in ALLOWED_USERS:
-            logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id}")
-            if hasattr(update, 'message') and update.message:
-                await update.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
-            elif hasattr(update, 'callback_query') and update.callback_query:
-                await update.callback_query.answer("Доступ запрещен")
-                logger.debug(f"admin_only: Отправлен ответ 'Доступ запрещен' пользователю {user_id}") # <--- ДОБАВЬТЕ ЭТОТ ЛОГ
+            logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id} к функции {func.__name__}")
+            if hasattr(_update_, 'message') and _update_.message:
+                await _update_.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
+            elif hasattr(_update_, 'callback_query') and _update_.callback_query:
+                await _update_.callback_query.answer("Доступ запрещен", show_alert=True)
+                logger.debug(f"admin_only ({func.__name__}): Отправлен ответ 'Доступ запрещен' пользователю {user_id}")
             return
-        return await func(*args, **kwargs)
+        # --- Конец: Логика поиска ---
+
+        # Если проверка на администратора пройдена, вызываем оригинальную функцию корректно
+        if inspect.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
     return wrapper
 
 # Проверка на дублирующийся запуск
@@ -259,12 +285,12 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("add_settings", self.add_settings))
         self.application.add_handler(CommandHandler("settings", self.show_settings))
         self.application.add_handler(CommandHandler("export", self.export_start))
+        self.application.add_handler(CommandHandler("edit", self.start_edit))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
 
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),group=-1)
         self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
         self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
         self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))     
@@ -277,10 +303,24 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
 
-        self.application.add_handler(MessageHandler(
-            filters.Document.ALL,
-            self.handle_document
+        # Редактирование записей
+        self.application.add_handler(CallbackQueryHandler(
+            self.handle_edit_choice,
+            pattern='^(edit_by_id|edit_by_filter|cancel_edit)$'
         ))
+        self.application.add_handler(CallbackQueryHandler(
+            self.select_edit_mode,
+            pattern='^edit_field_[a-z_]+$'
+        ))
+        self.application.add_handler(CallbackQueryHandler(
+            self.get_new_value,
+            pattern='^edit_mode_(replace|append)$'
+        ))
+
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$'),self.process_ids_input)) #, group=1)
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input)) # Добавить перед apply_edits
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),group=2)
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND,self.apply_edits))
         
         # Обработчики callback-запросов (только для админов)
         self.application.add_handler(
@@ -330,10 +370,12 @@ class TransactionProcessorBot:
             )
         )
 
-        self.application.add_handler(CallbackQueryHandler(
-        self.handle_save_confirmation,
-        pattern='^save_(yes|no)$'
-        ))
+        self.application.add_handler(
+            CallbackQueryHandler(
+                self.handle_save_confirmation,
+                pattern='^save_(yes|no)$'
+            )
+        )
 
         self.application.add_handler(
             CallbackQueryHandler(
@@ -341,87 +383,397 @@ class TransactionProcessorBot:
                 pattern='^(update_duplicates|skip_duplicates)$'
             )
         )
+        
+        self.application.add_handler(CallbackQueryHandler(self.handle_edit_filter_proceed, pattern='^edit_filter_proceed_to_fields$'))
 
         self.application.add_handler(CommandHandler("cancel", self.cancel_operation))
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
 
-    @admin_only
-    async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Обновленное меню фильтров с новыми полями"""
-        user_id = update.effective_user.id
-        logger.debug(f"show_export_filters_menu вызвана для user_id: {user_id}")
-        
-        # Получаем или инициализируем фильтры
-        if 'export_filters' not in context.user_data:
-            context.user_data['export_filters'] = self.get_default_filters()
-        filters = context.user_data['export_filters']
+    def get_default_filters(self) -> dict:
+        return {
+            'start_date': datetime.now().replace(day=1).strftime('%d.%m.%Y'),
+            'end_date': datetime.now().strftime('%d.%m.%Y'),
+            'category': 'Все',
+            'transaction_type': 'Все',
+            'cash_source': 'Все',
+            'counterparty': 'Все',
+            'check_num': 'Все',
+            'transaction_class': 'Все'
+        }
 
-        logger.debug(f"show_export_filters_menu: Используемые фильтры для генерации меню: {filters}")
+    async def handle_edit_filter_proceed(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        await query.answer()
+
+        if not context.user_data.get('edit_mode') or \
+        context.user_data['edit_mode'].get('type') != 'edit_by_filter' or \
+        not context.user_data['edit_mode'].get('edit_filters'):
+            await query.edit_message_text("Ошибка: Не найдены фильтры для редактирования.")
+            context.user_data.pop('edit_mode', None)
+            return
+
+        # Фильтры уже должны быть в context.user_data['edit_mode']['edit_filters']
+        # Здесь можно (если еще не сделано) получить ID транзакций по этим фильтрам
+        # и сохранить их в context.user_data['edit_mode']['ids']
+
+        # Например, получение ID по фильтрам (этот код нужно адаптировать из apply_edits или get_transactions)
+        db = Database()
+        try:
+            filters_for_db = context.user_data['edit_mode']['edit_filters']
+            db_parsed_filters = {k: v for k, v in filters_for_db.items() if v != 'Все' and k not in ['start_date', 'end_date']}
+
+            start_date_dt = datetime.strptime(filters_for_db['start_date'], '%d.%m.%Y')
+            end_date_dt = datetime.strptime(filters_for_db['end_date'], '%d.%m.%Y')
+
+            df_transactions = db.get_transactions(
+                user_id=update.effective_user.id,
+                start_date=start_date_dt,
+                end_date=end_date_dt,
+                filters=db_parsed_filters
+            )
+            ids_from_filter = df_transactions['id'].tolist()
+
+            if not ids_from_filter:
+                await query.edit_message_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
+                # Можно предложить вернуться к фильтрам или отменить
+                return 
+
+            context.user_data['edit_mode']['ids'] = ids_from_filter
+            logger.info(f"Редактирование по фильтру: найдено {len(ids_from_filter)} ID. IDs: {ids_from_filter[:10]}...") # Лог первых 10 ID
+
+        except Exception as e:
+            logger.error(f"Ошибка получения ID по фильтрам: {e}", exc_info=True)
+            await query.edit_message_text("⚠️ Ошибка при применении фильтров")
+            context.user_data.pop('edit_mode', None)
+            return
+        finally:
+            db.close()
+
+        await query.edit_message_text(f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.")
+        await self._select_fields_to_edit(update, context) # Переход к выбору поля для редактирования
+
+    async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE, edit_mode: bool = False):
+        user_id = update.effective_user.id
+        logger.debug(f"show_filters_menu вызвана для user_id: {user_id}, edit_mode: {edit_mode}")
+
+        # Получаем текущие фильтры или создаем новый словарь, если их нет
+        current_filters = context.user_data.get('export_filters', {})
+
+        default_filters = self.get_default_filters()
+            # Значения по умолчанию для всех полей фильтра
+
+        # Объединяем: приоритет у current_filters, недостающие берутся из default_filters
+        filters = {**default_filters, **current_filters}
         
-        # user_data = context.user_data
-        # filters = user_data['export_filters']
-        
-        keyboard = [
-            [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
-            [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
-            [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
-            [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
-            [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
-            [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
-            [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
-            [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
-            [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
-            [InlineKeyboardButton("❌ Отмена", callback_data='cancel_export')]
-        ]
+        # Сохраняем обновленные фильтры
+        context.user_data['export_filters'] = filters
+
+        if edit_mode:
+            if 'edit_mode' not in context.user_data:
+                context.user_data['edit_mode'] = {}
+            # Используем default_filters как значение по умолчанию для setdefault
+            filters = context.user_data['edit_mode'].setdefault('edit_filters', default_filters.copy()) # Используем .copy() чтобы избежать изменения оригинала
+        else:
+            # Используем default_filters как значение по умолчанию для setdefault
+            filters = context.user_data.setdefault('export_filters', default_filters.copy()) # Используем .copy()
+
+        logger.debug(f"show_filters_menu: Используемые фильтры для генерации меню: {filters}")
+
+        # Формируем клавиатуру
+        if edit_mode:
+            keyboard = [
+                [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
+                [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+                [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
+                [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
+                [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
+                [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
+                [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
+                [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
+                [InlineKeyboardButton("➡️ К выбору полей", callback_data='edit_filter_proceed_to_fields')],
+                [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_edit')]
+            ]
+            message_text = "⚙ Настройте фильтры для выбора записей для редактирования:"
+        else:
+            keyboard = [
+                [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
+                [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+                [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
+                [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
+                [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
+                [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
+                [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
+                [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
+                [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
+                [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_export')]
+            ]
+            message_text = "⚙ Настройте параметры отчета:"
 
         reply_markup = InlineKeyboardMarkup(keyboard)
-        
-        # Формируем базовый текст
-        base_message_text = "⚙ Настройте параметры отчета:"
-        current_message_id_text = "" # Для добавления ID при редактировании
 
         if update.callback_query and update.callback_query.message:
-            # Если это редактирование, добавляем message_id в текст
-            current_message_id_text = f" (ID: {update.callback_query.message.message_id})"
-            message_text = f"{base_message_text}{current_message_id_text}" # Текст с ID
-
-            logger.debug(f"show_filters_menu: Попытка редактировать сообщение {update.callback_query.message.message_id}. Callback data: {update.callback_query.data}")
-            if update.callback_query.message.text: # Лог добавленный вами
-                 logger.debug(f"show_filters_menu: Текущий текст сообщения (часть): {update.callback_query.message.text[:100]}")
-            else: # Лог добавленный вами
-                 logger.debug(f"show_filters_menu: Текущий текст сообщения: None или пустой")
-            logger.debug(f"show_filters_menu: Новый текст (часть): {message_text[:100]}") # Лог добавленный вами
-            
             try:
                 await update.callback_query.edit_message_text(
                     text=message_text,
                     reply_markup=reply_markup
                 )
-                logger.debug(f"Сообщение {update.callback_query.message.message_id} успешно отредактировано в show_filters_menu.")
             except telegram.error.BadRequest as e:
-                logger.error(f"Ошибка BadRequest при редактировании сообщения в show_filters_menu: {e}")
-                if "message is not modified" in str(e).lower():
-                    logger.info("Сообщение не было изменено (message is not modified), пропуск редактирования.")
-                    await update.callback_query.answer() 
-                else:
-                    await update.callback_query.answer("Произошла ошибка при обновлении сообщения.")
-            except Exception as e:
-                logger.error(f"Общая ошибка при редактировании сообщения в show_filters_menu: {e}", exc_info=True)
-                await update.callback_query.answer("Произошла серьезная ошибка.")
+                logger.error(f"Ошибка при редактировании сообщения: {e}")
         else:
-            # Если это первая отправка, ID еще не известен, отправляем без него
-            message_text = base_message_text # Текст без ID
-            logger.debug("show_filters_menu: Отправка нового сообщения (не callback).")
-            logger.debug(f"show_filters_menu: Текст нового сообщения (часть): {message_text[:100]}")
-            sent_message = await update.message.reply_text( # Сохраняем отправленное сообщение
+            await update.message.reply_text(
                 text=message_text,
                 reply_markup=reply_markup
             )
-            # Опционально: можно сохранить sent_message.message_id в context.user_data, если нужно будет на него ссылаться
-            # context.user_data['main_filter_menu_id'] = sent_message.message_id
-            logger.debug(f"Новое меню фильтров отправлено с message_id: {sent_message.message_id}")
+
+    @admin_only
+    async def start_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /edit"""
+        context.user_data['edit_mode'] = {}  # Сброс предыдущего состояния
+        keyboard = [
+            [InlineKeyboardButton("🆔 По ID записи", callback_data='edit_by_id')],
+            [InlineKeyboardButton("🔍 По фильтру", callback_data='edit_by_filter')],
+            [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_edit')]
+        ]
+        await update.message.reply_text(
+            "📝 Выберите способ редактирования:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    async def handle_edit_choice(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает выбор способа редактирования"""
+        query = update.callback_query
+        await query.answer()
+        
+        if query.data == 'back_to_edit_choice':
+            await self.start_edit(update, context)
+            return
+        elif query.data == 'cancel_edit':
+            await query.edit_message_text("ℹ️ Редактирование отменено")
+            context.user_data.pop('edit_mode', None)
+            return     
+        elif query.data == 'edit_by_filter': # было `else:`
+            if 'edit_mode' not in context.user_data:
+                context.user_data['edit_mode'] = {}
+            if 'edit_filters' not in context.user_data['edit_mode']:
+                # Получаем default_filters асинхронно
+                default_filters = self.get_default_filters()
+                context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
+            context.user_data['edit_mode']['type'] = 'edit_by_filter'
+            await self.show_filters_menu(update, context, edit_mode=True)
+
+        if query.data == 'edit_by_id':
+            context.user_data['edit_mode'] = {'type': 'edit_by_id', 'awaiting_ids': True} # Устанавливаем флаг
+            await query.edit_message_text(
+                "📝 Введите ID записей через запятую (например: 15, 28, 42):\n"
+                "Или диапазон через дефис (15-28)"
+            )
+        else:  # edit_by_filter
+            await self.show_filters_menu(update, context, edit_mode=True)
+
+    async def process_ids_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает ввод ID записей"""
+        edit_mode_data = context.user_data.get('edit_mode', {})
+        if not (edit_mode_data.get('type') == 'edit_by_id' and edit_mode_data.get('awaiting_ids')):
+            # Это не тот случай, когда мы ждем ID, передаем дальше или игнорируем
+            return 
+        logger.debug(f"Получены ID для редактирования: {update.message.text}")        
+        
+        # db = Database() # Инициализация DB должна быть внутри try, или после парсинга ID,
+                        # чтобы не делать запрос к БД, если ID невалидны
+        try:
+            ids_input = update.message.text.strip()
+            ids = []
+
+            if '-' in ids_input:  # Обработка диапазона
+                try:
+                    start, end = map(int, ids_input.split('-'))
+                    ids = list(range(start, end + 1))
+                except ValueError:
+                    await update.message.reply_text("⚠️ Неверный формат диапазона. Пример: 10-20")
+                    return
+            else:  # Обработка списка
+                try:
+                    ids = [int(id_str.strip()) for id_str in ids_input.split(',')] # Исправлено: id -> id_str
+                except ValueError:
+                    await update.message.reply_text("⚠️ Неверный формат ID. Пример: 15, 28, 42")
+                    return
+
+            # ---> ПЕРЕМЕСТИТЬ ПРОВЕРКУ ID СЮДА <---
+            db = Database() # Инициализация DB здесь, после успешного парсинга ID
+            try:
+                existing_ids_from_db = db.check_existing_ids(ids) # Переименовал, чтобы не путать с ids
+                if len(existing_ids_from_db) != len(ids):
+                    missing = set(ids) - set(existing_ids_from_db)
+
+                    ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
+                    if not ids:
+                        await update.message.reply_text("⚠️ Нет действительных ID для редактирования.")
+                        context.user_data.pop('edit_mode', None)
+                        return
+
+                    await update.message.reply_text(f"⚠ ID {', '.join(map(str, missing))} не найдены в базе. Будут обработаны только существующие.")
+                    ids = [id_val for id_val in ids if id_val in existing_ids_from_db] # Обновляем ids, оставляя только существующие
+                    if not ids: # Если после фильтрации список ids пуст (на всякий случай)
+                        await update.message.reply_text("⚠️ Ошибка: нет действительных ID для редактирования после проверки.")
+                        context.user_data.pop('edit_mode', None) # Очищаем состояние редактирования
+                        return
+            finally:
+                db.close()
+            # ---> КОНЕЦ ПЕРЕМЕЩЕННОГО БЛОКА <---
+
+            context.user_data['edit_mode']['ids'] = ids # Сохраняем только существующие ID
+            # context.user_data['edit_mode'].pop('awaiting_ids', None) # Удаляем флаг
+            context.user_data['edit_mode'] = {'type': 'edit_by_id','ids': ids}         
+            await self._select_fields_to_edit(update, context)
+
+        except psycopg2.errors.UndefinedTable as db_err: # Перехват ошибки отсутствия таблицы
+            logger.error(f"Ошибка базы данных при обработке ID: {db_err}", exc_info=True)
+            await update.message.reply_text("❌ Критическая ошибка конфигурации базы данных. Обратитесь к администратору.")
+            # Важно не продолжать, если БД не готова
+            return
+        except Exception as e:
+            logger.error(f"Ошибка обработки ID: {e}", exc_info=True)
+            await update.message.reply_text("❌ Ошибка обработки. Проверьте формат ввода")
+
+    async def _select_fields_to_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Показывает меню выбора полей для редактирования"""
+        logger.debug(f"Вызов _select_fields_to_edit для user_id: {update.effective_user.id}")
+
+        keyboard = [
+            [InlineKeyboardButton("🏷 Категория", callback_data='edit_field_category')],
+            [InlineKeyboardButton("📝 Описание", callback_data='edit_field_description')],
+            [InlineKeyboardButton("👥 Контрагент", callback_data='edit_field_counterparty')],
+            [InlineKeyboardButton("🧾 Чек #", callback_data='edit_field_check_num')],
+            [InlineKeyboardButton("💳 Наличность", callback_data='edit_field_cash_source')],
+            [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_edit_choice')],
+            [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
+        ]
+        
+        if isinstance(update, Update) and update.callback_query:
+            await update.callback_query.edit_message_text(
+                "✏️ Выберите поле для редактирования:",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+        else:
+            await update.message.reply_text(
+                "✏️ Выберите поле для редактирования:",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+
+    async def select_edit_mode(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Выбор режима редактирования (замена/добавление)"""
+        query = update.callback_query
+        await query.answer()
+        
+        field = query.data.replace('edit_field_', '')
+        context.user_data['edit_mode']['field'] = field
+        
+        keyboard = [
+            [InlineKeyboardButton("🔄 Заменить полностью", callback_data='edit_mode_replace')],
+            [InlineKeyboardButton("➕ Добавить текст", callback_data='edit_mode_append')],
+            [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_edit')]
+        ]
+        
+        await query.edit_message_text(
+            f"Выберите способ редактирования поля '{field}':",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    async def get_new_value(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Запрашивает новое значение для выбранного поля"""
+        query = update.callback_query
+        await query.answer()
+        
+        context.user_data['edit_mode']['mode'] = query.data.replace('edit_mode_', '')
+        
+        await query.edit_message_text(
+            f"Введите новое значение для поля '{context.user_data['edit_mode']['field']}':\n"
+            f"(Режим: {'замена' if context.user_data['edit_mode']['mode'] == 'replace' else 'добавление'})"
+        )
+
+
+    async def apply_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Применяет изменения к базе данных"""
+        edit_data = context.user_data.get('edit_mode', {})
+        new_value = update.message.text
+        
+        if not edit_data or 'field' not in edit_data or 'mode' not in edit_data: # Добавил проверку 'mode'
+            # Эта проверка может быть избыточной, если первая проверка выше работает
+            logger.warning("apply_edits: edit_data неполный. edit_data: %s", edit_data)
+            # Не отправляем сообщение об ошибке здесь, чтобы не дублировать, если проблема в другом
+            return
+
+        db = Database()
+        try:
+            if edit_data['type'] == 'edit_by_filter':
+                ids = edit_data.get('ids', [])
+                if not ids: # Дополнительная проверка
+                    logger.warning("apply_edits (edit_by_filter): 'ids' не найдены в edit_data.")
+                    # Попытка получить ID заново, если их нет (менее предпочтительно)
+                    edit_filters_data = context.user_data.get('edit_mode', {}).get('edit_filters')
+                    if not edit_filters_data:
+                        await update.message.reply_text("⚠ Ошибка: Фильтры для редактирования не найдены.")
+                        context.user_data.pop('edit_mode', None)
+                        return
+                    df = db.get_transactions(
+                        user_id=update.effective_user.id,
+                        start_date=datetime.strptime(edit_filters_data['start_date'], '%d.%m.%Y'),
+                        end_date=datetime.strptime(edit_filters_data['end_date'], '%d.%m.%Y'),
+                        filters={k: v for k, v in edit_filters_data.items() if v != 'Все'}
+                    )
+
+                    ids = df['id'].tolist()
+
+                    if not ids:
+                        await update.message.reply_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
+                        context.user_data.pop('edit_mode', None)
+                        return
+
+                # Получаем ID по фильтрам
+                # filters = context.user_data.get('export_filters', {})
+            else:
+                ids = edit_data.get('ids', [])
+
+            # Формируем обновления
+            updates = {
+                edit_data['field']: (new_value, edit_data['mode'])
+            }
+            
+            # Выполняем обновление
+            updated_ids = db.update_transactions(
+                user_id=update.effective_user.id,
+                ids=ids,
+                updates=updates
+            )
+            
+            # Логируем действие
+            logger.info(
+                f"User {update.effective_user.id} edited {len(updated_ids)} records. "
+                f"IDs: {updated_ids}. Changes: {updates}"
+            )
+            
+            await update.message.reply_text(
+                f"✅ Успешно обновлено {len(updated_ids)} записей!\n"
+                f"Измененное поле: {edit_data['field']}\n"
+                f"Новое значение: {new_value}"
+            )
+
+        except Exception as e:
+            logger.error(f"Ошибка при редактировании: {e}", exc_info=True)
+            await update.message.reply_text("❌ Ошибка при обновлении. Проверьте подключение к базе данных или обратитесь к администратору.")
+
+        finally:
+            db.close()
+            logger.debug("Очистка состояния edit_mode после apply_edits")
+            context.user_data.pop('edit_mode', None) # <-- Важная строка, очищает состояние
+            # Чтобы точно предотвратить дальнейшую обработку этого текстового сообщения
+            # другими общими текстовыми хендлерами, которые могут среагировать,
+            # можно попробовать установить флаг, но обычно очистки user_data достаточно
+            # context.user_data['message_handled_by_apply_edits'] = True 
+            # И тогда в handle_config_edit и handle_text_input проверять этот флаг.
+            # Но проще всего, если группы хендлеров и их специфичность настроены правильно.
 
     @admin_only
     async def export_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -440,7 +792,7 @@ class TransactionProcessorBot:
         
         await self.show_filters_menu(update, context)
 
-    @admin_only
+
     async def set_start_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.debug("Создание календаря для выбора даты начала")
         logger.debug("Вызов set_start_date для user_id=%s", update.effective_user.id)
@@ -453,7 +805,7 @@ class TransactionProcessorBot:
         )
         context.user_data["calendar_context"] = "start_date" 
 
-    @admin_only
+
     async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.debug("Вызов set_end_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
@@ -465,53 +817,67 @@ class TransactionProcessorBot:
         )
         context.user_data["calendar_context"] = "end_date"
 
-    @admin_only
+
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         logger.debug(f"Получен callback от календаря: {query.data}")
-        await query.answer()
+        # await query.answer()
+        
         result, key, step = DetailedTelegramCalendar(locale='ru').process(query.data)
 
-        calendar_context = context.user_data.get("calendar_context") # Получаем контекст (start_date или end_date)
+        calendar_context = context.user_data.get("calendar_context")
+
+        # Определяем, активен ли режим редактирования по фильтру
+        is_editing_filters = (
+            context.user_data.get('edit_mode') and
+            context.user_data['edit_mode'].get('type') == 'edit_by_filter'
+        )
 
         if not result and key:
-            # Если дата еще не выбрана (пользователь выбирает год/месяц), обновляем календарь
-            # Определяем русский текст для контекста
+            # ... (логика обновления отображения календаря) ...
+            # Примерно так:
             if calendar_context == "start_date":
                 context_text_ru = "дату начала"
             elif calendar_context == "end_date":
                 context_text_ru = "дату окончания"
             else:
-                context_text_ru = "дату" # Запасной вариант
-
-            # Если дата еще не выбрана (пользователь выбирает год/месяц), обновляем календарь
+                context_text_ru = "дату"
             await query.edit_message_text(f"📅 Выберите {context_text_ru} ({LSTEP[step]}):", reply_markup=key)
         elif result:
-            # Если дата выбрана (result - это объект datetime.date)
-            selected_date_str = result.strftime('%d.%m.%Y') # Форматируем дату как строку
+            selected_date_str = result.strftime('%d.%m.%Y')
 
-            logger.debug(f"handle_calendar_callback: Текущие фильтры ДО обновления даты: {context.user_data.get('export_filters')}")
+            # Определяем, какой словарь фильтров использовать
+            if is_editing_filters:
+                # Убедимся, что 'edit_filters' существует в 'edit_mode'
+                if 'edit_filters' not in context.user_data.get('edit_mode', {}): # Проверка, что edit_mode существует
+                    if 'edit_mode' not in context.user_data: # Инициализация edit_mode если его нет
+                         context.user_data['edit_mode'] = {}
+                    context.user_data['edit_mode']['edit_filters'] = self.get_default_filters().copy()
+                
+                target_filters_dict = context.user_data['edit_mode']['edit_filters']
+                log_source_for_filters = "edit_mode['edit_filters']"
+            else:
+                if 'export_filters' not in context.user_data:
+                    context.user_data['export_filters'] = self.get_default_filters().copy()
+                target_filters_dict = context.user_data['export_filters']
+                log_source_for_filters = "export_filters"
+            
+            logger.debug(f"handle_calendar_callback: Текущие фильтры ({log_source_for_filters}) ДО обновления: {target_filters_dict}")
 
             if calendar_context == "start_date":
-                context.user_data['export_filters']['start_date'] = selected_date_str
-                logger.debug("Установлена дата начала через календарь: %s", selected_date_str)
+                target_filters_dict['start_date'] = selected_date_str
+                logger.debug(f"Установлена дата начала через календарь в {log_source_for_filters}: {selected_date_str}")
             elif calendar_context == "end_date":
-                context.user_data['export_filters']['end_date'] = selected_date_str
-                logger.debug("Установлена дата окончания через календарь: %s", selected_date_str)
+                target_filters_dict['end_date'] = selected_date_str
+                logger.debug(f"Установлена дата окончания через календарь в {log_source_for_filters}: {selected_date_str}")
 
-            logger.debug(f"handle_calendar_callback: Фильтры ПОСЛЕ обновления даты: {context.user_data['export_filters']}")
-
-            # Очищаем временный контекст календаря
+            logger.debug(f"handle_calendar_callback: Фильтры ({log_source_for_filters}) ПОСЛЕ обновления: {target_filters_dict}")
+            
             if "calendar_context" in context.user_data:
                 del context.user_data["calendar_context"]
 
-            # Можно уведомить пользователя о выбранной дате (опционально, т.к. сразу покажем меню)
-            # await query.edit_message_text(f"Выбрана дата: {selected_date_str}")
+            await self.show_filters_menu(update, context, edit_mode=is_editing_filters)
 
-            # Возвращаемся к меню фильтров, где будет отображена выбранная дата
-            await self.show_filters_menu(update, context)
-
-    @admin_only
     async def set_category(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info("Обработчик set_category вызван для user_id=%s", update.effective_user.id)
         query = update.callback_query
@@ -558,7 +924,7 @@ class TransactionProcessorBot:
         finally:
             db.close()
 
-    @admin_only
+
     async def set_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info("Обработчик set_type вызван")
         query = update.callback_query
@@ -578,7 +944,7 @@ class TransactionProcessorBot:
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.edit_message_text("Выберите тип транзакции:", reply_markup=reply_markup)
 
-    @admin_only
+
     async def set_cash_source(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Наличности"""
         logger.info("Обработчик set_cash_source вызван")
@@ -601,7 +967,7 @@ class TransactionProcessorBot:
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
     
-    @admin_only      
+      
     async def set_counterparty(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Контрагента"""
         logger.info("Обработчик set_counterparty вызван")
@@ -613,7 +979,7 @@ class TransactionProcessorBot:
         )
         context.user_data['awaiting_input'] = 'counterparty'
 
-    @admin_only
+
     async def set_check_num(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Чека"""
         logger.info("Обработчик set_check_num вызван")
@@ -625,7 +991,7 @@ class TransactionProcessorBot:
         )
         context.user_data['awaiting_input'] = 'check_num'
 
-    @admin_only
+
     async def set_class(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Меню выбора Класса"""
         logger.info("Обработчик set_class вызван")
@@ -647,14 +1013,14 @@ class TransactionProcessorBot:
             "Выберите класс транзакции:",
             reply_markup=InlineKeyboardMarkup(keyboard))
 
-    @admin_only
+
     async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
         context.user_data.pop('export_filters', None)
-        await query.edit_message_text("Экспорт отменен.")
+        await query.edit_message_text("Экспорт отменен")
 
-    @admin_only
+
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         # logger.info("Получен callback: %s", query.data)
@@ -662,37 +1028,82 @@ class TransactionProcessorBot:
         await query.answer()
 
     # Обновим обработчик текстового ввода
-    @admin_only
-    async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        # Сначала проверяем, не находимся ли мы в режиме редактирования конфига
-        if context.user_data.get('editing_file'):
-            # Мы ожидаем, что handle_config_edit перехватит это сообщение.
-            # Если же оно дошло сюда, значит, что-то не так с приоритетами
-            # или регистрацией handle_config_edit.
-            # Логируем это как потенциальную проблему, но не обрабатываем здесь,
-            # чтобы дать шанс handle_config_edit (если он все же как-то сработает позже
-            # или если проблема в другом).
-            logger.warning(f"handle_text_input: Получен текст, но мы в режиме редактирования файла '{context.user_data['editing_file']}'. "
-                           f"Ожидался вызов handle_config_edit. Текст: {update.message.text[:100]}...")
-            return # Явно выходим, чтобы не обрабатывать это сообщение как обычный текст
 
+
+    async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
         text = update.message.text
-        user_data = context.user_data
-        logger.info("Получен текст от user_id %s: %s, user_data: %s", user_id, text, user_data) # user_id теперь используется
+
+        edit_mode_data = context.user_data.get('edit_mode', {})
+        is_in_edit_process = bool(edit_mode_data) 
+
+        logger.info(f"handle_text_input: Обработка текста '{text}' для user_id {user_id}. Режим: {'edit_mode' if is_in_edit_process else 'фильтры'}")
 
         if not text:
             await update.message.reply_text("Пожалуйста, введите непустое значение")
             return
 
-        # Обработка других текстовых вводов (Контрагент, Чек)
-        if 'awaiting_input' in user_data:
-            filter_type = user_data['awaiting_input']
-            user_data['export_filters'][filter_type] = text
-            del user_data['awaiting_input']
-            await self.show_filters_menu(update, context)
+        if is_in_edit_process and 'field' in edit_mode_data and 'mode' in edit_mode_data:
+            # Если мы в процессе редактирования поля и ожидаем значение
+            await self.apply_edits(update, context)
+            return
 
-    @admin_only
+        # Логика для фильтров (экспорт или edit_by_filter, когда вводится значение для контрагента/чека)
+        # или если мы ожидаем ввод ID
+        if context.user_data.get('edit_mode', {}).get('awaiting_ids'):
+            # Если мы ожидаем ввод ID, этот текст должен быть обработан process_ids_input
+            # Этот return предотвратит дальнейшую обработку этого текста в handle_text_input
+            # если process_ids_input не справился или не должен был.
+            # Но лучше, если process_ids_input сам решает, что делать.
+            # Пока оставим так, чтобы текстовый ввод ID не попадал в логику фильтров ниже.
+            # Это предположение, что process_ids_input обработает ID.
+            return
+
+
+        # Получаем default_filters асинхронно ОДИН РАЗ
+        default_filters = self.get_default_filters()
+
+        edit_mode_active = edit_mode_data.get('type') == 'edit_by_filter'
+
+        # Определяем, где хранятся фильтры
+        if edit_mode_active:
+            if 'edit_filters' not in context.user_data['edit_mode']:
+                context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
+            filters_storage = context.user_data['edit_mode']['edit_filters']
+        else: # Это для export_filters
+            if 'export_filters' not in context.user_data:
+                context.user_data['export_filters'] = default_filters.copy()
+            filters_storage = context.user_data['export_filters']
+
+        # Теперь filters_storage точно является словарем
+        if not isinstance(filters_storage, dict): # Дополнительная проверка на всякий случай
+            logger.error(f"filters_storage не является словарем: {type(filters_storage)}, значение: {filters_storage}")
+            await update.message.reply_text("❌ Внутренняя ошибка при обработке фильтров. Обратитесь к администратору.")
+            return
+
+        # Обработка ввода для фильтров 'Контрагент' или 'Чек'
+        awaiting_input_type = context.user_data.pop('awaiting_input', None) # Получаем и удаляем флаг
+        if awaiting_input_type == 'counterparty':
+            filters_storage['counterparty'] = text
+        elif awaiting_input_type == 'check_num':
+            filters_storage['check_num'] = text
+        # elif awaiting_input_type: # Если были другие типы ожидаемого ввода
+            # filters_storage[awaiting_input_type] = text # Общая логика (не рекомендуется без четкого понимания)
+        else:
+            # Если мы не ожидали специфического ввода (контрагент/чек),
+            # и это не ввод значения для редактирования поля (обработано выше),
+            # и это не ввод ID (обработано выше),
+            # то это может быть неожиданный текстовый ввод.
+            # Можно добавить логику или просто проигнорировать, или ответить пользователю.
+            logger.warning(f"Получен неожиданный текстовый ввод: '{text}' от user_id {user_id} при отсутствии awaiting_input.")
+            # await update.message.reply_text("Неясно, к чему относится ваш ввод. Пожалуйста, используйте кнопки или команды.")
+            # Пока не будем ничего отвечать, чтобы не мешать другим потокам.
+            return # Важно, чтобы не вызывался show_filters_menu без надобности
+
+        # После установки значения для контрагента или чека, показываем обновленное меню фильтров
+        await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
+
+
     async def handle_filter_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -701,6 +1112,13 @@ class TransactionProcessorBot:
         filter_type = data[0]
         value = data[1] if len(data) > 1 else ''
         
+        edit_mode_active = context.user_data.get('edit_mode') and context.user_data['edit_mode'].get('type') == 'edit_by_filter'
+
+        if edit_mode_active:
+            filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', self.get_default_filters())
+        else:
+            filters_storage = context.user_data.setdefault('export_filters', self.get_default_filters())
+
         # Для категории ищем оригинальное значение в базе
         if filter_type == 'cat':
             db = Database()
@@ -710,6 +1128,7 @@ class TransactionProcessorBot:
                 safe_value = value
                 original_value = next((cat for cat in categories if cat.replace(" ", "_").replace("'", "").replace('"', "")[:50] == safe_value), safe_value)
                 context.user_data['export_filters']['category'] = original_value
+                filters_storage['category'] = original_value
             except Exception as e:
                 logger.error("Ошибка при получении категорий: %s", e)
                 await query.edit_message_text("❌ Ошибка при выборе категории.")
@@ -717,15 +1136,15 @@ class TransactionProcessorBot:
             finally:
                 db.close()
         elif filter_type == 'type':
-            context.user_data['export_filters']['transaction_type'] = value
+            filters_storage['transaction_type'] = value
         elif filter_type == 'source':
-            context.user_data['export_filters']['cash_source'] = value
+            filters_storage['cash_source'] = value
         elif filter_type == 'class':
-            context.user_data['export_filters']['transaction_class'] = value
+            filters_storage['transaction_class'] = value
         
-        await self.show_filters_menu(update, context)
+        await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
 
-    @admin_only
+
     async def generate_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Генерация и отправка отчета"""
         query = update.callback_query
@@ -909,7 +1328,7 @@ class TransactionProcessorBot:
         context.user_data.pop('processing_settings', None)
         await update.message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
 
-    @admin_only
+
     async def handle_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик текстовых сообщений с настройками"""
         user_data = context.user_data
@@ -930,7 +1349,7 @@ class TransactionProcessorBot:
         
         await update.message.reply_text(response)
 
-    @admin_only
+
     async def view_logs_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора логов"""
         query = update.callback_query
@@ -979,6 +1398,7 @@ class TransactionProcessorBot:
             logger.error(f"Ошибка при показе меню логов: {e}")
             await query.edit_message_text("Произошла ошибка при загрузке списка логов")
 
+    @admin_only
     async def cancel_operation(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Отменяет текущую операцию"""
         if 'adding_pattern' in context.user_data:
@@ -992,7 +1412,7 @@ class TransactionProcessorBot:
         else:
             await update.message.reply_text("Нет активных операций для отмены")
 
-    @admin_only
+
     async def handle_pattern_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор категории для добавления паттерна"""
         query = update.callback_query
@@ -1030,7 +1450,7 @@ class TransactionProcessorBot:
             self.handle_pattern_input
         ))
 
-    @admin_only
+
     def safe_calendar_pattern_wrapper(self, original_pattern_callable):
         """Безопасно обрабатывает проверки паттернов календаря, перехватывая AttributeErrors."""
         def wrapper(data: str) -> bool:
@@ -1046,7 +1466,7 @@ class TransactionProcessorBot:
             # Не перехватываем TypeError и другие исключения
         return wrapper
 
-    @admin_only
+
     async def handle_pattern_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает ввод паттерна"""
         if 'adding_pattern' not in context.user_data:
@@ -1109,7 +1529,7 @@ class TransactionProcessorBot:
             await update.message.reply_text("Неверный формат команды")
             return
 
-    @admin_only
+
     async def add_pattern_interactive(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Интерактивное добавление паттерна"""
         query = update.callback_query
@@ -1154,7 +1574,7 @@ class TransactionProcessorBot:
         # Устанавливаем следующий шаг
         context.user_data['next_step'] = 'await_pattern'
 
-    @admin_only
+
     async def config_selection_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор конфига для просмотра"""
         query = update.callback_query
@@ -1178,7 +1598,7 @@ class TransactionProcessorBot:
         filename = config_map[query.data]
         await self.send_single_config_file(query, filename)
 
-    @admin_only
+
     async def send_single_config_file(self, query, filename):
         """Отправляет один выбранный конфигурационный файл"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
@@ -1216,7 +1636,7 @@ class TransactionProcessorBot:
         else:
             await query.message.reply_text(f"Файл {filename} не найден")
 
-    @admin_only
+
     async def send_all_config_files(self, query):
         """Отправляет все конфигурационные файлы"""
         config_files = {
@@ -1297,11 +1717,11 @@ class TransactionProcessorBot:
             return
         
         keyboard = [
-            [InlineKeyboardButton("Просмотреть конфиг", callback_data='view_config')],
-            [InlineKeyboardButton("Редактировать конфиг", callback_data='edit_config')],
-            [InlineKeyboardButton("Добавить Категорию - Паттерн", callback_data='add_pattern_interactive')],
-            [InlineKeyboardButton("Просмотреть логи", callback_data='view_logs')],
-            [InlineKeyboardButton("Перезагрузить бота", callback_data='restart')]
+            [InlineKeyboardButton("🔎 Просмотреть конфиг", callback_data='view_config')],
+            [InlineKeyboardButton("✏️ Редактировать конфиг", callback_data='edit_config')],
+            [InlineKeyboardButton("📝 Добавить Категорию - Паттерн", callback_data='add_pattern_interactive')],
+            [InlineKeyboardButton("👁️ Просмотреть логи", callback_data='view_logs')],
+            [InlineKeyboardButton("🔄 Перезагрузить бота", callback_data='restart')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await message.reply_text(
@@ -1310,7 +1730,7 @@ class TransactionProcessorBot:
         )
 
     # Callback обработчики
-    @admin_only
+
     async def main_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает callback из главного меню"""
         query = update.callback_query
@@ -1325,7 +1745,7 @@ class TransactionProcessorBot:
         elif query.data == 'restart':
             await self.restart_bot(update, context)
 
-    @admin_only
+
     async def show_config_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора конфига для просмотра"""
         query = update.callback_query
@@ -1363,7 +1783,7 @@ class TransactionProcessorBot:
             except Exception as reply_error:
                  logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
 
-    @admin_only
+
     async def edit_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает callback из меню редактирования"""
         query = update.callback_query
@@ -1402,7 +1822,7 @@ class TransactionProcessorBot:
             handlers_added_count += 1
         logger.info(f"edit_menu_callback: Добавлено {handlers_added_count} обработчиков из self.config_handlers в группу -1.")
 
-    @admin_only
+
     async def show_edit_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора файла для редактирования"""
         query = update.callback_query
@@ -1413,7 +1833,7 @@ class TransactionProcessorBot:
             [InlineKeyboardButton("Спец. условия", callback_data='edit_special')],
             [InlineKeyboardButton("PDF паттерны", callback_data='edit_pdf_patterns')],
             [InlineKeyboardButton("Таймауты", callback_data='edit_timeouts')],
-            [InlineKeyboardButton("Отмена", callback_data='cancel')]
+            [InlineKeyboardButton("↩️ Отмена", callback_data='cancel')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -1437,7 +1857,7 @@ class TransactionProcessorBot:
             except Exception as reply_error:
                  logger.error(f"Не удалось отправить сообщение об ошибке пользователю: {reply_error}")
 
-    @admin_only
+
     async def send_config_files(self, query):
         """Отправляет содержимое конфигов как текстовые сообщения"""
         config_dir = os.path.join(os.path.dirname(__file__), 'config')
@@ -1472,7 +1892,7 @@ class TransactionProcessorBot:
             else:
                 await query.message.reply_text(f"Файл {filename} не найден")
                 
-    @admin_only
+
     async def handle_config_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает текстовое редактирование конфига"""
         logger.debug("handle_config_edit: editing_file = %s", context.user_data.get('editing_file'))
@@ -1483,11 +1903,19 @@ class TransactionProcessorBot:
         # logger.info(f"Файл доступен для записи: {os.path.exists(filepath) and os.access(filepath, os.W_OK)}")
         logger.info("handle_config_edit: Начало обработки текстового редактирования.") # Добавлено
         
-        if 'editing_file' not in context.user_data:
-            logger.warning("handle_config_edit: 'editing_file' не найден в user_data.") # Добавлено
-            await update.message.reply_text("Не выбрано файл для редактирования")
+        # Пропускаем если это часть процесса редактирования транзакций
+        # или если edit_mode все еще существует (на всякий случай)
+        if context.user_data.get('edit_mode'): # Проверяем наличие ключа 'edit_mode'
+            logger.debug("handle_config_edit: Обнаружен активный 'edit_mode', пропускаем.")
             return
-            
+
+        if 'editing_file' not in context.user_data:
+            logger.warning("handle_config_edit: 'editing_file' не найден в user_data.")
+            # Это сообщение не должно появляться, если мы не в режиме редактирования конфига.
+            # Если оно появляется после apply_edits, значит apply_edits не остановил обработку.
+            # await update.message.reply_text("Не выбрано файл для редактирования") # Пока закомментируем, чтобы не мешало
+            return
+
         filename = context.user_data['editing_file']
         new_content_text = update.message.text # Получаем текст
 
@@ -1572,7 +2000,7 @@ class TransactionProcessorBot:
             # Возвращаем в главное меню
             # await self.show_config_menu(update, context) # Возможно, это не нужно здесь, или нужно update.message
 
-    @admin_only
+
     async def handle_config_upload(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает загрузку конфига файлом"""
         if 'editing_file' not in context.user_data:
@@ -1648,7 +2076,7 @@ class TransactionProcessorBot:
             self.application.remove_handler(handler_obj, group=-1)
 
     # Обработка документов
-    @admin_only
+
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обновленный обработчик документов"""
         user_data = context.user_data
@@ -1781,7 +2209,7 @@ class TransactionProcessorBot:
             if tmp_pdf:
                 tmp_pdf.close()
 
-    @admin_only
+
     async def handle_save_confirmation(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -1865,7 +2293,7 @@ class TransactionProcessorBot:
                 AND amount = %s
             """, (new_category, date, amount))
 
-    @admin_only
+
     async def handle_duplicates_decision(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -1906,7 +2334,7 @@ class TransactionProcessorBot:
         user_data.pop('pending_duplicates', None)
 
 
-    @admin_only
+
     async def cleanup_files(self, file_paths):
         for path in file_paths:
             if path and os.path.exists(path) and os.path.isfile(path):
@@ -1916,7 +2344,7 @@ class TransactionProcessorBot:
                 except Exception as e:
                     logger.error(f"Ошибка удаления {path}: {e}")
 
-    @admin_only
+
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор файла логов"""
         query = update.callback_query
@@ -1950,7 +2378,7 @@ class TransactionProcessorBot:
             else:
                 logger.error(f"Ошибка при изменении сообщения: {e}")
 
-    @admin_only
+
     async def handle_log_view_option(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор варианта просмотра логов"""
         query = update.callback_query
@@ -2070,7 +2498,6 @@ class TransactionProcessorBot:
                 except telegram.error.BadRequest:
                     pass
 
-    @admin_only
     async def delayed_restart(self):
         """Отложенный перезапуск бота"""
         if self._is_restarting:
@@ -2120,7 +2547,7 @@ class TransactionProcessorBot:
         finally:
             self._is_restarting = False
 
-    @admin_only
+
     async def shutdown(self):
         """Останавливает бота"""
         try:
