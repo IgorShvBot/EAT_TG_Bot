@@ -1,4 +1,4 @@
-__version__ = "3.5.0"
+__version__ = "3.5.1"
 
 import os
 import logging
@@ -317,6 +317,7 @@ class TransactionProcessorBot:
             pattern='^edit_mode_(replace|append)$'
         ))
 
+        self.application.add_handler(MessageHandler(filters.Document.PDF, self.handle_document))
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$'),self.process_ids_input)) #, group=1)
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input)) # Добавить перед apply_edits
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_config_edit),group=2)
@@ -2147,7 +2148,7 @@ class TransactionProcessorBot:
             # Отправка выбранных файлов
             for file_path in files_to_send:
                 if file_path and os.path.exists(file_path):
-                    caption = "Транзакции для ручной классификации" if file_path == unclassified_csv_path else None
+                    caption = "✍️ Транзакции для ручной классификации" if file_path == unclassified_csv_path else None
                     with open(file_path, 'rb') as f:
                         await update.message.reply_document(document=f, caption=caption)
 
@@ -2217,7 +2218,7 @@ class TransactionProcessorBot:
         user_data = context.user_data
         
         if query.data == 'save_no':
-            await query.edit_message_text("Данные не сохранены")
+            await query.edit_message_text("ℹ️ Данные не сохранены")
             
             if 'temp_files' in user_data:
                 await self.cleanup_files(user_data['temp_files'])
@@ -2235,7 +2236,7 @@ class TransactionProcessorBot:
             return
             
         if time.time() - pending_data['timestamp'] > 300:
-            await query.edit_message_text("Время подтверждения истекло (максимум 5 минут)")
+            await query.edit_message_text("⏳ Время подтверждения истекло (максимум 5 минут)")
             return
 
         logger.info("Сохранение данных в БД: %s", pending_data['df'][['Дата']].head().to_dict())
@@ -2245,19 +2246,19 @@ class TransactionProcessorBot:
             stats = db.save_transactions(pending_data['df'], query.from_user.id)
             
             logger.info(
-                f"Сохранено: новых - {stats['new']}, дубликатов - {stats['duplicates']}"
+                f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
             )
             
             if stats['duplicates'] > 0:
                 context.user_data['pending_duplicates'] = stats['duplicates_list']
                 keyboard = [
-                    [InlineKeyboardButton("Обновить дубликаты ✅", callback_data='update_duplicates')],
-                    [InlineKeyboardButton("Пропустить ❌", callback_data='skip_duplicates')]
+                    [InlineKeyboardButton("Обновить дубликаты 🔄", callback_data='update_duplicates')],
+                    [InlineKeyboardButton("Пропустить ➡️", callback_data='skip_duplicates')]
                 ]
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 
                 await query.edit_message_text(
-                    f"Найдено {stats['duplicates']} дубликатов. Обновить записи?",
+                    f"🔍 Найдено {stats['duplicates']} дубликатов. Обновить записи?",
                     reply_markup=reply_markup
                 )
             else:
@@ -2302,7 +2303,7 @@ class TransactionProcessorBot:
         duplicates = user_data.get('pending_duplicates', [])
         
         if not duplicates:
-            await query.edit_message_text("Нет данных для обновления")
+            await query.edit_message_text("ℹ️ Нет данных для обновления")
             return
 
         if query.data == 'update_duplicates':

@@ -1,19 +1,424 @@
-11-05-2025 22:43:30 - root - INFO - Уровень логирования для BOT установлен в: INFO
-11-05-2025 22:43:30 - root - INFO - Запуск бота в Docker-контейнере
-11-05-2025 22:43:30 - telegram.ext.Application - INFO - Application started
-11-05-2025 22:43:58 - database - INFO - Подключение к БД успешно
-11-05-2025 22:43:58 - root - INFO - Получено 5 записей из базы данных
-11-05-2025 22:43:58 - database - INFO - Соединение с БД закрыто
-11-05-2025 22:44:28 - root - ERROR - Ошибка при редактировании сообщения: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
-11-05-2025 22:44:38 - database - INFO - Подключение к БД успешно
-11-05-2025 22:44:38 - root - INFO - Редактирование по фильтру: найдено 5 ID. IDs: [23, 24, 25, 26, 27]...
-11-05-2025 22:44:38 - database - INFO - Соединение с БД закрыто
-11-05-2025 22:44:48 - root - INFO - handle_text_input: Обработка текста 'Калина 2244' для user_id 198451926. Режим: edit_mode
-11-05-2025 22:44:48 - database - INFO - Подключение к БД успешно
-11-05-2025 22:44:48 - root - INFO - User 198451926 edited 5 records. IDs: [23, 24, 25, 26, 27]. Changes: {'check_num': ('Калина 2244', 'append')}
-11-05-2025 22:44:49 - database - INFO - Соединение с БД закрыто
-11-05-2025 22:44:49 - root - INFO - handle_config_edit: Начало обработки текстового редактирования.
-11-05-2025 22:44:49 - root - WARNING - handle_config_edit: 'editing_file' не найден в user_data.
-11-05-2025 22:45:05 - database - INFO - Подключение к БД успешно
-11-05-2025 22:45:05 - root - INFO - Получено 5 записей из базы данных
-11-05-2025 22:45:05 - database - INFO - Соединение с БД закрыто
+12-05-2025 12:40:29 - root - INFO - Уровень логирования для BOT установлен в: INFO
+12-05-2025 12:40:29 - root - INFO - Запуск бота в Docker-контейнере
+12-05-2025 12:40:29 - telegram.ext.Application - INFO - Application started
+12-05-2025 12:40:44 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 12:40:44 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 89178 байт
+12-05-2025 12:40:44 - root - INFO - Используются настройки: return_files=0
+12-05-2025 12:40:44 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:40:44 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:40:44 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:40:44 - camelot - INFO - Processing page-1
+12-05-2025 12:40:45 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:40:45 - camelot - INFO - Processing page-2
+12-05-2025 12:40:45 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+12-05-2025 12:47:49 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 12:47:50 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 89178 байт
+12-05-2025 12:47:50 - root - INFO - Используются настройки: return_files=0
+12-05-2025 12:47:50 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:47:50 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:47:50 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:47:50 - camelot - INFO - Processing page-1
+12-05-2025 12:47:50 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 12:47:50 - camelot - INFO - Processing page-2
+12-05-2025 12:47:50 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff_Platinum
+12-05-2025 12:48:40 - root - INFO - Сохранение данных в БД: {'Дата': {0: '11.05.2025 19:16', 1: '11.05.2025 12:00', 2: '10.05.2025 22:55', 3: '10.05.2025 20:31', 4: '10.05.2025 19:42'}}
+12-05-2025 12:48:40 - database - INFO - Подключение к БД успешно
+12-05-2025 12:48:40 - database - INFO - Вставлено 20 новых транзакций
+12-05-2025 12:48:40 - root - INFO - Сохранено: новых - 20, дубликатов - 0
+12-05-2025 12:48:40 - database - INFO - Соединение с БД закрыто
+12-05-2025 13:14:18 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 13:14:19 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 13:14:19 - root - INFO - Используются настройки: return_files=0
+12-05-2025 13:14:19 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:14:19 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:14:19 - camelot - INFO - Processing page-1
+12-05-2025 13:14:19 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 13:40:55 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 13:40:56 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 13:40:56 - root - INFO - Используются настройки: return_files=0
+12-05-2025 13:40:56 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:40:56 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:40:56 - camelot - INFO - Processing page-1
+12-05-2025 13:40:56 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 13:47:25 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 13:47:25 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 13:47:25 - root - INFO - Используются настройки: return_files=0
+12-05-2025 13:47:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:47:25 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:47:25 - camelot - INFO - Processing page-1
+12-05-2025 13:47:25 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 13:47:42 - root - INFO - Сохранение данных в БД: {'Дата': {0: '10.05.2025 15:40', 1: '06.05.2025 17:18', 2: '05.05.2025 16:48', 3: '05.05.2025 15:41', 4: '01.05.2025 20:35'}}
+12-05-2025 13:47:42 - database - INFO - Подключение к БД успешно
+12-05-2025 13:47:42 - database - ERROR - Ошибка при работе с БД: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/database.py", line 101, in get_cursor
+    yield cursor
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:47:42 - database - ERROR - Ошибка при сохранении транзакций: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:47:42 - root - ERROR - Ошибка БД: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/bot.py", line 2246, in handle_save_confirmation
+    stats = db.save_transactions(pending_data['df'], query.from_user.id)
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:47:42 - database - INFO - Соединение с БД закрыто
+12-05-2025 13:53:49 - root - INFO - Уровень логирования для BOT установлен в: INFO
+12-05-2025 13:53:49 - root - INFO - Запуск бота в Docker-контейнере
+12-05-2025 13:53:50 - telegram.ext.Application - INFO - Application started
+12-05-2025 13:54:07 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 13:54:07 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 13:54:07 - root - INFO - Используются настройки: return_files=0
+12-05-2025 13:54:08 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:54:08 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 13:54:08 - camelot - INFO - Processing page-1
+12-05-2025 13:54:08 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 13:54:10 - root - INFO - 💾 Сохранение данных в БД: {'Дата': {0: '10.05.2025 15:40', 1: '06.05.2025 17:18', 2: '05.05.2025 16:48', 3: '05.05.2025 15:41', 4: '01.05.2025 20:35'}}
+12-05-2025 13:54:10 - database - INFO - Подключение к БД успешно
+12-05-2025 13:54:10 - database - ERROR - Ошибка при работе с БД: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/database.py", line 101, in get_cursor
+    yield cursor
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:54:10 - database - ERROR - Ошибка при сохранении транзакций: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:54:10 - root - ERROR - Ошибка БД: value too long for type character varying(50)
+Traceback (most recent call last):
+  File "/app/bot.py", line 2246, in handle_save_confirmation
+    stats = db.save_transactions(pending_data['df'], query.from_user.id)
+  File "/app/database.py", line 258, in save_transactions
+    execute_batch(
+  File "/root/.local/lib/python3.10/site-packages/psycopg2/extras.py", line 1216, in execute_batch
+    cur.execute(b";".join(sqls))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(50)
+
+12-05-2025 13:54:10 - database - INFO - Соединение с БД закрыто
+12-05-2025 14:28:52 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 14:28:52 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 14:28:52 - root - INFO - Используются настройки: return_files=0
+12-05-2025 14:28:53 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 14:28:53 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 14:28:53 - camelot - INFO - Processing page-1
+12-05-2025 14:28:53 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 14:29:09 - root - INFO - 💾 Сохранение данных в БД: {'Дата': {0: '10.05.2025 15:40', 1: '06.05.2025 17:18', 2: '05.05.2025 16:48', 3: '05.05.2025 15:41', 4: '01.05.2025 20:35'}}
+12-05-2025 14:29:09 - database - INFO - Подключение к БД успешно
+12-05-2025 14:29:09 - database - INFO - Вставлено 6 новых транзакций
+12-05-2025 14:29:09 - root - INFO - Сохранено: новых - 6, дубликатов - 0
+12-05-2025 14:29:09 - database - INFO - Соединение с БД закрыто
+12-05-2025 15:10:15 - root - INFO - Уровень логирования для BOT установлен в: INFO
+12-05-2025 15:10:15 - root - INFO - Запуск бота в Docker-контейнере
+12-05-2025 15:10:16 - telegram.ext.Application - INFO - Application started
+12-05-2025 15:10:52 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 15:10:53 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 15:10:53 - root - INFO - Используются настройки: return_files=0
+12-05-2025 15:10:53 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 15:10:53 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 15:10:53 - camelot - INFO - Processing page-1
+12-05-2025 15:10:53 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 15:10:56 - root - INFO - Сохранение данных в БД: {'Дата': {0: '10.05.2025 15:40', 1: '06.05.2025 17:18', 2: '05.05.2025 16:48', 3: '05.05.2025 15:41', 4: '01.05.2025 20:35'}}
+12-05-2025 15:10:56 - database - INFO - Подключение к БД успешно
+12-05-2025 15:10:56 - database - ERROR - Ошибка при работе с БД: 'duplicates'
+Traceback (most recent call last):
+  File "/app/database.py", line 101, in get_cursor
+    yield cursor
+  File "/app/database.py", line 259, in save_transactions
+    stats['duplicates'] += 1 # Увеличиваем счетчик дубликатов
+KeyError: 'duplicates'
+12-05-2025 15:10:56 - database - ERROR - Ошибка при сохранении транзакций: 'duplicates'
+Traceback (most recent call last):
+  File "/app/database.py", line 259, in save_transactions
+    stats['duplicates'] += 1 # Увеличиваем счетчик дубликатов
+KeyError: 'duplicates'
+12-05-2025 15:10:56 - root - ERROR - Ошибка БД: 'duplicates'
+Traceback (most recent call last):
+  File "/app/bot.py", line 2246, in handle_save_confirmation
+    stats = db.save_transactions(pending_data['df'], query.from_user.id)
+  File "/app/database.py", line 259, in save_transactions
+    stats['duplicates'] += 1 # Увеличиваем счетчик дубликатов
+KeyError: 'duplicates'
+12-05-2025 15:10:56 - database - INFO - Соединение с БД закрыто
+12-05-2025 15:17:12 - root - INFO - Уровень логирования для BOT установлен в: INFO
+12-05-2025 15:17:12 - root - INFO - Запуск бота в Docker-контейнере
+12-05-2025 15:17:13 - telegram.ext.Application - INFO - Application started
+12-05-2025 15:17:20 - root - INFO - Получен файл: Справка_о_движении_денежных_средств.pdf
+12-05-2025 15:17:21 - root - INFO - Начата обработка PDF: Справка_о_движении_денежных_средств.pdf, размер: 85206 байт
+12-05-2025 15:17:21 - root - INFO - Используются настройки: return_files=0
+12-05-2025 15:17:21 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 15:17:21 - pdfminer.pdfpage - WARNING - CropBox missing from /Page, defaulting to MediaBox
+12-05-2025 15:17:21 - camelot - INFO - Processing page-1
+12-05-2025 15:17:21 - extract_transactions_pdf2 - INFO - Обработка CSV как Tinkoff
+12-05-2025 15:17:23 - root - INFO - Сохранение данных в БД: {'Дата': {0: '10.05.2025 15:40', 1: '06.05.2025 17:18', 2: '05.05.2025 16:48', 3: '05.05.2025 15:41', 4: '01.05.2025 20:35'}}
+12-05-2025 15:17:23 - database - INFO - Подключение к БД успешно
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-10 15:40:00, Сумма=1863.0, Наличность=Тинькофф
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-06 17:18:00, Сумма=14500.0, Наличность=Тинькофф
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-05 16:48:00, Сумма=400000.0, Наличность=Тинькофф
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-05 15:41:00, Сумма=400000.0, Наличность=Яндекс
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-01 20:35:00, Сумма=10000.0, Наличность=Тинькофф
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-01 19:10:00, Сумма=111150.0, Наличность=Тинькофф
+12-05-2025 15:17:23 - database - INFO - Пропущен дубликат: Дата=2025-05-01 13:07:00, Сумма=200000.0, Наличность=Яндекс
+12-05-2025 15:17:23 - database - INFO - Обработано записей: Новых=0, Пропущено дубликатов=7
+12-05-2025 15:17:23 - root - INFO - 💾 Сохранено: 🆕 новых - 0, 📑 дубликатов - 7
+12-05-2025 15:17:23 - database - INFO - Соединение с БД закрыто
+12-05-2025 15:26:22 - root - INFO - Уровень логирования для BOT установлен в: INFO
+12-05-2025 15:26:22 - root - INFO - Запуск бота в Docker-контейнере
+12-05-2025 15:26:22 - telegram.ext.Application - INFO - Application started
+12-05-2025 15:32:07 - telegram.ext.Updater - ERROR - Error while getting Updates: httpx.RemoteProtocolError: Server disconnected without sending a response.
+12-05-2025 15:32:07 - root - ERROR - Ошибка: httpx.RemoteProtocolError: Server disconnected without sending a response., update: None
+NoneType: None
+12-05-2025 15:32:07 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
+    response = await connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 96, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 121, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 99, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 164, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 214, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
+    res = await self._client.request(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
+    response = await self._send_handling_auth(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 240, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.RemoteProtocolError: Server disconnected without sending a response.
+12-05-2025 15:47:26 - telegram.ext.Updater - ERROR - Error while getting Updates: httpx.RemoteProtocolError: Server disconnected without sending a response.
+12-05-2025 15:47:26 - root - ERROR - Ошибка: httpx.RemoteProtocolError: Server disconnected without sending a response., update: None
+NoneType: None
+12-05-2025 15:47:26 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
+    response = await connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 96, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 121, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 99, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 164, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 214, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
+    res = await self._client.request(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
+    response = await self._send_handling_auth(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 240, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.RemoteProtocolError: Server disconnected without sending a response.
+12-05-2025 16:04:21 - telegram.ext.Updater - ERROR - Error while getting Updates: httpx.RemoteProtocolError: Server disconnected without sending a response.
+12-05-2025 16:04:21 - root - ERROR - Ошибка: httpx.RemoteProtocolError: Server disconnected without sending a response., update: None
+NoneType: None
+12-05-2025 16:04:21 - root - ERROR - Исключение при обработке запроса:
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 60, in map_httpcore_exceptions
+    yield
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 353, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 262, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 245, in handle_async_request
+    response = await connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/connection.py", line 96, in handle_async_request
+    return await self._connection.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 121, in handle_async_request
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 99, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 164, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+  File "/root/.local/lib/python3.10/site-packages/httpcore/_async/http11.py", line 214, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 216, in do_request
+    res = await self._client.request(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1530, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1617, in send
+    response = await self._send_handling_auth(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1645, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1682, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_client.py", line 1719, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 352, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.local/lib/python3.10/site-packages/httpx/_transports/default.py", line 77, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 607, in _network_loop_retry
+    if not await action_cb():
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 335, in polling_action_cb
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_updater.py", line 320, in polling_action_cb
+    updates = await self.bot.get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 543, in get_updates
+    updates = await super().get_updates(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 381, in decorator
+    result = await func(self, *args, **kwargs)  # skipcq: PYL-E1102
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 3661, in get_updates
+    await self._post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 469, in _post
+    return await self._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/ext/_extbot.py", line 325, in _do_post
+    return await super()._do_post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/_bot.py", line 497, in _do_post
+    return await request.post(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 168, in post
+    result = await self._request_wrapper(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 291, in _request_wrapper
+    raise exc
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_baserequest.py", line 277, in _request_wrapper
+    code, payload = await self.do_request(
+  File "/root/.local/lib/python3.10/site-packages/telegram/request/_httpxrequest.py", line 240, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.RemoteProtocolError: Server disconnected without sending a response.

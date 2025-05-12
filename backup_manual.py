@@ -1,4 +1,4 @@
-# python backup_manual.py
+# DB_HOST=localhost python backup_manual.py
 
 import os
 from database import Database

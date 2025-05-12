@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     category VARCHAR(100),
     description TEXT,
     counterparty VARCHAR(200),
-    check_num VARCHAR(50),
+    check_num VARCHAR(200),
     transaction_type VARCHAR(50),
     -- Новые поля:
     transaction_class VARCHAR(100),  -- Класс

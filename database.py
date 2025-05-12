@@ -223,7 +223,6 @@ class Database:
                 # Преобразование и валидация данных
                 # Указываем формат даты ДД-ММ-ГГГГ, если это формат в CSV
                 df['дата'] = pd.to_datetime(df['дата'], format='%d.%m.%Y %H:%M', errors='coerce')
-                # df['дата'] = pd.to_datetime(df['дата'], errors='coerce')
                 df['сумма'] = pd.to_numeric(df['сумма'], errors='coerce')
                 if 'сумма (куда)' in df.columns:
                     df['сумма (куда)'] = pd.to_numeric(df['сумма (куда)'], errors='coerce')
@@ -241,7 +240,10 @@ class Database:
 
                 new_data = []
                 for _, row in df.iterrows():
-                    if not self.check_duplicate(row['дата'], row['наличность'], row['сумма']):
+                    # Вызываем проверку на дубликат
+                    is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
+                    # if not self.check_duplicate(row['дата'], row['наличность'], row['сумма']):
+                    if not is_duplicate: # Если это НЕ дубликат
                         new_data.append((
                             import_id, user_id, row['дата'], row['сумма'],
                             row.get('наличность'), row.get('категория'), 
@@ -253,6 +255,11 @@ class Database:
                             row.get('наличность (куда)')
                         ))
                         stats['new'] += 1
+                    else: # Если ЭТО дубликат
+                        stats['duplicates'] += 1 # Увеличиваем счетчик дубликатов
+                        # Опционально: можно добавить детали дубликата в список, если нужно
+                        # stats['duplicates_list'].append(row.to_dict())
+                        logger.info(f"Пропущен дубликат: Дата={row['дата']}, Сумма={row['сумма']}, Наличность={row.get('наличность')}")
 
                 if new_data:
                     execute_batch(
@@ -266,7 +273,10 @@ class Database:
                         new_data,
                         page_size=100
                     )
-                logger.info("Вставлено %d новых транзакций", stats['new'])
+                    logger.info("Вставлено %d новых транзакций", stats['new'])
+                
+                # Логирование статистики перед возвратом
+                logger.info(f"Обработано записей: Новых={stats['new']}, Пропущено дубликатов={stats['duplicates']}")
 
                 return stats
                 
