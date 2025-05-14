@@ -13,6 +13,8 @@ categories:
       - BALAKLAVSKIJ PROSPEKT
       - PYATEROCHKA
       - GURMETSPAR
+      - KRASNOE&BELOE
+      - PEREKRESTOK
   - name: Кафе, посиделки
     patterns:
       - KOFEMANIYA
@@ -47,9 +49,10 @@ categories:
   - name: Бытовые расходы
     patterns:
       - SBER\*5732\*MEGAMARKET
+      - XOZMIR
   - name: Семья и личные расходы. Медицина
     patterns:
-      - АРТЕКА
+      - APTEKA
       - DOCDENT
       - MED
       - MSKAPT
@@ -59,6 +62,11 @@ categories:
       - Gorzdrav
       - Аптечная сеть
       - Gemotest
+      - АРТЕCHNOE
+      - ZDOROV
+  - name: Семья и личные расходы. Спорт
+    patterns:
+      - INSIGHT
   - name: Косметология и уход
     patterns:
       - WAXANDGO
@@ -93,6 +101,7 @@ categories:
     patterns:
       - CITYDRIVE
       - DELIMOBIL
+      - YANDEX DRIVE
   - name: Доставка
     patterns:
       - DOSTAVKA

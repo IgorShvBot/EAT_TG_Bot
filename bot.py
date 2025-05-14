@@ -1,4 +1,4 @@
-__version__ = "3.5.1"
+__version__ = "3.5.2"
 
 import os
 import logging
@@ -494,7 +494,7 @@ class TransactionProcessorBot:
                 [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
                 [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
                 [InlineKeyboardButton("➡️ К выбору полей", callback_data='edit_filter_proceed_to_fields')],
-                [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_edit')]
+                [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
             ]
             message_text = "⚙ Настройте фильтры для выбора записей для редактирования:"
         else:
@@ -508,7 +508,7 @@ class TransactionProcessorBot:
                 [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
                 [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
                 [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
-                [InlineKeyboardButton("↩️ Отмена", callback_data='cancel_export')]
+                [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_export')]
             ]
             message_text = "⚙ Настройте параметры отчета:"
 
@@ -906,7 +906,7 @@ class TransactionProcessorBot:
             for cat in categories:
                 safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "")[:50]
                 keyboard.append([InlineKeyboardButton(cat, callback_data=f"cat_{safe_cat}")])
-            keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+            keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             try:
@@ -941,7 +941,7 @@ class TransactionProcessorBot:
             [InlineKeyboardButton(type, callback_data=f"type_{type}")]
             for type in types
         ]
-        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.edit_message_text("Выберите тип транзакции:", reply_markup=reply_markup)
 
@@ -961,7 +961,7 @@ class TransactionProcessorBot:
             for src in sources[i:i+2]]
             for i in range(0, len(sources), 2)
         ]
-        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
         
         await query.edit_message_text(
             "Выберите источник средств:",
@@ -1008,7 +1008,7 @@ class TransactionProcessorBot:
             for cls in classes[i:i+3]]
             for i in range(0, len(classes), 3)
         ]
-        keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_filters')])
+        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
         
         await query.edit_message_text(
             "Выберите класс транзакции:",
@@ -1019,7 +1019,7 @@ class TransactionProcessorBot:
         query = update.callback_query
         await query.answer()
         context.user_data.pop('export_filters', None)
-        await query.edit_message_text("Экспорт отменен")
+        await query.edit_message_text("ℹ️ Экспорт отменен")
 
 
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1192,20 +1192,20 @@ class TransactionProcessorBot:
                 'transaction_date': 'Дата',
                 'amount': 'Сумма',
                 'cash_source': 'Наличность',
+                'target_amount': 'Сумма (куда)',
+                'target_cash_source': 'Наличность (куда)',
                 'category': 'Категория',
                 'description': 'Описание',
+                'transaction_type': 'Тип транзакции',
                 'counterparty': 'Контрагент',
                 'check_num': 'Чек #',
-                'transaction_type': 'Тип транзакции',
-                'transaction_class': 'Класс',
-                'target_amount': 'Сумма (куда)',
-                'target_cash_source': 'Наличность (куда)'
+                'transaction_class': 'Класс'
             }
             
             # Переименовываем столбцы
             # df = df.rename(columns=column_mapping)
             df_renamed = df.rename(columns=column_mapping)
-            logger.debug("Столбцы после переименования: %s", df.columns.tolist())
+            logger.debug("Столбцы после переименования: %s", df_renamed.columns.tolist())
             
             with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
                 df_renamed.to_csv(tmp.name, index=False, encoding='utf-8', sep=',')
@@ -1380,7 +1380,7 @@ class TransactionProcessorBot:
                 [InlineKeyboardButton(f, callback_data=f'logfile_{f}')]
                 for f in log_files
             ]
-            keyboard.append([InlineKeyboardButton("Назад", callback_data='back_to_main')])
+            keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_main')])
             
             reply_markup = InlineKeyboardMarkup(keyboard)
             
@@ -1482,7 +1482,7 @@ class TransactionProcessorBot:
             add_pattern_to_category(category, pattern)
             
             await update.message.reply_text(
-                f"Паттерн '{pattern}' успешно добавлен в категорию '{category}'"
+                f"✅ Паттерн '{pattern}' успешно добавлен в категорию '{category}'"
             )
         except Exception as e:
             logger.error(f"Ошибка добавления паттерна: {e}")
@@ -1678,29 +1678,30 @@ class TransactionProcessorBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /start"""
         welcome_text = (
-            "👋 Привет! Я бот для обработки банковских выписок и управления финансами.\n\n"
-            "📌 <b>Основные возможности:</b>\n"
-            "• Обработка PDF-выписок из банков (Tinkoff, Сбербанк, Яндекс и другие)\n"
-            "• Автоматическая классификация транзакций по категориям\n"
-            "• Настройка категорий и паттернов для распознавания\n"
-            "• Управление конфигурацией прямо в чате\n"
-            "• Просмотр логов работы бота\n\n"
-            "📄 <b>Как работать с ботом:</b>\n"
-            "1. Просто отправьте мне PDF-файл с банковской выпиской\n"
-            "2. Я обработаю его и верну структурированные данные\n"
-            "3. Для транзакций, которые не удалось классифицировать, будет отдельный файл\n\n"
-            "⚙ <b>Дополнительные команды:</b>\n"
-            "/config - Управление конфигурацией (категории, паттерны, таймауты)\n"
-            "/add_pattern - Добавить новый паттерн для категории\n"
-            "/settings - Показать текущие настройки\n"
-            "/reset - Сбросить настройки к значениям по умолчанию\n\n"
-            "<b>Примеры команд:</b>\n"
-            "• <code>/add_pattern \"Еда\" \"VKUSVILL\"</code> - добавить паттерн для категории\n"
-            "• <code>PDF: 1</code> - сохранить промежуточные файлы обработки\n"
-            "• <code>Чек #: + НДС</code> - добавить текст ко всем чекам\n\n"
-            "Обработка файла может занять несколько минут, пожалуйста, подождите."
+            "👋 Привет! Я ваш личный финансовый помощник.\n"
+            "Я помогу обработать PDF-выписки из банка, автоматически распределю транзакции по категориям и сохраню их в базу данных для дальнейшего анализа.\n\n"
+            "<b>С чего начать:</b>\n"
+            "1. 📤 <b>Отправьте мне PDF-файл</b> с банковской выпиской.\n"
+            "2. 💾 После обработки я предложу сохранить распознанные транзакции.\n"
+            "3. 📄 Транзакции, требующие ручной классификации, будут в отдельном файле.\n\n"
+            "<b>Основные возможности и команды:</b>\n"
+            "• /export - Выгрузить транзакции в CSV файл, используя гибкие фильтры.\n"
+            "• /edit - Редактировать детали существующих записей в базе данных.\n"
+            "• /config - Центр управления: здесь можно настроить категории, паттерны для автоклассификации, просмотреть логи или перезагрузить бота.\n"
+            "• <code>/add_pattern \"Категория\" \"Паттерн\"</code> - Быстро добавить новое правило для автоматической классификации транзакций (например, <code>/add_pattern \"Продукты\" \"АЗБУКА ВКУСА\"</code>).\n\n"
+            "<b>Управление настройками обработки PDF:</b>\n"
+            "Перед отправкой PDF-файла (или используя команду /add_settings) вы можете задать специфические параметры для обработки. Например:\n"
+            "   <code>Описание: +Командировка СПб</code> (добавит текст к описанию всех транзакций из файла)\n"
+            "   <code>PDF: 1</code> (для получения промежуточных файлов обработки)\n"
+            "   <code>Класс: Личные расходы</code> (установит класс для всех транзакций)\n"
+            "Для управления этими настройками:\n"
+            "• /add_settings - Задать или изменить настройки обработки.\n"
+            "• /show_settings - Посмотреть текущие активные настройки.\n"
+            "• /reset_settings - Сбросить все настройки обработки к значениям по умолчанию.\n\n"
+            "⏳ <i>Обработка PDF-файла может занять некоторое время.</i>\n"
+            "✨ Успешной работы и точного учета!"            
         )
-        
+         
         await update.message.reply_text(welcome_text, parse_mode='HTML')
 
     @admin_only
@@ -1760,7 +1761,7 @@ class TransactionProcessorBot:
             [InlineKeyboardButton("PDF паттерны", callback_data='view_pdf_patterns')],
             [InlineKeyboardButton("Таймауты", callback_data='view_timeouts')],
             [InlineKeyboardButton("Все файлы", callback_data='view_all')],
-            [InlineKeyboardButton("Назад", callback_data='back_to_main')]
+            [InlineKeyboardButton("↩️ Назад", callback_data='back_to_main')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 

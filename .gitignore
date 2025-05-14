@@ -3,4 +3,11 @@ __pycache__/
 *.pyc
 .env
 logs/
+backups/
 txt_versions/
+RPi Commands/
+rpi_config/
+rpi_db_backups/
+rpi_logs/
+rpi_scripts
+RPiGetBotFiles.command

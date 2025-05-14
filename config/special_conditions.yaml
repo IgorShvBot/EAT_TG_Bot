@@ -66,6 +66,47 @@ special_conditions:
       - field: "Категория"
         value: ""
 
+  - condition: "Перевод между счетами одного клиента"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс Сейв"
+      - field: "Наличность (куда)"
+        value: "Яндекс"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., +7 926 766-00-77, Сбербанк"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Visa Gold"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Перевод от Ш. Игорь Николаевич"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Visa Gold"
+      - field: "Наличность (куда)"
+        value: "Visa Gold Aeroflot"
+      - field: "Категория"
+        value: ""
+      - field: "Класс"
+        value: "01 Личное"
+
   - condition: "ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ"
     actions:
       - field: "Сумма"

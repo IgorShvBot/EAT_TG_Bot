@@ -335,9 +335,9 @@ class Database:
             sql.SQL("""
             SELECT
                 id, transaction_date, amount, cash_source,
-                category, description, counterparty,
-                check_num, transaction_type,
-                transaction_class, target_amount, target_cash_source
+                target_amount, target_cash_source, 
+                category, description, transaction_type,
+                counterparty, check_num, transaction_class                            
             FROM transactions
             WHERE user_id = %s AND transaction_date >= %s AND transaction_date < %s
             """)
