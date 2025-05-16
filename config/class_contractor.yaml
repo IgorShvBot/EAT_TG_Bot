@@ -1,0 +1,21 @@
+type_settings:
+  Tinkoff_Platinum:
+    class: 01 Личное
+    contractor: ""
+    cash: "Тинькофф. Платинум"
+  Tinkoff:
+    class: 01 Личное
+    contractor: ""
+    cash: "Тинькофф"
+  Yandex:
+    class: 01 Личное
+    contractor: ""
+    cash: "Яндекс"
+  Visa_Gold_Aeroflot:
+    class: 03 Родные, близкие
+    contractor: "! М"
+    cash: "Visa Gold Aeroflot"
+  default:
+    class: 01 Личное
+    contractor: ""
+    cash: ""

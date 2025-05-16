@@ -1,0 +1,186 @@
+special_conditions:
+  - condition: "Plati chastyami"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность (куда)"
+        value: "Плати частями"
+      - field: "Категория"
+        value: ""
+
+  - condition: "перевод по номеру телефона \\+79267660077"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+
+  - condition: "Внутренний перевод с договора 5174820778"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Тинькофф"
+      - field: "Наличность (куда)"
+        value: "Тинькофф. Платинум"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Внутренний перевод на договор 0589803758"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Тинькофф"
+      - field: "Наличность (куда)"
+        value: "Тинькофф. Платинум"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Внутрибанковский перевод с договора 5363074237"
+    actions:
+      - field: "Тип транзакции"
+        value: "Доход"
+      - field: "Наличность"
+        value: "Тинькофф"
+      - field: "Категория"
+        value: "Доход от аренды"
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Машиноместо: 04.2025-14.5к, 09.2023-11к, 03.2022-9к"
+
+  - condition: "Пополнение. Система быстрых платежей"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Тинькофф"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Перевод между счетами одного клиента"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс Сейв"
+      - field: "Наличность (куда)"
+        value: "Яндекс"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., \\+7 926 766-00-77, Сбербанк"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Visa Gold"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Перевод от Ш. Игорь Николаевич"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Visa Gold"
+      - field: "Наличность (куда)"
+        value: "Visa Gold Aeroflot"
+      - field: "Категория"
+        value: ""
+      - field: "Контрагент"
+        value: ""
+      - field: "Класс"
+        value: "01 Личное"
+
+  - condition: "ВОЗВРАТ|ОТМЕНА ОПЕРАЦИИ"
+    actions:
+      - field: "Сумма"
+        value: "-$CURRENT"
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Возврат средств"
+
+  - condition: "ОПЛАТА ПО ДОГОВОРУ ОКАЗАНИЯ УСЛУГ №38/25"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Монтессори центр САМИ"
+
+  - condition: "03224643450000007300"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Осн"
+      - field: "Контрагент"
+        value: "! М"
+      - field: "Класс"
+        value: "03 Родные, близкие"
+
+  - condition: "SKLADNO"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Аренда под вещи: складно"
+
+  - condition: "MOSENERGOSBYT"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МосЭнергоСбыт (МЭС)"
+      - field: "Контрагент"
+        value: "Квартира_Ипотека"
+
+  - condition: "КОМ. ПЛАТЕЖИ. ВЕРНАДСКОГО 54"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "ЖКХ"
+      - field: "Контрагент"
+        value: "Квартира_Ипотека"
+
+  - condition: "MGTS"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МГТС"
+      - field: "Контрагент"
+        value: "Квартира_Ипотека"
+
+  - condition: "inconnect"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "VPN InConnect: 100 дней"
+
+  - condition: "BUKLYA"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Даниил"
+
+  - condition: "Прием платежей mos.ru"
+    actions:
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "МосЭнергоСбыт (МЭС)"
+      - field: "Контрагент"
+        value: "! М"
+      - field: "Класс"
+        value: "03 Родные, близкие"
