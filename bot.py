@@ -1,4 +1,4 @@
-__version__ = "3.6.0"
+__version__ = "3.6.1"
 
 import os
 import logging
@@ -1335,9 +1335,9 @@ class TransactionProcessorBot:
                 await context.bot.send_document(
                     chat_id=query.from_user.id,
                     document=open(tmp.name, 'rb'),
-                    caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} - {filters['end_date'].strftime('%d.%m.%Y')}"
+                    caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} - {filters['end_date'].strftime('%d.%m.%Y')}\n"
+                            f"📌 Всего записей: {len(df_renamed)}"
                 )
-                # os.unlink(tmp.name)  # Удаляем временный файл
             
                 # --- ФОРМИРОВАНИЕ СВОДКИ ПО ФИЛЬТРАМ ---
                 filter_summary_lines = []
@@ -1366,10 +1366,10 @@ class TransactionProcessorBot:
                 # -----------------------------------------
 
                 # --- ОБНОВЛЕНИЕ СООБЩЕНИЯ ОБ УСПЕХЕ ---
-                success_message = "✅ Отчет успешно сформирован."
+                success_message = "✅ Отчет успешно сформирован"
                 # Добавляем сводку по фильтрам, если она не пустая
                 if filter_summary:
-                    success_message += "\n\n<b>Примененные фильтры:</b>\n" + filter_summary
+                    success_message += "\n\n⚙️ <b>Примененные фильтры:</b>\n" + filter_summary
 
                 # Используем parse_mode='HTML' для жирного шрифта
                 await query.edit_message_text(success_message, parse_mode='HTML')
@@ -2252,32 +2252,6 @@ class TransactionProcessorBot:
                 classify_transactions, combined_csv_path, pdf_type, user_settings=settings
             )
 
-            # Отправка файлов согласно настройкам
-            files_to_send = []
-            
-            if return_files == '1':
-                files_to_send.append(temp_csv_path)
-            elif return_files == '2':
-                files_to_send.extend([temp_csv_path, combined_csv_path])
-            else:  # default - только итоговый файл
-                files_to_send.append(result_csv_path)
-                # Добавляем unclassified только при отправке итогового файла
-                if unclassified_csv_path and os.path.exists(unclassified_csv_path):
-                    files_to_send.append(unclassified_csv_path)
-
-            # Отправка выбранных файлов
-            for file_path in files_to_send:
-                if file_path and os.path.exists(file_path):
-                    caption = "✍️ Транзакции для ручной классификации" if file_path == unclassified_csv_path else None
-                    with open(file_path, 'rb') as f:
-                        await update.message.reply_document(document=f, caption=caption)
-
-            # Сохраняем DataFrame во временное хранилище
-            # context.user_data['pending_data'] = {
-            #     'df': pd.read_csv(result_csv_path),
-            #     'timestamp': time.time()
-            # }
-            
             df = pd.read_csv(
                 result_csv_path,
                 sep=';',          # Указываем разделитель
@@ -2291,6 +2265,34 @@ class TransactionProcessorBot:
                 'pdf_type': pdf_type,
                 'timestamp': time.time()  # Фиксируем время получения данных
             }
+
+            # Отправка файлов согласно настройкам
+            files_to_send = []
+            
+            if return_files == '1':
+                files_to_send.append(temp_csv_path)
+            elif return_files == '2':
+                files_to_send.extend([temp_csv_path, combined_csv_path])
+            else:  # default - только итоговый файл
+                files_to_send.append(result_csv_path)
+                # Добавляем unclassified только при отправке итогового файла
+                if unclassified_csv_path and os.path.exists(unclassified_csv_path):
+                    unclassified_df = pd.read_csv(unclassified_csv_path)
+                    unclassified_caption = f"✍️ Транзакции для ручной классификации\n🗂️ Всего записей: {len(unclassified_df)}"
+                    with open(unclassified_csv_path, 'rb') as f:
+                        await update.message.reply_document(document=f, caption=unclassified_caption)                    
+                    # files_to_send.append(unclassified_csv_path)
+
+            # Отправка выбранных файлов
+            for file_path in files_to_send:
+                if file_path and os.path.exists(file_path):
+                    caption = "✍️ Транзакции для ручной классификации" if file_path == unclassified_csv_path else None
+                    with open(file_path, 'rb') as f:
+                        file_caption = f"🗃️ Всего записей: {len(df)}"
+                        if caption:
+                            file_caption = f"{caption}\n{file_caption}"
+                        await update.message.reply_document(document=f, caption=file_caption)                        
+
             context.user_data['temp_files'] = [
                 tmp_pdf_path,
                 temp_csv_path,
