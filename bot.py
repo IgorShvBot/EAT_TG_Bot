@@ -1,4 +1,4 @@
-__version__ = "3.5.2"
+__version__ = "3.6.0"
 
 import os
 import logging
@@ -51,7 +51,7 @@ def setup_logging():
     file_handler = TimedRotatingFileHandler(
         'logs/bot.log',
         when='midnight',
-        backupCount=30,
+        backupCount=5,
         encoding='utf-8'
     )
     
@@ -108,6 +108,25 @@ def load_admins():
 
 ALLOWED_USERS = load_admins()
 
+def load_general_settings(config_path: str = None) -> Dict:
+    """Загружает общие настройки из YAML-файла"""
+    if config_path is None:
+        config_path = os.path.join(os.path.dirname(__file__), 'config', 'settings.yaml')
+    
+    try:
+        with open(config_path, 'r', encoding='utf-8') as file:
+            settings = yaml.safe_load(file)
+            if settings is None:  # Если файл пустой
+                logger.warning(f"Файл настроек {config_path} пуст. Используются значения по умолчанию.")
+                return {'LOG_LEVEL': 'INFO'}  # Возвращаем настройки по умолчанию
+            return settings
+    except FileNotFoundError:
+        logger.warning(f"Файл настроек {config_path} не найден. Используются значения по умолчанию.")
+        return {'LOG_LEVEL': 'INFO'}  # Настройки по умолчанию
+    except Exception as e:
+        logger.error(f"Ошибка загрузки файла настроек {config_path}: {e}", exc_info=True)
+        return {'LOG_LEVEL': 'INFO'}  # Настройки по умолчанию
+    
 # Декоратор для проверки доступа
 def admin_only(func):
     async def wrapper(*args, **kwargs): # Сам wrapper должен быть async
@@ -253,6 +272,15 @@ class TransactionProcessorBot:
         self.request_timeout = timeouts['request_timeout']
         self.delay_between_operations = timeouts['delay_between_operations']
 
+        # Загрузка общих настроек
+        general_settings = load_general_settings()
+
+        self.log_lines_to_show = general_settings.get('log_lines_to_show', 50) # Значение по умолчанию 50, если в файле нет
+        logger.debug(f"Количество строк лога для отображения установлено в: {self.log_lines_to_show}")
+        # Загрузка настройки для export_last_import_ids_count
+        self.export_last_import_ids_count = general_settings.get('export_last_import_ids_count', 10)
+        logger.debug(f"Количество последних import_id для фильтра экспорта установлено в: {self.export_last_import_ids_count}")
+
         # Настройка Application
         self.application = Application.builder() \
             .token(token) \
@@ -268,12 +296,6 @@ class TransactionProcessorBot:
             pattern=re.compile(r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$')
         )
         # , group=-1
-        )
-
-        # Обработчик для ввода паттерна
-        self.pattern_handler = MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            self.handle_pattern_input
         )
 
     def setup_handlers(self):
@@ -300,6 +322,8 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.set_counterparty, pattern='^set_counterparty'))
         self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
         self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
+        self.application.add_handler(CallbackQueryHandler(self.set_import_id, pattern='^set_import_id$'))
+        self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
         self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
 
@@ -487,6 +511,7 @@ class TransactionProcessorBot:
             keyboard = [
                 [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
                 [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+                [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
                 [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
                 [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
                 [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
@@ -501,6 +526,7 @@ class TransactionProcessorBot:
             keyboard = [
                 [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
                 [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+                [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
                 [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
                 [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
                 [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
@@ -1014,6 +1040,46 @@ class TransactionProcessorBot:
             "Выберите класс транзакции:",
             reply_markup=InlineKeyboardMarkup(keyboard))
 
+    async def set_import_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+            """Меню выбора Import ID"""
+            logger.info("Обработчик set_import_id вызван")
+            query = update.callback_query
+            await query.answer()
+
+            user_id = query.from_user.id
+            db = Database()
+            try:
+                # Получаем последние N import_id и даты
+                last_imports = db.get_last_import_ids(user_id, self.export_last_import_ids_count)
+                logger.debug(f"Получены последние {len(last_imports)} import_id для user_id {user_id}")
+
+                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]] # Кнопка "Все"
+                # Формируем кнопки для каждого import_id
+                
+                # last_imports теперь будет содержать (import_id, created_at, pdf_type_val)
+                for import_id, created_at, pdf_type_val in last_imports: # <--- Добавлен pdf_type_val
+                    date_str = created_at.strftime('%d.%m.%Y %H:%M')
+                    # Формируем текст кнопки, добавляя pdf_type, если он есть
+                    button_text = f"#{import_id} ({date_str}"
+                    if pdf_type_val:
+                        button_text += f", {pdf_type_val}"
+                    button_text += ")"
+                    keyboard.append([InlineKeyboardButton(button_text, callback_data=f'import_id_{import_id}')])
+
+                keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
+                reply_markup = InlineKeyboardMarkup(keyboard)
+
+                await query.edit_message_text(
+                    f"Выберите ID импорта (последние {self.export_last_import_ids_count}):",
+                    reply_markup=reply_markup
+                )
+                context.user_data['awaiting_input'] = None # Убедимся, что не ждем текстового ввода
+
+            except Exception as e:
+                logger.error(f"Ошибка в set_import_id: {e}", exc_info=True)
+                await query.edit_message_text("❌ Ошибка при загрузке ID импортов. Попробуйте позже.")
+            finally:
+                db.close()
 
     async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -1145,12 +1211,64 @@ class TransactionProcessorBot:
         
         await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
 
+    async def handle_import_id_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+            """Обрабатывает выбор import_id из меню"""
+            query = update.callback_query
+            await query.answer()
 
+            callback_data = query.data
+            logger.debug(f"handle_import_id_callback: Получен исходный callback_data: '{callback_data}'")
+
+            selected_import_id = 'Все' # Инициализируем значение по умолчанию
+
+            if callback_data == 'import_id_Все':
+                selected_import_id = 'Все'
+            elif callback_data.startswith('import_id_'):
+                id_str = callback_data[len('import_id_'):]
+                logger.debug(f"handle_import_id_callback: Извлечен id_str = '{id_str}', тип = {type(id_str)}")
+
+                try:
+                    selected_import_id = int(id_str)
+                except ValueError:
+                    logger.warning(f"Не удалось преобразовать извлеченную строку '{id_str}' в число. Устанавливаю 'Все'.")
+                    selected_import_id = 'Все'
+            else:
+                logger.warning(f"Получен неожиданный callback_data для import_id: '{callback_data}'. Устанавливаю 'Все'.")
+                selected_import_id = 'Все'
+
+            # Определяем, какой словарь фильтров использовать
+            edit_mode_active = context.user_data.get('edit_mode') and context.user_data['edit_mode'].get('type') == 'edit_by_filter'
+            if edit_mode_active:
+                filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', self.get_default_filters())
+            else:
+                filters_storage = context.user_data.setdefault('export_filters', self.get_default_filters())
+
+            # Сохраняем определенное значение import_id
+            filters_storage['import_id'] = selected_import_id
+            logger.debug(f"handle_import_id_callback: Установлен import_id в фильтрах: {filters_storage['import_id']}")
+
+            # --- ДОБАВЛЕНО: Автоматическая установка даты начала при выборе ID импорта ---
+            # Если выбран конкретный ID (не "Все"), устанавливаем давнюю дату начала
+            if filters_storage['import_id'] != 'Все':
+                from datetime import datetime
+                past_start_date = datetime(2000, 1, 1) # Желаемая дата начала (например, 1 января 2000)
+                filters_storage['start_date'] = past_start_date.strftime('%d.%m.%Y')
+                logger.debug(f"handle_import_id_callback: Дата начала автоматически установлена в {filters_storage['start_date']} после выбора ID импорта.")
+            # --- КОНЕЦ ДОБАВЛЕНО ---
+
+            # Возвращаемся к основному меню фильтров
+            try:
+                await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
+            except Exception as e:
+                logger.error(f"Ошибка при вызове show_filters_menu: {e}", exc_info=True)
+                await update.callback_query.message.reply_text("⚠️ Не удалось обновить меню. Фильтр ID импорта установлен.")
+                    
     async def generate_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Генерация и отправка отчета"""
         query = update.callback_query
-        await query.answer()
+        await query.answer("Формирую отчет...")
         
+        user_id = query.from_user.id
         user_data = context.user_data
         filters = user_data['export_filters']
         logger.debug("Генерация отчета с фильтрами: %s", filters)
@@ -1159,7 +1277,10 @@ class TransactionProcessorBot:
         for key in ['category', 'transaction_type', 'cash_source', 'counterparty', 'check_num', 'transaction_class']:
             if filters[key] != 'Все':
                 db_filters[key] = filters[key]
-        
+
+        if filters.get('import_id') and filters['import_id'] != 'Все':
+            db_filters['import_id'] = filters['import_id']
+
         filters['start_date'] = datetime.strptime(filters['start_date'], '%d.%m.%Y')
         filters['end_date'] = datetime.strptime(filters['end_date'], '%d.%m.%Y')
 
@@ -1222,6 +1343,7 @@ class TransactionProcessorBot:
                 filter_summary_lines = []
                 # Добавляем диапазон дат (он всегда есть)
                 filter_summary_lines.append(f"📅 Период: {filters.get('start_date').strftime('%d.%m.%Y')} - {filters.get('end_date').strftime('%d.%m.%Y')}")
+
                 # Словарь для красивых названий фильтров
                 filter_display_names = {
                     'category': '🏷 Категория',
@@ -1229,7 +1351,8 @@ class TransactionProcessorBot:
                     'cash_source': '💳 Наличность',
                     'counterparty': '👥 Контрагент',
                     'check_num': '🧾 Чек',
-                    'transaction_class': '📊 Класс'
+                    'transaction_class': '📊 Класс',
+                    'import_id': '📦 ID импорта'
                 }
 
                 # Добавляем остальные активные фильтры (те, что не 'Все')
@@ -1425,7 +1548,7 @@ class TransactionProcessorBot:
         # Находим полное название категории в конфиге
         from classify_transactions_pdf import load_config
         config = load_config()
-        
+
         full_category = None
         for cat in config['categories']:
             if cat['name'].replace(" ", "_")[:30] == safe_category:
@@ -1435,14 +1558,14 @@ class TransactionProcessorBot:
         if not full_category:
             await query.edit_message_text("Категория не найдена")
             return
-        
+
         context.user_data['adding_pattern'] = {
             'category': full_category,
             'message': await query.edit_message_text(
-                f"Вы выбрали категорию: {full_category}\n"
-                "Теперь отправьте мне паттерн для добавления (текст или регулярное выражение).\n"
-                "Используйте /cancel для отмены."
-            )
+            f"Вы выбрали категорию: {full_category}\n"
+            "Теперь отправьте мне паттерн для добавления (текст или регулярное выражение).\n"
+                "Используйте /cancel для отмены"
+        )
         }
         
         # Добавляем обработчик следующего сообщения
@@ -1788,6 +1911,7 @@ class TransactionProcessorBot:
 
     async def edit_menu_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает callback из меню редактирования"""
+        logger.debug("edit_menu_callback: Вызван обработчик")
         query = update.callback_query
         await query.answer()
         
@@ -1827,6 +1951,7 @@ class TransactionProcessorBot:
 
     async def show_edit_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора файла для редактирования"""
+        logger.debug("show_edit_menu: Вызван обработчик")
         query = update.callback_query
         await query.answer()
         
@@ -1899,10 +2024,6 @@ class TransactionProcessorBot:
         """Обрабатывает текстовое редактирование конфига"""
         logger.debug("handle_config_edit: editing_file = %s", context.user_data.get('editing_file'))
         logger.debug("handle_config_edit: Получен текст от пользователя")
-        # logger.info(f"Путь к файлу: {filepath}")
-        # logger.info(f"Файл существует: {os.path.exists(filepath)}")
-        # logger.info(f"Директория доступна для записи: {os.access(config_dir, os.W_OK)}")
-        # logger.info(f"Файл доступен для записи: {os.path.exists(filepath) and os.access(filepath, os.W_OK)}")
         logger.info("handle_config_edit: Начало обработки текстового редактирования.") # Добавлено
         
         # Пропускаем если это часть процесса редактирования транзакций
@@ -2005,6 +2126,7 @@ class TransactionProcessorBot:
 
     async def handle_config_upload(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает загрузку конфига файлом"""
+        logger.debug("handle_config_upload: Вызван обработчик")
         if 'editing_file' not in context.user_data:
             await update.message.reply_text("Не выбрано файл для редактирования")
             return
@@ -2102,10 +2224,11 @@ class TransactionProcessorBot:
             await update.message.reply_text("Файл слишком большой. Максимальный размер - 10 МБ.")
             return
 
-        logger.info(f"Получен файл: {document.file_name}")
+        # logger.info(f"Получен файл: {document.file_name}")
         await update.message.reply_text("Начинаю обработку...")
         
-        logger.info(f"Начата обработка PDF: {document.file_name}, размер: {document.file_size} байт")
+        # logger.info(f"Начата обработка PDF: {document.file_name}, размер: {document.file_size} байт")
+        logger.info(f"Начата обработка PDF: {document.file_name}, размер: {round(document.file_size / (1024 * 1024), 2)} МБ")
         logger.info(f"Используются настройки: return_files={return_files}")
 
         tmp_pdf_path = temp_csv_path = combined_csv_path = result_csv_path = unclassified_csv_path = None
@@ -2141,10 +2264,6 @@ class TransactionProcessorBot:
                 # Добавляем unclassified только при отправке итогового файла
                 if unclassified_csv_path and os.path.exists(unclassified_csv_path):
                     files_to_send.append(unclassified_csv_path)
-            
-            # db = Database()
-            # db.save_transactions(pd.read_csv(result_csv_path), update.effective_user.id)
-            # db.close()
 
             # Отправка выбранных файлов
             for file_path in files_to_send:
@@ -2169,6 +2288,7 @@ class TransactionProcessorBot:
 
             context.user_data['pending_data'] = {
                 'df': df,
+                'pdf_type': pdf_type,
                 'timestamp': time.time()  # Фиксируем время получения данных
             }
             context.user_data['temp_files'] = [
@@ -2231,20 +2351,23 @@ class TransactionProcessorBot:
         
         # Только для ответа "Да" продолжаем проверки
         pending_data = user_data.get('pending_data', {})
-        
-        if not pending_data or 'timestamp' not in pending_data or 'df' not in pending_data:
-            await query.edit_message_text("Данные для сохранения не найдены или повреждены")
+        df_to_save = pending_data.get('df')
+        pdf_type_to_save = pending_data.get('pdf_type')
+
+        # if not pending_data or 'timestamp' not in pending_data or 'df' not in pending_data:
+        if not pending_data or 'df' not in pending_data or 'pdf_type' not in pending_data:
+            await query.edit_message_text("Данные для сохранения не найдены или повреждены (DataFrame или pdf_type отсутствуют)")
             return
             
         if time.time() - pending_data['timestamp'] > 300:
             await query.edit_message_text("⏳ Время подтверждения истекло (максимум 5 минут)")
             return
 
-        logger.info("Сохранение данных в БД: %s", pending_data['df'][['Дата']].head().to_dict())
+        logger.debug("Сохранение данных в БД: %s", pending_data['df'][['Дата']].head().to_dict())
         db = None
         try:
             db = Database()
-            stats = db.save_transactions(pending_data['df'], query.from_user.id)
+            stats = db.save_transactions(pending_data['df'], query.from_user.id, pdf_type_to_save)
             
             logger.info(
                 f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
@@ -2362,7 +2485,7 @@ class TransactionProcessorBot:
         # Создаем клавиатуру с вариантами просмотра
         keyboard = [
             [
-                InlineKeyboardButton("Последние 100 строк", callback_data=f'logview_text_{filename}'),
+                InlineKeyboardButton(text=f"Последние {self.log_lines_to_show} строк",callback_data=f'logview_text_{filename}'),
                 InlineKeyboardButton("Скачать файл", callback_data=f'logview_file_{filename}')
             ],
             [InlineKeyboardButton("Назад к логам", callback_data='view_logs')]
@@ -2396,11 +2519,11 @@ class TransactionProcessorBot:
         
         try:
             if action == 'text':
-                # Читаем последние 100 строк
+                # Читаем настроенное количество последних строк
                 with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
-                    lines = f.readlines()[-100:]
+                    lines = f.readlines()[-self.log_lines_to_show:] # <--- Используем self.log_lines_to_show
                     content = ''.join(lines)
-                
+
                 # Очищаем текст от проблемных символов
                 content = self.sanitize_log_content(content)
                 
@@ -2410,23 +2533,23 @@ class TransactionProcessorBot:
                     for part in parts:
                         try:
                             await query.message.reply_text(
-                                f"Последние 100 строк из {filename}:\n<pre>{part}</pre>",
+                                f"Последние {self.log_lines_to_show} строк из {filename}:\n<pre>{part}</pre>",
                                 parse_mode='HTML'
                             )
                         except Exception:
                             await query.message.reply_text(
-                                f"Последние 100 строк из {filename}:\n{part}"
+                                f"Последние {self.log_lines_to_show} строк из {filename}:\n{part}"
                             )
                         await asyncio.sleep(0.5)
                 else:
                     try:
                         await query.message.reply_text(
-                            f"Последние 100 строк из {filename}:\n<pre>{content}</pre>",
+                            f"Последние {self.log_lines_to_show} строк из {filename}:\n<pre>{content}</pre>",
                             parse_mode='HTML'
                         )
                     except Exception:
                         await query.message.reply_text(
-                            f"Последние 100 строк из {filename}:\n{content}"
+                            f"Последние {self.log_lines_to_show} строк из {filename}:\n{content}"
                         )
                     
             elif action == 'file':

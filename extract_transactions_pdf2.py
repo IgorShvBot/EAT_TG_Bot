@@ -74,7 +74,7 @@ def process_visa_gold_aeroflot(input_csv_path: str) -> pd.DataFrame:
     try:
         # df = pd.read_csv(input_csv_path)
         df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
-        logger.info(f"Успешно загружен CSV для Visa Gold Aeroflot, строк: {len(df)}")
+        logger.debug(f"Успешно загружен CSV для Visa Gold Aeroflot, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Visa Gold Aeroflot: {str(e)}")
         raise
@@ -134,7 +134,7 @@ def process_Yandex(input_csv_path: str) -> pd.DataFrame:
     try:
         # df = pd.read_csv(input_csv_path)
         df = pd.read_csv(input_csv_path, sep=',', quotechar='"', engine='python')
-        logger.info(f"Успешно загружен CSV для Yandex, строк: {len(df)}")
+        logger.debug(f"Успешно загружен CSV для Yandex, строк: {len(df)}")
     except Exception as e:
         logger.error(f"Ошибка чтения CSV для Yandex: {str(e)}")
         raise
@@ -255,8 +255,8 @@ def process_csv(input_csv_path: str, pdf_type: Optional[str] = None) -> str:
         raise
 
 if __name__ == "__main__":
-    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Yandex_temp.csv"
-    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
+    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Yandex_temp.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Visa_Gold_Aeroflot_temp.csv"
     # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_Tinkoff_Platinum_temp.csv"
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"Файл не найден: {input_csv}")
@@ -264,11 +264,11 @@ if __name__ == "__main__":
     try:
         # Определите тип PDF (можно получить из detect_pdf_type из extract_transactions_pdf1.py)
         # pdf_type = "Tinkoff_Platinum"
-        pdf_type = "Visa_Gold_Aeroflot"
-        # pdf_type = "Yandex"
+        # pdf_type = "Visa_Gold_Aeroflot"
+        pdf_type = "Yandex"
         # output_csv = process_csv(input_csv, "Tinkoff_Platinum")
-        output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
-        # output_csv = process_csv(input_csv, "Yandex")
+        # output_csv = process_csv(input_csv, "Visa_Gold_Aeroflot")
+        output_csv = process_csv(input_csv, "Yandex")
         # print(f"Обработанный CSV сохранен: {output_csv}")
         logger.info(f"Обработанный CSV сохранен: {output_csv}")
         

@@ -79,7 +79,7 @@ special_conditions:
       - field: "Категория"
         value: ""
 
-  - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., +7 926 766-00-77, Сбербанк"
+  - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., \\+7 926 766-00-77, Сбербанк"
     actions:
       - field: "Тип транзакции"
         value: "Перевод"
@@ -89,6 +89,32 @@ special_conditions:
         value: "Яндекс"
       - field: "Наличность (куда)"
         value: "Visa Gold"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., \\+7 926 766-00-77, Т- Банк"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Тинькофф"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Погашение основного долга по договору № КС20231111787407688262"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Яндекс. Сплит"
       - field: "Категория"
         value: ""
 
@@ -103,6 +129,8 @@ special_conditions:
       - field: "Наличность (куда)"
         value: "Visa Gold Aeroflot"
       - field: "Категория"
+        value: ""
+      - field: "Контрагент"
         value: ""
       - field: "Класс"
         value: "01 Личное"

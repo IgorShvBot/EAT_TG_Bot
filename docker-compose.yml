@@ -1,13 +1,14 @@
 services:
   postgres:
     image: postgres:14
-    container_name: my_postgres
+    container_name: postgres
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: Europe/Moscow
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./sql:/docker-entrypoint-initdb.d  # Автоматически запустит .sql
@@ -28,7 +29,6 @@ services:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
       # - LOG_LEVEL=DEBUG # Или DEBUG для более подробных логов
-      # - LOG_LEVEL=WARNING # Или WARNING для менее подробных
       - BACKUP_DIR=/backups
       - DISABLE_DUPLICATE_CHECK=${DISABLE_DUPLICATE_CHECK:-false}
     volumes:
@@ -36,18 +36,6 @@ services:
       - ./logs:/app/logs:rw
       - ./backups:/backups
     command: python bot.py
-    # command: >
-    #   bash -c "chown -R 1000:1000 /app/config && chmod -R 775 /app/config && python bot.py"
-    #   bash -c "chmod -R ugo+rw /app/config && python bot.py"
-    # или можно использовать chmod -R 777 /app/config для простоты, 
-    # но ugo+rw (эквивалент 666 для файлов и добавление прав на запись для всех к директориям) 
-    # будет достаточно для записи файлов.
-    # Если нужны права на исполнение для директорий (чтобы в них можно было входить),
-    # то что-то вроде chmod -R 775 или chmod -R 777 может быть проще в управлении через chmod.
-    # Для простоты и уверенности в правах на запись, особенно если владелец на хосте отличается,
-    # можно использовать более широкие права на время отладки, например:
-    # command: >
-    #   bash -c "chmod -R 777 /app/config && python bot.py"
     logging:
         driver: json-file
         options:

@@ -132,7 +132,7 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
         # 1. Дата
         result['Дата'] = df['Дата и время операции']
         # 2. Сумма
-        result['Сумма'] = df['Сумма операции в валюте карты'].str.replace(r'[₽+-]|\s', '', regex=True).str.strip()
+        result['Сумма'] = df['Сумма операции в валюте карты'].str.replace(r'[₽+–−-]|\s', '', regex=True).str.strip()
         # 3. Наличность
         result['Наличность'] = user_settings.get('Наличность', {}).get('value', settings.get('cash', ''))
         # 4. Сумма (куда) и Наличность (куда)
@@ -198,7 +198,13 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
 
         # Сохранение результата
         output_csv_path = os.path.join(os.path.dirname(input_csv_path), "result.csv")
-        # result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8')
+        
+        # Сортировка DataFrame result по убыванию даты
+        result['Дата'] = pd.to_datetime(result['Дата'], format='%d.%m.%Y %H:%M', errors='coerce') # Убедимся, что 'Дата' - datetime
+        result.sort_values(by='Дата', ascending=False, inplace=True)
+        result['Дата'] = result['Дата'].dt.strftime('%d.%m.%Y %H:%M') # Возвращаем в нужный строковый формат для CSV
+
+        # Сохранение в файл csv
         result.to_csv(output_csv_path, sep=';', index=False, encoding='utf-8', quoting=csv.QUOTE_ALL)
 
         # Формирование файла с неподходящими транзакциями
@@ -215,3 +221,13 @@ def classify_transactions(input_csv_path: str, pdf_type: str = 'default', user_s
         raise
 
     return output_csv_path, unclassified_csv_path
+
+
+if __name__ == "__main__":
+    input_csv = "/Users/IgorShvyrkin/Downloads/transactions_processed_yandex.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_processed_tinkoff_platinum.csv"
+    # input_csv = "/Users/IgorShvyrkin/Downloads/transactions_processed_visa_gold_aeroflot.csv"
+    output_csv, unclassified_csv = classify_transactions(input_csv)
+    print(f"Результат сохранен в: {output_csv}")
+    if unclassified_csv:
+        print(f"Неклассифицированные транзакции: {unclassified_csv}")

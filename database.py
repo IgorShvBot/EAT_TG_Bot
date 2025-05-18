@@ -86,7 +86,7 @@ class Database:
                 port=os.getenv('DB_PORT', '5432'),
                 connect_timeout=int(os.getenv('DB_CONNECT_TIMEOUT', '5'))
             )
-            logger.info("Подключение к БД успешно")
+            logger.debug("Подключение к БД успешно")
         except Exception as e:
             logger.error(f"Ошибка подключения к БД: {e}", exc_info=True)
             raise
@@ -208,11 +208,11 @@ class Database:
             logger.error(f"Ошибка выполнения SQL-скрипта {filepath}: {e}", exc_info=True)
             raise
 
-    def save_transactions(self, df, user_id):
+    def save_transactions(self, df, user_id, pdf_type):
         """Массовая вставка транзакций с возвратом статистики"""
         stats = {'new': 0, 'duplicates': 0, 'updated': 0, 'duplicates_list': []}
         
-        # Приведение названий столбцов к нижнему регистру для унификации
+        # Приведение названий столбцов к нижнему регистру
         df.columns = df.columns.str.lower()
         
         try:
@@ -220,46 +220,47 @@ class Database:
                 cur.execute("SELECT nextval('import_id_seq')")
                 import_id = cur.fetchone()[0]
 
-                # Преобразование и валидация данных
-                # Указываем формат даты ДД-ММ-ГГГГ, если это формат в CSV
                 df['дата'] = pd.to_datetime(df['дата'], format='%d.%m.%Y %H:%M', errors='coerce')
-                df['сумма'] = pd.to_numeric(df['сумма'], errors='coerce')
+                df['сумма'] = pd.to_numeric(df['сумма'].astype(str).str.replace(',', '.'), errors='coerce')
                 if 'сумма (куда)' in df.columns:
-                    df['сумма (куда)'] = pd.to_numeric(df['сумма (куда)'], errors='coerce')
-                
+                    df['сумма (куда)'] = pd.to_numeric(df['сумма (куда)'].astype(str).str.replace(',', '.'), errors='coerce')
+
                 df.dropna(subset=['дата', 'сумма'], inplace=True)
 
                 if df.empty:
                     logger.warning("DataFrame пуст после преобразования дат и сумм")
                     return stats
 
-                # --- ДОБАВЛЯЕМ СОРТИРОВКУ ЗДЕСЬ ---
-                logger.debug(f"Сортировка {len(df)} записей по дате (от новых к старым)...")
-                df.sort_values(by='дата', ascending=False, inplace=True)
-                # ---------------------------------
+                logger.debug(f"Сортировка {len(df)} записей по дате (от старых к новым)...")
+                df.sort_values(by='дата', ascending=True, inplace=True)
 
                 new_data = []
+                disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
+                if disable_duplicates:
+                    logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
+
                 for _, row in df.iterrows():
-                    # Вызываем проверку на дубликат
-                    is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
-                    # if not self.check_duplicate(row['дата'], row['наличность'], row['сумма']):
-                    if not is_duplicate: # Если это НЕ дубликат
+                    is_duplicate = False
+                    if not disable_duplicates:
+                        is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
+
+                    if not is_duplicate:
                         new_data.append((
                             import_id, user_id, row['дата'], row['сумма'],
                             row.get('наличность'), row.get('категория'), 
                             row.get('описание'), row.get('контрагент'),
                             row.get('чек #'), row.get('тип транзакции'),
-                            # Новые поля:
-                            row.get('класс'), 
-                            row.get('сумма (куда)'),
-                            row.get('наличность (куда)')
+                            row.get('класс'), row.get('сумма (куда)'), 
+                            row.get('наличность (куда)'), pdf_type
                         ))
                         stats['new'] += 1
-                    else: # Если ЭТО дубликат
-                        stats['duplicates'] += 1 # Увеличиваем счетчик дубликатов
-                        # Опционально: можно добавить детали дубликата в список, если нужно
-                        # stats['duplicates_list'].append(row.to_dict())
-                        logger.info(f"Пропущен дубликат: Дата={row['дата']}, Сумма={row['сумма']}, Наличность={row.get('наличность')}")
+                    else:
+                        stats['duplicates'] += 1
+                        stats['duplicates_list'].append({
+                            'дата': row['дата'],
+                            'сумма': row['сумма'],
+                            'наличность': row.get('наличность')
+                        })
 
                 if new_data:
                     execute_batch(
@@ -268,18 +269,22 @@ class Database:
                             import_id, user_id, transaction_date, amount,
                             cash_source, category, description,
                             counterparty, check_num, transaction_type,
-                            transaction_class, target_amount, target_cash_source
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                            transaction_class, target_amount, target_cash_source,
+                            pdf_type
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                         new_data,
                         page_size=100
                     )
-                    logger.info("Вставлено %d новых транзакций", stats['new'])
-                
-                # Логирование статистики перед возвратом
-                logger.info(f"Обработано записей: Новых={stats['new']}, Пропущено дубликатов={stats['duplicates']}")
+                    logger.info("✅ Вставлено %d новых транзакций", stats['new'])
+
+                if stats['duplicates']:
+                    logger.info("ℹ️ Пропущено как дубликаты: %d записей", stats['duplicates'])
+                    for dup in stats['duplicates_list'][:5]:
+                        logger.debug(f"Дубликат: Дата={dup['дата']}, Сумма={dup['сумма']}, Наличность={dup['наличность']}")
+                    if len(stats['duplicates_list']) > 5:
+                        logger.debug(f"...и еще {len(stats['duplicates_list']) - 5} дубликатов")
 
                 return stats
-                
         except Exception as e:
             logger.error(f"Ошибка при сохранении транзакций: {e}", exc_info=True)
             raise
@@ -362,6 +367,9 @@ class Database:
                      # Частичное совпадение для counterparty без учета регистра
                     filter_conditions.append(sql.SQL("counterparty ILIKE %s"))
                     params.append(f"%{value}%")
+                elif key == 'import_id' and value != 'Все':
+                    filter_conditions.append(sql.SQL("import_id = %s"))
+                    params.append(value)
                 # Добавьте сюда другие elif для обработки других ключей фильтров, если они есть
 
             # --- КОРРЕКТНОЕ ДОБАВЛЕНИЕ ФИЛЬТРОВ к ОСНОВНОМУ ЗАПРОСУ ---
@@ -391,6 +399,35 @@ class Database:
         except Exception as e:
             logger.error("Ошибка выполнения запроса: %s", e, exc_info=True) # Добавьте exc_info для полного traceback
             raise
+
+    def get_last_import_ids(self, user_id: int, limit: int = 10) -> list[tuple[int, datetime]]:
+            """
+            Получает последние N уникальных import_id для пользователя с датой их создания.
+
+            Args:
+                user_id: ID пользователя.
+                limit: Максимальное количество import_id для возврата.
+
+            Returns:
+                Список кортежей (import_id, created_at) отсортированный по дате создания (самые новые первыми).
+            """
+            logger.debug(f"Вызов get_last_import_ids для user_id={user_id}, limit={limit}")
+            query = """
+                SELECT DISTINCT ON (t.import_id) t.import_id, t.created_at, t.pdf_type
+                FROM transactions t
+                WHERE t.user_id = %s
+                ORDER BY t.import_id DESC, t.created_at DESC
+                LIMIT %s
+            """
+            try:
+                with self.get_cursor() as cur:
+                    cur.execute(query, (user_id, limit))
+                    results = cur.fetchall()
+                    logger.debug(f"Получено {len(results)} последних import_id.")
+                    return results
+            except Exception as e:
+                logger.error(f"Ошибка при получении последних import_id: {e}", exc_info=True)
+                raise
 
     def update_transactions(self, user_id: int, ids: list[int], updates: dict) -> list[int]:
         """Обновляет транзакции с логированием изменений
@@ -446,7 +483,7 @@ class Database:
         """Закрывает соединение с БД"""
         if hasattr(self, 'conn') and self.conn and not self.conn.closed:
             self.conn.close()
-            logger.info("Соединение с БД закрыто")
+            logger.debug("Соединение с БД закрыто")
  
     """ Резервное копирование БД """
     def create_backup(self, backup_dir: str = None):

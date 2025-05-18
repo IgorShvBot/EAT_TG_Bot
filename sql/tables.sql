@@ -24,9 +24,13 @@ CREATE TABLE IF NOT EXISTS transactions (
 
 -- Для фиксации изменений в БД
 ALTER TABLE transactions
-  ADD COLUMN IF NOT EXISTS edited_by INTEGER REFERENCES users(id), -- Добавлено IF NOT EXISTS
-  ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP,                   -- Добавлено IF NOT EXISTS
-  ADD COLUMN IF NOT EXISTS edited_ids INTEGER[];                  -- Добавлено IF NOT EXISTS
+  -- ADD COLUMN IF NOT EXISTS edited_by INTEGER REFERENCES users(id), -- Добавлено IF NOT EXISTS
+  ADD COLUMN IF NOT EXISTS edited_by INTEGER, -- Удалено REFERENCES users(id)
+  ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP,
+  ADD COLUMN IF NOT EXISTS edited_ids INTEGER[];
 
+ALTER TABLE transactions 
+  ADD COLUMN IF NOT EXISTS pdf_type VARCHAR(50);
+  
 -- Секвенция для импорта
 CREATE SEQUENCE IF NOT EXISTS import_id_seq;

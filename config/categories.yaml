@@ -38,6 +38,7 @@ categories:
       - KRANC PARK
       - DZHO
       - FLORENTINI
+      - Рестораны и кафе
   - name: Заказ еды
     patterns:
       - "5814"
@@ -62,7 +63,7 @@ categories:
       - Gorzdrav
       - Аптечная сеть
       - Gemotest
-      - АРТЕCHNOE
+      - APTECHN
       - ZDOROV
   - name: Семья и личные расходы. Спорт
     patterns:
@@ -73,8 +74,6 @@ categories:
   - name: Стрижка
     patterns:
       - BUKLYA
-  - name: Стрижка
-    patterns:
       - LIVECURLY
   - name: Домашние животные
     patterns:
@@ -92,7 +91,7 @@ categories:
     patterns:
       - METRO
       - TRANSPORT
-  - name: Такси
+  - name: Транспорт. Такси
     patterns:
       - TAXI
       - "412"
@@ -102,6 +101,7 @@ categories:
       - CITYDRIVE
       - DELIMOBIL
       - YANDEX DRIVE
+      - Сервисы Яндекса
   - name: Доставка
     patterns:
       - DOSTAVKA
@@ -134,6 +134,9 @@ categories:
       - DETSKIY MIR
       - KOTOFEJ
       - перевод по номеру телефона \+79295575863
+  - name: Дети. Медицина
+    patterns:
+      - NMITS
   - name: Дети. Образование | Сад
     patterns:
       - "03224643450000007300"

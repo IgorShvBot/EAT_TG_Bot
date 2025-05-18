@@ -2,24 +2,19 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "docker-build",
-			"label": "docker-build",
-			"platform": "python",
-			"dockerBuild": {
-				"tag": "eattgbotdocker:latest",
-				"dockerfile": "${workspaceFolder}/Dockerfile",
-				"context": "${workspaceFolder}",
-				"pull": true
+			"label": "Stop Bot",
+			"type": "shell",
+			"command": "docker compose stop telegram-bot",
+			"presentation": {
+				"reveal": "always"
 			}
 		},
 		{
-			"type": "docker-run",
-			"label": "docker-run: debug",
-			"dependsOn": [
-				"docker-build"
-			],
-			"python": {
-				"file": "database.py"
+			"label": "Start Bot (with rebuild)",
+			"type": "shell",
+			"command": "docker compose up --build -d telegram-bot",
+			"presentation": {
+				"reveal": "always"
 			}
 		}
 	]
