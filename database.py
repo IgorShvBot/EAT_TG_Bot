@@ -302,6 +302,42 @@ class Database:
             """, (transaction_date, cash_source, amount))
             return cur.fetchone()[0] > 0
 
+    def get_min_max_dates_by_pdf_type(self, user_id: int) -> list[dict]:
+        """
+        Получает минимальную и максимальную дату транзакции для каждого
+        уникального pdf_type для данного пользователя.
+
+        Args:
+            user_id: ID пользователя.
+
+        Returns:
+            Список словарей, где каждый словарь содержит 'pdf_type',
+            'min_date' и 'max_date'.
+            Например: [{'pdf_type': 'Tinkoff', 'min_date': datetime(...), 'max_date': datetime(...)}, ...]
+            Если данных нет, возвращает пустой список.
+        """
+        logger.debug(f"Вызов get_max_date_by_pdf_type для user_id={user_id}")
+        query = sql.SQL("""
+            SELECT 
+                pdf_type,
+                MIN(transaction_date) AS min_date,
+                MAX(transaction_date) AS max_date
+            FROM transactions
+            WHERE user_id = %s AND pdf_type IS NOT NULL
+            GROUP BY pdf_type
+            ORDER BY pdf_type;
+        """) # Добавлено order by для предсказуемого порядка
+
+        try:
+            # Используем fetchall с dict_cursor=True для получения словарей
+            results = self.fetchall(query, (user_id,))
+            logger.debug(f"Получено {len(results)} записей о максимальных датах.")
+            return results
+        except Exception as e:
+            logger.error(f"Ошибка при получении максимальных дат по pdf_type: {e}", exc_info=True)
+            # В случае ошибки лучше вернуть пустой список, чтобы бот не упал
+            return []
+
     def get_transactions(self, user_id, start_date, end_date, filters=None):
         """Получает транзакции с фильтрацией и сортировкой по дате (новые сначала),
            включая начальную и конечную даты полностью."""
@@ -355,22 +391,30 @@ class Database:
             filter_conditions = []
             for key, value in filters.items():
                 # Используем безопасные идентификаторы и параметры
-                if key in ['category', 'transaction_type', 'cash_source', 'transaction_class', 'target_cash_source']:
+                # Игнорируем фильтр, если значение 'Все' или пустое (кроме контрагента/чека, где 'Все' обрабатывается логикой вызова)
+                if value is None or value == 'Все' or (isinstance(value, str) and not value.strip() and key not in ['counterparty', 'check_num', 'description']):
+                    continue # Пропускаем пустые или "Все" фильтры, кроме текстовых, где пустота может быть введена пользователем
+                if key in ['category', 'transaction_type', 'cash_source', 'transaction_class', 'target_cash_source', 'pdf_type']: # Добавлен pdf_type
+                    # Для этих полей ищем точное совпадение
                     col = sql.Identifier(key)
                     filter_conditions.append(sql.SQL("{0} = %s").format(col))
                     params.append(value)
-                elif key == 'check_num' and value:
+                elif key == 'description' and isinstance(value, str) and value.strip():
+                    # Частичное совпадение для description без учета регистра
+                    filter_conditions.append(sql.SQL("description ILIKE %s"))
+                    params.append(f"%{value.strip()}%") # Добавляем % и очищаем пробелы
+ 
+                elif key == 'check_num' and isinstance(value, str) and value.strip(): # Добавлена проверка на непустую строку
                     # Частичное совпадение для check_num без учета регистра
                     filter_conditions.append(sql.SQL("check_num ILIKE %s"))
-                    params.append(f"%{value}%")
-                elif key == 'counterparty' and value:
+                    params.append(f"%{value.strip()}%") # Добавляем % и очищаем пробелы
+                elif key == 'counterparty' and isinstance(value, str) and value.strip(): # Добавлена проверка на непустую строку
                      # Частичное совпадение для counterparty без учета регистра
                     filter_conditions.append(sql.SQL("counterparty ILIKE %s"))
-                    params.append(f"%{value}%")
-                elif key == 'import_id' and value != 'Все':
+                    params.append(f"%{value.strip()}%") # Добавляем % и очищаем пробелы
+                elif key == 'import_id' and value != 'Все' and value is not None: # Добавлена проверка на None
                     filter_conditions.append(sql.SQL("import_id = %s"))
                     params.append(value)
-                # Добавьте сюда другие elif для обработки других ключей фильтров, если они есть
 
             # --- КОРРЕКТНОЕ ДОБАВЛЕНИЕ ФИЛЬТРОВ к ОСНОВНОМУ ЗАПРОСУ ---
             if filter_conditions:
