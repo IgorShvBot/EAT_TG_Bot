@@ -238,16 +238,16 @@ class Database:
                 df.sort_values(by='дата', ascending=True, inplace=True)
 
                 new_data = []
-                # disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
-                # if disable_duplicates:
-                #     logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
+                disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
+                if disable_duplicates:
+                    logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
 
                 current_time_msk = datetime.now(MOSCOW_TZ)
 
                 for _, row in df.iterrows():
                     # is_duplicate = False
                     # if not disable_duplicates:
-                    is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
+                    is_duplicate = self.check_duplicate(user_id, row['дата'], row['наличность'], row['сумма'])
 
                     if not is_duplicate:
                         new_data.append((
@@ -282,7 +282,7 @@ class Database:
                         new_data,
                         page_size=100
                     )
-                    logger.info("✅ Вставлено %d новых транзакций", stats['new'])
+                    logger.info("✅ Добавлено %d новых записей", stats['new'])
 
                 if stats['duplicates']:
                     logger.info("ℹ️ Пропущено как дубликаты: %d записей", stats['duplicates'])
@@ -296,17 +296,18 @@ class Database:
             logger.error(f"Ошибка при сохранении транзакций: {e}", exc_info=True)
             raise
             
-    def check_duplicate(self, transaction_date, cash_source, amount):
+    def check_duplicate(self, user_id, transaction_date, cash_source, amount):
         """Проверяет наличие дублирующейся транзакции, если не отключено в настройках"""
         if os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true':
             return False
         with self.get_cursor() as cur:
             cur.execute("""
-                SELECT COUNT(*) FROM transactions 
-                WHERE transaction_date = %s 
+                SELECT COUNT(*) FROM transactions
+                WHERE user_id = %s
+                AND date_trunc('minute', transaction_date) = date_trunc('minute', %s)
                 AND cash_source = %s 
                 AND amount = %s
-            """, (transaction_date, cash_source, amount))
+            """, (user_id, transaction_date, cash_source, amount))
             return cur.fetchone()[0] > 0
 
     def get_min_max_dates_by_pdf_type(self, user_id: int) -> list[dict]:

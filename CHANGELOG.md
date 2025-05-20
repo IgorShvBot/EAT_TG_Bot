@@ -43,6 +43,12 @@ Security — обновления безопасности -->
 
 
 ------------------
+## [v3.6.3(2)] - 2025-05-20 21:25
+### Изменено
+- Вернул в database.py проверку DISABLE_DUPLICATE_CHECK и связанное логирование
+- В check_duplicate = AND date_trunc('minute', transaction_date) = date_trunc('minute', %s)
+
+
 ## [v3.6.3(1)] - 2025-05-20 15:20
 ### Изменено
 - Удаляем в database.py проверку DISABLE_DUPLICATE_CHECK и связанное логирование
