@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     -- Для фиксации изменений в БД
     -- is_modified BOOLEAN DEFAULT FALSE,
     -- modified_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE,
     CONSTRAINT unique_transaction UNIQUE (user_id, transaction_date, cash_source, amount)
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 ALTER TABLE transactions
   -- ADD COLUMN IF NOT EXISTS edited_by INTEGER REFERENCES users(id), -- Добавлено IF NOT EXISTS
   ADD COLUMN IF NOT EXISTS edited_by INTEGER, -- Удалено REFERENCES users(id)
-  ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP,
+  ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP WITH TIME ZONE,
   ADD COLUMN IF NOT EXISTS edited_ids INTEGER[];
 
 ALTER TABLE transactions 

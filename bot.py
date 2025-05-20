@@ -1,4 +1,4 @@
-__version__ = "3.6.2"
+__version__ = "3.6.3"
 
 import os
 import logging
@@ -2500,7 +2500,6 @@ class TransactionProcessorBot:
         
         # Только для ответа "Да" продолжаем проверки
         pending_data = user_data.get('pending_data', {})
-        df_to_save = pending_data.get('df')
         pdf_type_to_save = pending_data.get('pdf_type')
 
         # if not pending_data or 'timestamp' not in pending_data or 'df' not in pending_data:
@@ -2522,6 +2521,9 @@ class TransactionProcessorBot:
                 f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
             )
             
+            # Сохраняем статистику в user_data для использования в handle_duplicates_decision
+            context.user_data['last_save_stats'] = stats
+
             if stats['duplicates'] > 0:
                 context.user_data['pending_duplicates'] = stats['duplicates_list']
                 keyboard = [
@@ -2567,16 +2569,18 @@ class TransactionProcessorBot:
                 AND amount = %s
             """, (new_category, date, amount))
 
-
     async def handle_duplicates_decision(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
         
         user_data = context.user_data
         duplicates = user_data.get('pending_duplicates', [])
-        
+        stats = user_data.get('last_save_stats', {'new': 0, 'duplicates': 0, 'duplicates_list': []})
+
         if not duplicates:
             await query.edit_message_text("ℹ️ Нет данных для обновления")
+            user_data.pop('pending_duplicates', None)
+            user_data.pop('last_save_stats', None)
             return
 
         if query.data == 'update_duplicates':
@@ -2585,29 +2589,54 @@ class TransactionProcessorBot:
                 updated = 0
                 
                 for row in duplicates:
-                    # Логика обновления существующих записей
-                    # Например:
-                    db.update_transaction(
-                        date=row['Дата'],
-                        amount=row['Сумма'],
-                        new_category=row['Категория']
-                    )
-                    updated += 1
-                    
+                    # Находим ID транзакции по критериям дубликата
+                    with db.get_cursor(dict_cursor=True) as cur:
+                        cur.execute("""
+                            SELECT id FROM transactions 
+                            WHERE transaction_date = %s 
+                            AND amount = %s 
+                            AND cash_source = %s
+                        """, (row['дата'], row['сумма'], row.get('наличность')))
+                        result = cur.fetchone()
+                        if result:
+                            # Обновляем транзакцию по ID
+                            updates = {'category': (row.get('категория', None), 'replace')}
+                            updated_ids = db.update_transactions(
+                                user_id=query.from_user.id,
+                                ids=[result['id']],
+                                updates=updates
+                            )
+                            if updated_ids:
+                                updated += 1
+                
                 logger.info(f"Обновлено {updated} дубликатов")
-                await query.edit_message_text(f"✅ Обновлено {updated} записей")
+                await query.edit_message_text(
+                    f"✅ Обновлено {updated} записей\n"
+                    f"🆕 Сохранено ранее: {stats['new']} записей"
+                )
                 
             except Exception as e:
-                logger.error(f"Ошибка обновления: {e}")
+                logger.error(f"Ошибка обновления: {e}", exc_info=True)
                 await query.edit_message_text("❌ Ошибка при обновлении")
                 
-        elif query.data == 'skip_duplicates':
-            await query.edit_message_text("Дубликаты пропущены")
+            finally:
+                db.close()
         
-        # Очистка временных данных
+        elif query.data == 'skip_duplicates':
+            response = (
+                f"🔄 Дубликаты пропущены: {stats['duplicates']}\n"
+                f"✅ Успешно сохранено: {stats['new']}"
+            )
+            if stats['new'] == 0:
+                response = (
+                    f"🔄 Дубликаты пропущены: {stats['duplicates']}\n"
+                    f"ℹ️ Новые записи не сохранены"
+                )
+            
+            await query.edit_message_text(response)
+        
         user_data.pop('pending_duplicates', None)
-
-
+        user_data.pop('last_save_stats', None)
 
     async def cleanup_files(self, file_paths):
         for path in file_paths:

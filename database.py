@@ -9,6 +9,7 @@ import logging
 from contextlib import contextmanager
 from dotenv import load_dotenv
 import sys # Импортируем sys для StreamHandler
+import pytz
 
 # Загрузите переменные окружения из .env
 load_dotenv()
@@ -19,6 +20,8 @@ backup_logger = logging.getLogger('backup.database')
 
 # Основной логгер для этого файла
 logger = logging.getLogger(__name__)
+
+MOSCOW_TZ = pytz.timezone('Europe/Moscow')
 
 # Настройка логирования для основного логгера
 def setup_database_logging():
@@ -239,6 +242,8 @@ class Database:
                 if disable_duplicates:
                     logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
 
+                current_time_msk = datetime.now(MOSCOW_TZ)
+
                 for _, row in df.iterrows():
                     is_duplicate = False
                     if not disable_duplicates:
@@ -251,7 +256,7 @@ class Database:
                             row.get('описание'), row.get('контрагент'),
                             row.get('чек #'), row.get('тип транзакции'),
                             row.get('класс'), row.get('сумма (куда)'), 
-                            row.get('наличность (куда)'), pdf_type
+                            row.get('наличность (куда)'), pdf_type, current_time_msk
                         ))
                         stats['new'] += 1
                     else:
@@ -263,15 +268,17 @@ class Database:
                         })
 
                 if new_data:
-                    execute_batch(
-                        cur,
-                        """INSERT INTO transactions (
+                    insert_query = """INSERT INTO transactions (
                             import_id, user_id, transaction_date, amount,
                             cash_source, category, description,
                             counterparty, check_num, transaction_type,
                             transaction_class, target_amount, target_cash_source,
-                            pdf_type
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                            pdf_type, created_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                        
+                    execute_batch(
+                        cur,
+                        insert_query,
                         new_data,
                         page_size=100
                     )
@@ -491,30 +498,37 @@ class Database:
         with self.get_cursor() as cur:
             # Формируем SET часть запроса
             set_parts = []
-            params = []
+            params_for_set = []
+
             for field, (value, mode) in updates.items():
+                # Используем безопасное форматирование идентификаторов столбцов
+                safe_field = sql.Identifier(field)
                 if mode == 'replace':
-                    set_parts.append(f"{field} = %s")
+                    set_parts.append(sql.SQL("{} = %s").format(safe_field))
                 elif mode == 'append':
-                    set_parts.append(f"{field} = CONCAT({field}, ', ', %s)")
-                params.append(value)
+                    set_parts.append(sql.SQL("{} = CONCAT({}, ', ', %s)").format(safe_field, safe_field))
+                params_for_set.append(value)
             
-            # Добавляем метки редактирования
-            set_parts.append("edited_by = %s")
-            set_parts.append("edited_at = NOW()")
-            set_parts.append("edited_ids = %s")
-            params.extend([user_id, ids])
+            set_parts.append(sql.SQL("edited_by = %s"))
+            params_for_set.append(user_id)
             
-            # Формируем полный запрос
-            query = f"""
+            set_parts.append(sql.SQL("edited_at = %s")) # <--- ИЗМЕНЕНО с NOW()
+            params_for_set.append(datetime.now(MOSCOW_TZ)) # <--- ДОБАВЛЕНО время в MSK
+            
+            set_parts.append(sql.SQL("edited_ids = %s"))
+            params_for_set.append(ids)
+            
+            set_clause = sql.SQL(', ').join(set_parts)
+            query = sql.SQL("""
                 UPDATE transactions
-                SET {', '.join(set_parts)}
+                SET {set_clause}
                 WHERE id = ANY(%s)
                 RETURNING id
-            """
-            params.append(ids)
+            """).format(set_clause=set_clause)
             
-            cur.execute(query, params)
+            final_query_params = params_for_set + [ids] 
+            
+            cur.execute(query, final_query_params)
             return [row[0] for row in cur.fetchall()]
 
     def check_existing_ids(self, ids: list[int]) -> list[int]:
