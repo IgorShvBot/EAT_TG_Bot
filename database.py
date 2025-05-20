@@ -238,16 +238,16 @@ class Database:
                 df.sort_values(by='дата', ascending=True, inplace=True)
 
                 new_data = []
-                disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
-                if disable_duplicates:
-                    logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
+                # disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
+                # if disable_duplicates:
+                #     logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
 
                 current_time_msk = datetime.now(MOSCOW_TZ)
 
                 for _, row in df.iterrows():
-                    is_duplicate = False
-                    if not disable_duplicates:
-                        is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
+                    # is_duplicate = False
+                    # if not disable_duplicates:
+                    is_duplicate = self.check_duplicate(row['дата'], row['наличность'], row['сумма'])
 
                     if not is_duplicate:
                         new_data.append((
