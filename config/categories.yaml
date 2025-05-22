@@ -87,16 +87,16 @@ categories:
       - YANTARNAYA ZARYA
       - tortbar
       - KHMYZOV
-  - name: Транспорт. Транспорт
+  - name: Транспорт
     patterns:
       - METRO
       - TRANSPORT
-  - name: Транспорт. Такси
+  - name: Такси
     patterns:
       - TAXI
       - "412"
       - "4121"
-  - name: Транспорт. Каршеринг
+  - name: Каршеринг
     patterns:
       - CITYDRIVE
       - DELIMOBIL

@@ -10,8 +10,9 @@ from contextlib import contextmanager
 from dotenv import load_dotenv
 import sys # Импортируем sys для StreamHandler
 import pytz
+import asyncpg
 
-# Загрузите переменные окружения из .env
+# Загружаем переменные окружения из файла .env
 load_dotenv()
 
 # Настройка логгера для бэкапов (можно оставить INFO)
@@ -64,6 +65,32 @@ def setup_database_logging():
     logger.info(f"Уровень логирования для DATABASE установлен в: {logging.getLevelName(logger.level)}")
 
 setup_database_logging()
+
+async def get_pdf_types(user_id: int = None) -> list[str]:
+    """
+    Возвращает список уникальных pdf_type из таблицы transactions.
+    Если user_id указан, фильтрует по конкретному пользователю.
+    """
+    # Собираем конфигурацию подключения из переменных окружения
+    db_config = {
+        'database': os.getenv('DB_NAME'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'host': os.getenv('DB_HOST'),
+        'port': int(os.getenv('DB_PORT', 5432)),
+    }
+    # Устанавливаем соединение с БД
+    conn = await asyncpg.connect(**db_config)
+
+    if user_id:
+        query = 'SELECT DISTINCT pdf_type FROM transactions WHERE user_id = $1 AND pdf_type IS NOT NULL'
+        rows = await conn.fetch(query, user_id)
+    else:
+        query = 'SELECT DISTINCT pdf_type FROM transactions WHERE pdf_type IS NOT NULL'
+        rows = await conn.fetch(query)
+
+    await conn.close()
+    return [r['pdf_type'] for r in rows]
 
 class Database:
     def __init__(self):
@@ -238,15 +265,16 @@ class Database:
                 df.sort_values(by='дата', ascending=True, inplace=True)
 
                 new_data = []
-                disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
-                if disable_duplicates:
-                    logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
+                # disable_duplicates = os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true'
+                # if disable_duplicates:
+                #     logger.warning("⚠ Проверка дубликатов отключена (DISABLE_DUPLICATE_CHECK=true)")
+
+
 
                 current_time_msk = datetime.now(MOSCOW_TZ)
 
                 for _, row in df.iterrows():
-                    # is_duplicate = False
-                    # if not disable_duplicates:
+                    # проверяем дубликат всегда
                     is_duplicate = self.check_duplicate(user_id, row['дата'], row['наличность'], row['сумма'])
 
                     if not is_duplicate:
@@ -297,9 +325,7 @@ class Database:
             raise
             
     def check_duplicate(self, user_id, transaction_date, cash_source, amount):
-        """Проверяет наличие дублирующейся транзакции, если не отключено в настройках"""
-        if os.getenv('DISABLE_DUPLICATE_CHECK', 'false').lower() == 'true':
-            return False
+        """Проверяет наличие дублирующейся транзакции"""
         with self.get_cursor() as cur:
             cur.execute("""
                 SELECT COUNT(*) FROM transactions

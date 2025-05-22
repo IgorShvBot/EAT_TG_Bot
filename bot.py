@@ -1,4 +1,4 @@
-__version__ = "3.6.3(2)"
+__version__ = "3.6.4"
 
 import os
 import logging
@@ -31,6 +31,9 @@ from datetime import datetime, timedelta
 from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 from telegram.ext.filters import BaseFilter
 import inspect
+from telegram.ext import ConversationHandler, MessageHandler, CommandHandler, filters
+from handlers.pdf_type_filter import register_pdf_type_handler, make_pdf_type_button
+
 
 # Настройка логирования
 def setup_logging():
@@ -311,6 +314,9 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
         self.application.add_handler(CommandHandler("date_ranges", self.get_min_max_dates))
 
+        # автоматически создаем вложенный ConversationHandler
+        register_pdf_type_handler(self.application,self.show_filters_menu)
+        
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
         self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
@@ -479,7 +485,8 @@ class TransactionProcessorBot:
             'description': 'Все',
             'counterparty': 'Все',
             'check_num': 'Все',
-            'transaction_class': 'Все'
+            'transaction_class': 'Все',
+            'pdf_type': 'Все'
         }
 
     async def handle_edit_filter_proceed(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -563,7 +570,6 @@ class TransactionProcessorBot:
 
         # Получаем текущие фильтры или создаем новый словарь, если их нет
         current_filters = context.user_data.get('export_filters', {})
-
         default_filters = self.get_default_filters()
             # Значения по умолчанию для всех полей фильтра
 
@@ -576,11 +582,9 @@ class TransactionProcessorBot:
         if edit_mode:
             if 'edit_mode' not in context.user_data:
                 context.user_data['edit_mode'] = {}
-            # Используем default_filters как значение по умолчанию для setdefault
-            filters = context.user_data['edit_mode'].setdefault('edit_filters', default_filters.copy()) # Используем .copy() чтобы избежать изменения оригинала
+            filters = context.user_data['edit_mode'].setdefault('edit_filters', default_filters.copy()) 
         else:
-            # Используем default_filters как значение по умолчанию для setdefault
-            filters = context.user_data.setdefault('export_filters', default_filters.copy()) # Используем .copy()
+            filters = context.user_data.setdefault('export_filters', default_filters.copy())
 
         logger.debug(f"show_filters_menu: Используемые фильтры для генерации меню: {filters}")
 
@@ -597,6 +601,7 @@ class TransactionProcessorBot:
                 [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
                 [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
                 [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
+                [make_pdf_type_button(filters)],
                 [InlineKeyboardButton("➡️ К выбору полей", callback_data='edit_filter_proceed_to_fields')],
                 [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
             ]
@@ -613,6 +618,7 @@ class TransactionProcessorBot:
                 [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
                 [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
                 [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
+                [make_pdf_type_button(filters)],
                 [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
                 [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_export')]
             ]
@@ -913,7 +919,6 @@ class TransactionProcessorBot:
         )
         context.user_data["calendar_context"] = "start_date" 
 
-
     async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.debug("Вызов set_end_date для user_id=%s", update.effective_user.id)
         query = update.callback_query
@@ -925,6 +930,46 @@ class TransactionProcessorBot:
         )
         context.user_data["calendar_context"] = "end_date"
 
+    async def set_import_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+            """Меню выбора Import ID"""
+            logger.info("Обработчик set_import_id вызван")
+            query = update.callback_query
+            await query.answer()
+
+            user_id = query.from_user.id
+            db = Database()
+            try:
+                # Получаем последние N import_id и даты
+                last_imports = db.get_last_import_ids(user_id, self.export_last_import_ids_count)
+                logger.debug(f"Получены последние {len(last_imports)} import_id для user_id {user_id}")
+
+                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]] # Кнопка "Все"
+                # Формируем кнопки для каждого import_id
+                
+                # last_imports теперь будет содержать (import_id, created_at, pdf_type_val)
+                for import_id, created_at, pdf_type_val in last_imports: # <--- Добавлен pdf_type_val
+                    date_str = created_at.strftime('%d.%m.%Y %H:%M')
+                    # Формируем текст кнопки, добавляя pdf_type, если он есть
+                    button_text = f"#{import_id} ({date_str}"
+                    if pdf_type_val:
+                        button_text += f", {pdf_type_val}"
+                    button_text += ")"
+                    keyboard.append([InlineKeyboardButton(button_text, callback_data=f'import_id_{import_id}')])
+
+                keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
+                reply_markup = InlineKeyboardMarkup(keyboard)
+
+                await query.edit_message_text(
+                    f"Выберите ID импорта (последние {self.export_last_import_ids_count}):",
+                    reply_markup=reply_markup
+                )
+                context.user_data['awaiting_input'] = None # Убедимся, что не ждем текстового ввода
+
+            except Exception as e:
+                logger.error(f"Ошибка в set_import_id: {e}", exc_info=True)
+                await query.edit_message_text("❌ Ошибка при загрузке ID импортов. Попробуйте позже.")
+            finally:
+                db.close()
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -995,7 +1040,7 @@ class TransactionProcessorBot:
         db = Database()
         try:
             categories = ['Все'] + db.get_unique_values("category", user_id)
-            logger.info("Полученные категории: %s", categories)
+            logger.debug("Полученные категории: %s", categories)
 
             if not categories or categories == ['Все']:
                 try:
@@ -1010,8 +1055,18 @@ class TransactionProcessorBot:
                 return
 
             keyboard = []
+            # в вашем set_category
+            # categories = ['Все'] + db.get_unique_values("category", user_id)
+            # context.user_data['category_list'] = categories
+
+            # keyboard = [
+            #     [InlineKeyboardButton(cat, callback_data=f"cat_{i}")]
+            #     for i, cat in enumerate(categories)
+            # ]
+            # keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
+
             for cat in categories:
-                safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "")[:50]
+                safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "").replace("|", "")[:50]
                 keyboard.append([InlineKeyboardButton(cat, callback_data=f"cat_{safe_cat}")])
             keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
 
@@ -1132,46 +1187,33 @@ class TransactionProcessorBot:
             "Выберите класс транзакции:",
             reply_markup=InlineKeyboardMarkup(keyboard))
 
-    async def set_import_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-            """Меню выбора Import ID"""
-            logger.info("Обработчик set_import_id вызван")
-            query = update.callback_query
-            await query.answer()
+    # async def set_pdf_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    #     logger.info("Обработчик set_pdf_type вызван")
+    #     query = update.callback_query
+    #     await query.answer()
 
-            user_id = query.from_user.id
-            db = Database()
-            try:
-                # Получаем последние N import_id и даты
-                last_imports = db.get_last_import_ids(user_id, self.export_last_import_ids_count)
-                logger.debug(f"Получены последние {len(last_imports)} import_id для user_id {user_id}")
+    #     # Получаем уникальные типы PDF из базы данных
+    #     user_id = query.from_user.id
+    #     db = Database()
+    #     try:
+    #         pdf_types = ['Все'] + db.get_unique_values("pdf_type", user_id)
+    #         logger.info("Полученные типы PDF: %s", pdf_types)
 
-                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]] # Кнопка "Все"
-                # Формируем кнопки для каждого import_id
-                
-                # last_imports теперь будет содержать (import_id, created_at, pdf_type_val)
-                for import_id, created_at, pdf_type_val in last_imports: # <--- Добавлен pdf_type_val
-                    date_str = created_at.strftime('%d.%m.%Y %H:%M')
-                    # Формируем текст кнопки, добавляя pdf_type, если он есть
-                    button_text = f"#{import_id} ({date_str}"
-                    if pdf_type_val:
-                        button_text += f", {pdf_type_val}"
-                    button_text += ")"
-                    keyboard.append([InlineKeyboardButton(button_text, callback_data=f'import_id_{import_id}')])
+    #         if not pdf_types or pdf_types == ['Все']:
+    #             await query.edit_message_text("Типы PDF не найдены.")
+    #             return
 
-                keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-                reply_markup = InlineKeyboardMarkup(keyboard)
+    #         keyboard = [[InlineKeyboardButton(pdf_type, callback_data=f"type_{pdf_type}")] for pdf_type in pdf_types]
+    #         keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
 
-                await query.edit_message_text(
-                    f"Выберите ID импорта (последние {self.export_last_import_ids_count}):",
-                    reply_markup=reply_markup
-                )
-                context.user_data['awaiting_input'] = None # Убедимся, что не ждем текстового ввода
+    #         reply_markup = InlineKeyboardMarkup(keyboard)
+    #         await query.edit_message_text("Выберите тип PDF:", reply_markup=reply_markup)
 
-            except Exception as e:
-                logger.error(f"Ошибка в set_import_id: {e}", exc_info=True)
-                await query.edit_message_text("❌ Ошибка при загрузке ID импортов. Попробуйте позже.")
-            finally:
-                db.close()
+    #     except Exception as e:
+    #         logger.error("Ошибка в set_pdf_type: %s", e)
+    #         await query.edit_message_text("❌ Ошибка при загрузке типов PDF.")
+    #     finally:
+    #         db.close()
 
     async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -1325,6 +1367,7 @@ class TransactionProcessorBot:
             filters_storage['cash_source'] = value
         elif filter_type == 'class':
             filters_storage['transaction_class'] = value
+
         
         await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
 
@@ -1397,7 +1440,7 @@ class TransactionProcessorBot:
         db_filters = {}
         filter_keys_to_transfer = [
             'category', 'transaction_type', 'cash_source', 'description',
-            'counterparty', 'check_num', 'transaction_class' 
+            'counterparty', 'check_num', 'transaction_class', 'pdf_type' 
         ]
 
         for key in filter_keys_to_transfer:
@@ -2653,7 +2696,8 @@ class TransactionProcessorBot:
         query = update.callback_query
         await query.answer()
         
-        filename = query.data.replace('logfile_', '')
+        # Поддерживаем префиксы logfile_, logview_file_, logview_text_
+        filename = re.sub(r'^(?:logfile_|logview_file_|logview_text_)', '', query.data)
         log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
         
         if not os.path.exists(log_path):
@@ -2683,76 +2727,103 @@ class TransactionProcessorBot:
 
 
     async def handle_log_view_option(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Обрабатывает выбор варианта просмотра логов"""
+        """
+        Обрабатывает нажатие кнопок:
+        — logview_text_<filename>  — последние строки текста;
+        — logview_file_<filename>  — скачивание всего файла.
+        Меню с кнопками всегда удаляется перед отправкой.
+        """
         query = update.callback_query
         await query.answer()
-        
-        action, filename = query.data.replace('logview_', '').split('_', 1)
-        log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
 
-        file_size = os.path.getsize(log_path)
-        if file_size > 5 * 1024 * 1024:  # 5 MB
-            await query.message.reply_text("Файл лога слишком большой (>5 MB) для просмотра. Используйте скачивание.")
-            return
-        
+        # 1) Разбор callback_data: action и имя файла
+        data = query.data.removeprefix('logview_')
         try:
-            if action == 'text':
-                # Читаем настроенное количество последних строк
-                with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
-                    lines = f.readlines()[-self.log_lines_to_show:] # <--- Используем self.log_lines_to_show
-                    content = ''.join(lines)
+            action, filename = data.split('_', 1)
+        except ValueError:
+            logger.error(f"Некорректные данные callback: {query.data}")
+            await query.edit_message_text("Ошибка: неверная кнопка.")
+            return
 
-                # Очищаем текст от проблемных символов
-                content = self.sanitize_log_content(content)
-                
-                # Разбиваем на части если слишком длинное
-                if len(content) > 4000:
-                    parts = [content[i:i+4000] for i in range(0, len(content), 4000)]
-                    for part in parts:
-                        try:
-                            await query.message.reply_text(
-                                f"Последние {self.log_lines_to_show} строк из {filename}:\n<pre>{part}</pre>",
-                                parse_mode='HTML'
-                            )
-                        except Exception:
-                            await query.message.reply_text(
-                                f"Последние {self.log_lines_to_show} строк из {filename}:\n{part}"
-                            )
-                        await asyncio.sleep(0.5)
-                else:
-                    try:
-                        await query.message.reply_text(
-                            f"Последние {self.log_lines_to_show} строк из {filename}:\n<pre>{content}</pre>",
-                            parse_mode='HTML'
-                        )
-                    except Exception:
-                        await query.message.reply_text(
-                            f"Последние {self.log_lines_to_show} строк из {filename}:\n{content}"
-                        )
-                    
-            elif action == 'file':
-                # Отправляем файл целиком
+        # 2) Путь до лога и его размер
+        log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
+        if not os.path.exists(log_path):
+            await query.edit_message_text(f"Файл `{filename}` не найден.", parse_mode='Markdown')
+            return
+        file_size = os.path.getsize(log_path)
+
+        # 3) Удаляем исходное меню
+        try:
+            await query.message.delete()
+        except Exception as e:
+            logger.debug(f"Не удалось удалить меню: {e}")
+
+        # 4) Если текстовый вывод
+        if action == 'text':
+            # Ограничение на размер для просмотра
+            if file_size > 5 * 1024 * 1024:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="Файл лога слишком большой (>5 MB) для просмотра. Пожалуйста, скачайте его целиком."
+                )
+                return
+
+            # Чтение последних строк
+            try:
+                with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
+                    lines = f.readlines()[-self.log_lines_to_show:]
+            except Exception as e:
+                logger.error(f"Не удалось прочитать файл {filename}: {e}")
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=f"Ошибка чтения файла `{filename}`."
+                )
+                return
+
+            content = ''.join(lines)
+            content = self.sanitize_log_content(content)
+
+            # Разбиваем на куски по 4000 символов
+            for part in (content[i:i+4000] for i in range(0, len(content), 4000)):
+                try:
+                    await context.bot.send_message(
+                        chat_id=update.effective_chat.id,
+                        text=f"Последние {self.log_lines_to_show} строк из `{filename}`:\n<pre>{part}</pre>",
+                        parse_mode='HTML'
+                    )
+                except Exception:
+                    await context.bot.send_message(
+                        chat_id=update.effective_chat.id,
+                        text=f"Последние {self.log_lines_to_show} строк из {filename}:\n{part}"
+                    )
+                await asyncio.sleep(0.3)
+            return
+
+        # 5) Если скачивание файла
+        if action == 'file':
+            try:
                 with open(log_path, 'rb') as f:
-                    await query.message.reply_document(
+                    await context.bot.send_document(
+                        chat_id=update.effective_chat.id,
                         document=f,
+                        filename=filename,
                         caption=f"Полный лог файл: {filename}"
                     )
-            
-            # Возвращаемся к выбору вариантов просмотра
-            try:
-                await self.handle_logfile_selection(update, context)
-            except telegram.error.BadRequest as e:
-                if "not modified" in str(e):
-                    logger.debug("Сообщение не изменилось, пропускаем ошибку")
-                else:
-                    raise
-                    
-        except Exception as e:
-            logger.error(f"Ошибка при обработке логов: {e}")
-            try:
-                await query.edit_message_text(f"Ошибка: {str(e)}")
-            except telegram.error.BadRequest:
-                pass
+            except Exception as e:
+                logger.error(f"Не удалось отправить файл {filename}: {e}")
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=f"Ошибка отправки файла `{filename}`."
+                )
+            return
+
+        # 6) Неизвестное действие
+        logger.error(f"Неизвестное действие {action} в callback_data")
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Ошибка: неизвестное действие."
+        )
+
 
     def sanitize_log_content(self, content: str) -> str:
         """Очищает текст лога от проблемных символов"""
