@@ -1,20 +1,14 @@
 # DB_HOST=localhost python backup_manual.py
 
 import os
-from database import Database
+from db.backup import create_backup
 
 def main():
-    try:
-        # Инициализация подключения к БД
-        db = Database()
-        
+    try:      
         # Создание резервной копии
-        # backup_file = db.create_backup()
-        backup_file = db.create_backup(backup_dir="/Users/IgorShvyrkin/Documents/EAT_TG_Bot_Docker/backups")
+        backup_file = create_backup(backup_dir="/Users/IgorShvyrkin/Documents/EAT_TG_Bot_Docker/backups")
         print(f"Резервная копия успешно создана: {backup_file}")
         
-        # Закрытие соединения
-        db.close()
     except Exception as e:
         print(f"Ошибка при создании резервной копии: {e}")
 

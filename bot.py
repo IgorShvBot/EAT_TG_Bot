@@ -1,8 +1,24 @@
-__version__ = "3.6.4"
+__version__ = "3.7.0"
 
+# === Standard library imports ===
 import os
+import sys
+import socket
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from io import BytesIO
+from typing import Dict
+from tempfile import NamedTemporaryFile
+import asyncio
+import time
+import yaml
+import re
+from datetime import datetime, timedelta
+import inspect
+
+# === Third-party imports ===
+import pandas as pd
+import telegram
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -10,98 +26,31 @@ from telegram.ext import (
     MessageHandler,
     ContextTypes,
     CallbackQueryHandler,
-    filters
+    filters,
+    ConversationHandler,
 )
-from io import BytesIO
-import pandas as pd
-from typing import Dict
-from tempfile import NamedTemporaryFile
-import asyncio
-import time
-import yaml
-import socket
-import sys
-import subprocess
-import shlex
-import telegram
-import re
-import psycopg2
-from database import Database
-from datetime import datetime, timedelta
-from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 from telegram.ext.filters import BaseFilter
-import inspect
-from telegram.ext import ConversationHandler, MessageHandler, CommandHandler, filters
-from handlers.pdf_type_filter import register_pdf_type_handler, make_pdf_type_button
+from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
+# === Local imports ===
+from handlers.pdf_type_filter import register_pdf_type_handler, make_pdf_type_button
+from db.base import DBConnection
+from db.transactions import (
+    save_transactions,
+    get_transactions,
+    update_transactions,
+    get_last_import_ids,
+    get_unique_values,
+    check_existing_ids,
+    get_min_max_dates_by_pdf_type,
+)
+from utils.logging import setup_logging
+
+print(">>> setup_logging() должен сейчас вызваться <<<")
 
 # Настройка логирования
-def setup_logging():
-    log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    date_format = '%d-%m-%Y %H:%M:%S' #%z'
-    
-    # Логи в консоль
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(logging.Formatter(log_format, date_format))
-    
-    # Логи в файл (если нужно)
-    try:
-        if not os.path.exists('logs'):
-            os.makedirs('logs')
-    except OSError as e:
-        logger.error(f"Ошибка при создании директории для логов: {e}")
-
-    file_handler = TimedRotatingFileHandler(
-        'logs/bot.log',
-        when='midnight',
-        backupCount=5,
-        encoding='utf-8'
-    )
-    
-    file_handler.suffix = "%Y-%m-%d_bot.log"
-    file_handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}_bot\.log$")
-    file_handler.setFormatter(logging.Formatter(log_format, date_format))
-       
-    # Основной логгер
-    logger = logging.getLogger()
-
-    # # Логирование изменений в БД
-    # edit_handler = TimedRotatingFileHandler(
-    #     'logs/edits.log', 
-    #     when='midnight', 
-    #     backupCount=30,
-    #     encoding='utf-8')
-    
-    # edit_handler.setFormatter(logging.Formatter(log_format, date_format))
-    # logger.addHandler(edit_handler)
-
-    # Читаем уровень логирования из переменной окружения, по умолчанию INFO
-    log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
-    log_level_mapping = {
-        'CRITICAL': logging.CRITICAL,
-        'ERROR': logging.ERROR,
-        'WARNING': logging.WARNING,
-        'INFO': logging.INFO,
-        'DEBUG': logging.DEBUG,
-        'NOTSET': logging.NOTSET
-    }
-    log_level = log_level_mapping.get(log_level_str, logging.INFO) # Устанавливаем INFO по умолчанию, если значение неверное
-    logger.setLevel(log_level)
-
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
-    
-    # Дополнительные настройки для конкретных логгеров
-    logging.getLogger('httpx').setLevel(logging.WARNING)  # Уменьшаем логи httpx
-    logging.getLogger('telegram').setLevel(logging.INFO)  # Настраиваем логи telegram
-    # logging.getLogger("telegram").setLevel(logging.DEBUG) # Добавлено
-
-    # Логируем установленный уровень
-    logger.info(f"Уровень логирования для BOT установлен в: {logging.getLevelName(logger.level)}")
-
-    return logger
-
-logger = setup_logging()
+setup_logging()
+logger = logging.getLogger(__name__)
 
 # Добавляем загрузку списка админов
 def load_admins():
@@ -424,56 +373,34 @@ class TransactionProcessorBot:
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
 
-    @admin_only # Добавляем декоратор, так как команда, вероятно, только для админов
+    @admin_only
     async def get_min_max_dates(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """
         Обработчик команды /max_dates (или переименованной команды).
         Получает и отправляет пользователю информацию о минимальной и
         максимальной дате операции для каждого pdf_type.
         """
-        user_id = update.effective_user.id
-        logger.info(f"User {user_id} запросил минимальные и максимальные даты по pdf_type")
-
-        db = Database()
         try:
-            # Вызываем новый метод базы с измененным именем
-            min_max_dates_data = db.get_min_max_dates_by_pdf_type(user_id)
+            with DBConnection() as db:
+                date_ranges = get_min_max_dates_by_pdf_type(user_id=update.effective_user.id, db=db)
 
-            if not min_max_dates_data:
+            if not date_ranges:
                 await update.message.reply_text("ℹ️ Данные о датах по типам PDF не найдены. Возможно, база данных пуста или не содержит записей с указанным типом PDF.")
                 return
 
-            # Форматируем ответ. Визуализация: показывать обе даты рядом.
-            response_lines = ["⚙️ **Диапазоны дат по типам PDF:**\n"] # Изменен заголовок
-
-            for item in min_max_dates_data:
+            response_lines = ["⚙️ **Диапазоны дат по типам PDF:**\n"]
+            for item in date_ranges:
                 pdf_type = item.get('pdf_type', 'Неизвестный тип')
                 min_date = item.get('min_date')
                 max_date = item.get('max_date')
-
-                # min_date_str = min_date.strftime('%d.%m.%Y') if min_date else 'Дата не опр.' # Формат только дата для краткости
-                # max_date_str = max_date.strftime('%d.%m.%Y') if max_date else 'Дата не опр.' # Формат только дата для краткости
-                
-                # --- Вариант визуализации: обе даты рядом ---
-                # Используем Markdown для выделения
-                # response_lines.append(f"▪️ *{pdf_type}*: `{min_date_str}` - `{max_date_str}`")
-
-                # Если нужны точное время или другие варианты, можно изменить формат:
                 min_date_full_str = min_date.strftime('%d.%m.%Y %H:%M') if min_date else 'н/д'
                 max_date_full_str = max_date.strftime('%d.%m.%Y %H:%M') if max_date else 'н/д'
-                response_lines.append(f"▪️ *{pdf_type}*:\n           min: `{min_date_full_str}`\n           max: `{max_date_full_str}`") # Вариант с переносом строк
-
+                response_lines.append(f"▪️ *{pdf_type}*:\n           min: `{min_date_full_str}`\n           max: `{max_date_full_str}`")
             response_text = "\n".join(response_lines)
-
-            # Отправляем ответ
             await update.message.reply_text(response_text, parse_mode='Markdown')
-
         except Exception as e:
             logger.error(f"Ошибка при выполнении команды /date_ranges: {e}", exc_info=True)
             await update.message.reply_text("❌ Произошла ошибка при получении данных. Пожалуйста, попробуйте позже.")
-
-        finally:
-            db.close() # Закрываем соединение
 
     def get_default_filters(self) -> dict:
         return {
@@ -503,66 +430,46 @@ class TransactionProcessorBot:
         # Фильтры уже должны быть в context.user_data['edit_mode']['edit_filters']
         # Здесь можно (если еще не сделано) получить ID транзакций по этим фильтрам
         # и сохранить их в context.user_data['edit_mode']['ids']
-
-        # Например, получение ID по фильтрам (этот код нужно адаптировать из apply_edits или get_transactions)
-        db = Database()
         try:
             filters_for_db = context.user_data['edit_mode']['edit_filters']
-            # db_parsed_filters = {k: v for k, v in filters_for_db.items() if v != 'Все' and k not in ['start_date', 'end_date']}
-
             db_parsed_filters = {}
-            # --- ИЗМЕНИТЕ СПИСОК КЛЮЧЕЙ СЛЕДУЮЩИМ ОБРАЗОМ ---
             filter_keys_to_transfer = [
                 'category', 'transaction_type', 'cash_source', 'description',
                 'counterparty', 'check_num', 'transaction_class'
             ]
-
             for key in filter_keys_to_transfer:
-                 # Проверяем, существует ли ключ в filters_for_db и не равно ли значение 'Все'
                 if key in filters_for_db and filters_for_db[key] != 'Все':
-                    # Дополнительная проверка для текстовых полей
                     if key in ['counterparty', 'check_num', 'description']:
                         if isinstance(filters_for_db[key], str) and filters_for_db[key].strip():
-                            db_parsed_filters[key] = filters_for_db[key].strip() # Сохраняем очищенное значение
-                        # Иначе, если строка пустая или не строка, пропускаем
+                            db_parsed_filters[key] = filters_for_db[key].strip()
                     else:
-                        db_parsed_filters[key] = filters_for_db[key] # Для нетекстовых полей
-
-            # Проверка для import_id
+                        db_parsed_filters[key] = filters_for_db[key]
             if filters_for_db.get('import_id') is not None and filters_for_db['import_id'] != 'Все':
-                 db_parsed_filters['import_id'] = filters_for_db['import_id']
-            
-            logger.debug(f"db_parsed_filters для handle_edit_filter_proceed: {db_parsed_filters}") # Логируем финальные фильтры для БД
-
+                db_parsed_filters['import_id'] = filters_for_db['import_id']
+            logger.debug(f"db_parsed_filters для handle_edit_filter_proceed: {db_parsed_filters}")
             start_date_dt = datetime.strptime(filters_for_db['start_date'], '%d.%m.%Y')
             end_date_dt = datetime.strptime(filters_for_db['end_date'], '%d.%m.%Y')
-
-            df_transactions = db.get_transactions(
-                user_id=update.effective_user.id,
-                start_date=start_date_dt,
-                end_date=end_date_dt,
-                filters=db_parsed_filters if db_parsed_filters else None
-            )
+            with DBConnection() as db:
+                df_transactions = get_transactions(
+                    user_id=update.effective_user.id,
+                    start_date=start_date_dt,
+                    end_date=end_date_dt,
+                    filters=db_parsed_filters if db_parsed_filters else None,
+                    db=db
+                )
             ids_from_filter = df_transactions['id'].tolist()
-
             if not ids_from_filter:
                 await query.edit_message_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
-                # Можно предложить вернуться к фильтрам или отменить
-                return 
-
+                return
             context.user_data['edit_mode']['ids'] = ids_from_filter
-            logger.info(f"Редактирование по фильтру: найдено {len(ids_from_filter)} ID. IDs: {ids_from_filter[:10]}...") # Лог первых 10 ID
-
+            logger.info(f"Редактирование по фильтру: найдено {len(ids_from_filter)} ID. IDs: {ids_from_filter[:10]}...")
         except Exception as e:
             logger.error(f"Ошибка получения ID по фильтрам: {e}", exc_info=True)
             await query.edit_message_text("⚠️ Ошибка при применении фильтров")
             context.user_data.pop('edit_mode', None)
             return
-        finally:
-            db.close()
-
         await query.edit_message_text(f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.")
-        await self._select_fields_to_edit(update, context) # Переход к выбору поля для редактирования
+        await self._select_fields_to_edit(update, context)
 
     async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE, edit_mode: bool = False):
         user_id = update.effective_user.id
@@ -693,58 +600,44 @@ class TransactionProcessorBot:
             return 
         logger.debug(f"Получены ID для редактирования: {update.message.text}")        
         
-        # db = Database() # Инициализация DB должна быть внутри try, или после парсинга ID,
-                        # чтобы не делать запрос к БД, если ID невалидны
         try:
             ids_input = update.message.text.strip()
             ids = []
-
-            if '-' in ids_input:  # Обработка диапазона
+            if '-' in ids_input:
                 try:
                     start, end = map(int, ids_input.split('-'))
                     ids = list(range(start, end + 1))
                 except ValueError:
                     await update.message.reply_text("⚠️ Неверный формат диапазона. Пример: 10-20")
                     return
-            else:  # Обработка списка
+            else:
                 try:
-                    ids = [int(id_str.strip()) for id_str in ids_input.split(',')] # Исправлено: id -> id_str
+                    ids = [int(id_str.strip()) for id_str in ids_input.split(',')]
                 except ValueError:
                     await update.message.reply_text("⚠️ Неверный формат ID. Пример: 15, 28, 42")
                     return
-
-            # ---> ПЕРЕМЕСТИТЬ ПРОВЕРКУ ID СЮДА <---
-            db = Database() # Инициализация DB здесь, после успешного парсинга ID
-            try:
-                existing_ids_from_db = db.check_existing_ids(ids) # Переименовал, чтобы не путать с ids
-                if len(existing_ids_from_db) != len(ids):
-                    missing = set(ids) - set(existing_ids_from_db)
-
-                    ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
-                    if not ids:
-                        await update.message.reply_text("⚠️ Нет действительных ID для редактирования.")
-                        context.user_data.pop('edit_mode', None)
-                        return
-
-                    await update.message.reply_text(f"⚠ ID {', '.join(map(str, missing))} не найдены в базе. Будут обработаны только существующие.")
-                    ids = [id_val for id_val in ids if id_val in existing_ids_from_db] # Обновляем ids, оставляя только существующие
-                    if not ids: # Если после фильтрации список ids пуст (на всякий случай)
-                        await update.message.reply_text("⚠️ Ошибка: нет действительных ID для редактирования после проверки.")
-                        context.user_data.pop('edit_mode', None) # Очищаем состояние редактирования
-                        return
-            finally:
-                db.close()
-            # ---> КОНЕЦ ПЕРЕМЕЩЕННОГО БЛОКА <---
-
-            context.user_data['edit_mode']['ids'] = ids # Сохраняем только существующие ID
-            # context.user_data['edit_mode'].pop('awaiting_ids', None) # Удаляем флаг
-            context.user_data['edit_mode'] = {'type': 'edit_by_id','ids': ids}         
+            # Проверка существующих ID через DBConnection и функцию из db.transactions
+            with DBConnection() as db:
+                existing_ids_from_db = check_existing_ids(ids, db=db)
+            if len(existing_ids_from_db) != len(ids):
+                missing = set(ids) - set(existing_ids_from_db)
+                ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
+                if not ids:
+                    await update.message.reply_text("⚠️ Нет действительных ID для редактирования.")
+                    context.user_data.pop('edit_mode', None)
+                    return
+                await update.message.reply_text(f"⚠ ID {', '.join(map(str, missing))} не найдены в базе. Будут обработаны только существующие.")
+                ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
+                if not ids:
+                    await update.message.reply_text("⚠️ Ошибка: нет действительных ID для редактирования после проверки.")
+                    context.user_data.pop('edit_mode', None)
+                    return
+            context.user_data['edit_mode']['ids'] = ids
+            context.user_data['edit_mode'] = {'type': 'edit_by_id','ids': ids}
             await self._select_fields_to_edit(update, context)
-
-        except psycopg2.errors.UndefinedTable as db_err: # Перехват ошибки отсутствия таблицы
+        except Exception as db_err:
             logger.error(f"Ошибка базы данных при обработке ID: {db_err}", exc_info=True)
             await update.message.reply_text("❌ Критическая ошибка конфигурации базы данных. Обратитесь к администратору.")
-            # Важно не продолжать, если БД не готова
             return
         except Exception as e:
             logger.error(f"Ошибка обработки ID: {e}", exc_info=True)
@@ -819,69 +712,56 @@ class TransactionProcessorBot:
             # Не отправляем сообщение об ошибке здесь, чтобы не дублировать, если проблема в другом
             return
 
-        db = Database()
         try:
             if edit_data['type'] == 'edit_by_filter':
                 ids = edit_data.get('ids', [])
-                if not ids: # Дополнительная проверка
+                if not ids:
                     logger.warning("apply_edits (edit_by_filter): 'ids' не найдены в edit_data.")
-                    # Попытка получить ID заново, если их нет (менее предпочтительно)
                     edit_filters_data = context.user_data.get('edit_mode', {}).get('edit_filters')
                     if not edit_filters_data:
                         await update.message.reply_text("⚠ Ошибка: Фильтры для редактирования не найдены.")
                         context.user_data.pop('edit_mode', None)
                         return
-                    df = db.get_transactions(
-                        user_id=update.effective_user.id,
-                        start_date=datetime.strptime(edit_filters_data['start_date'], '%d.%m.%Y'),
-                        end_date=datetime.strptime(edit_filters_data['end_date'], '%d.%m.%Y'),
-                        filters={k: v for k, v in edit_filters_data.items() if v != 'Все'}
-                    )
-
+                    with DBConnection() as db:
+                        df = get_transactions(
+                            user_id=update.effective_user.id,
+                            start_date=datetime.strptime(edit_filters_data['start_date'], '%d.%m.%Y'),
+                            end_date=datetime.strptime(edit_filters_data['end_date'], '%d.%m.%Y'),
+                            filters={k: v for k, v in edit_filters_data.items() if v != 'Все'},
+                            db=db
+                        )
                     ids = df['id'].tolist()
-
                     if not ids:
                         await update.message.reply_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
                         context.user_data.pop('edit_mode', None)
                         return
-
-                # Получаем ID по фильтрам
-                # filters = context.user_data.get('export_filters', {})
             else:
                 ids = edit_data.get('ids', [])
-
-            # Формируем обновления
             updates = {
                 edit_data['field']: (new_value, edit_data['mode'])
             }
-            
-            # Выполняем обновление
-            updated_ids = db.update_transactions(
-                user_id=update.effective_user.id,
-                ids=ids,
-                updates=updates
-            )
-            
-            # Логируем действие
+            with DBConnection() as db:
+                updated_ids = update_transactions(
+                    user_id=update.effective_user.id,
+                    ids=ids,
+                    updates=updates,
+                    db=db
+                )
             logger.info(
                 f"User {update.effective_user.id} edited {len(updated_ids)} records. "
                 f"IDs: {updated_ids}. Changes: {updates}"
             )
-            
             await update.message.reply_text(
                 f"✅ Успешно обновлено {len(updated_ids)} записей!\n"
                 f"Измененное поле: {edit_data['field']}\n"
                 f"Новое значение: {new_value}"
             )
-
         except Exception as e:
             logger.error(f"Ошибка при редактировании: {e}", exc_info=True)
             await update.message.reply_text("❌ Ошибка при обновлении. Проверьте подключение к базе данных или обратитесь к администратору.")
-
         finally:
-            db.close()
             logger.debug("Очистка состояния edit_mode после apply_edits")
-            context.user_data.pop('edit_mode', None) # <-- Важная строка, очищает состояние
+            context.user_data.pop('edit_mode', None)
             # Чтобы точно предотвратить дальнейшую обработку этого текстового сообщения
             # другими общими текстовыми хендлерами, которые могут среагировать,
             # можно попробовать установить флаг, но обычно очистки user_data достаточно
@@ -937,39 +817,32 @@ class TransactionProcessorBot:
             await query.answer()
 
             user_id = query.from_user.id
-            db = Database()
             try:
-                # Получаем последние N import_id и даты
-                last_imports = db.get_last_import_ids(user_id, self.export_last_import_ids_count)
+                with DBConnection() as db:
+                    last_imports = get_last_import_ids(
+                        user_id=query.from_user.id,
+                        limit=self.export_last_import_ids_count,
+                        db=db
+                    )
                 logger.debug(f"Получены последние {len(last_imports)} import_id для user_id {user_id}")
-
-                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]] # Кнопка "Все"
-                # Формируем кнопки для каждого import_id
-                
-                # last_imports теперь будет содержать (import_id, created_at, pdf_type_val)
-                for import_id, created_at, pdf_type_val in last_imports: # <--- Добавлен pdf_type_val
+                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]]
+                for import_id, created_at, pdf_type_val in last_imports:
                     date_str = created_at.strftime('%d.%m.%Y %H:%M')
-                    # Формируем текст кнопки, добавляя pdf_type, если он есть
                     button_text = f"#{import_id} ({date_str}"
                     if pdf_type_val:
                         button_text += f", {pdf_type_val}"
                     button_text += ")"
                     keyboard.append([InlineKeyboardButton(button_text, callback_data=f'import_id_{import_id}')])
-
                 keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
                 reply_markup = InlineKeyboardMarkup(keyboard)
-
                 await query.edit_message_text(
                     f"Выберите ID импорта (последние {self.export_last_import_ids_count}):",
                     reply_markup=reply_markup
                 )
-                context.user_data['awaiting_input'] = None # Убедимся, что не ждем текстового ввода
-
+                context.user_data['awaiting_input'] = None
             except Exception as e:
                 logger.error(f"Ошибка в set_import_id: {e}", exc_info=True)
                 await query.edit_message_text("❌ Ошибка при загрузке ID импортов. Попробуйте позже.")
-            finally:
-                db.close()
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -1036,10 +909,10 @@ class TransactionProcessorBot:
         query = update.callback_query
         await query.answer()
 
-        user_id = query.from_user.id
-        db = Database()
         try:
-            categories = ['Все'] + db.get_unique_values("category", user_id)
+            with DBConnection() as db:
+                categories = ['Все'] + get_unique_values('category', user_id=query.from_user.id, db=db)
+
             logger.debug("Полученные категории: %s", categories)
 
             if not categories or categories == ['Все']:
@@ -1055,15 +928,6 @@ class TransactionProcessorBot:
                 return
 
             keyboard = []
-            # в вашем set_category
-            # categories = ['Все'] + db.get_unique_values("category", user_id)
-            # context.user_data['category_list'] = categories
-
-            # keyboard = [
-            #     [InlineKeyboardButton(cat, callback_data=f"cat_{i}")]
-            #     for i, cat in enumerate(categories)
-            # ]
-            # keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
 
             for cat in categories:
                 safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "").replace("|", "")[:50]
@@ -1084,8 +948,6 @@ class TransactionProcessorBot:
             except telegram.error.BadRequest as e:
                 logger.warning(f"Ошибка Telegram API: {e}")
                 await query.message.reply_text("❌ Ошибка при загрузке категорий. Попробуйте позже.")
-        finally:
-            db.close()
 
 
     async def set_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1094,10 +956,8 @@ class TransactionProcessorBot:
         await query.answer()
 
         # Получение типов из базы
-        user_id = query.from_user.id
-        db = Database()
-        types = ['Все'] + db.get_unique_values("transaction_type", user_id)
-        db.close()
+        with DBConnection() as db:
+            types = ['Все'] + get_unique_values('transaction_type', user_id=query.from_user.id, db=db)
 
         keyboard = [
             [InlineKeyboardButton(type, callback_data=f"type_{type}")]
@@ -1113,9 +973,8 @@ class TransactionProcessorBot:
         query = update.callback_query
         await query.answer()
         
-        db = Database()
-        sources = ['Все'] + db.get_unique_values('cash_source', query.from_user.id)
-        db.close()
+        with DBConnection() as db:
+            sources = ['Все'] + get_unique_values('cash_source', user_id=query.from_user.id, db=db)
         
         keyboard = [
             [InlineKeyboardButton(src, callback_data=f'source_{src}') 
@@ -1172,9 +1031,8 @@ class TransactionProcessorBot:
         query = update.callback_query
         await query.answer()
         
-        db = Database()
-        classes = ['Все'] + db.get_unique_values('transaction_class', query.from_user.id)
-        db.close()
+        with DBConnection() as db:
+            classes = ['Все'] + get_unique_values('transaction_class', user_id=query.from_user.id, db=db)
         
         keyboard = [
             [InlineKeyboardButton(cls, callback_data=f'class_{cls}') 
@@ -1187,33 +1045,6 @@ class TransactionProcessorBot:
             "Выберите класс транзакции:",
             reply_markup=InlineKeyboardMarkup(keyboard))
 
-    # async def set_pdf_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #     logger.info("Обработчик set_pdf_type вызван")
-    #     query = update.callback_query
-    #     await query.answer()
-
-    #     # Получаем уникальные типы PDF из базы данных
-    #     user_id = query.from_user.id
-    #     db = Database()
-    #     try:
-    #         pdf_types = ['Все'] + db.get_unique_values("pdf_type", user_id)
-    #         logger.info("Полученные типы PDF: %s", pdf_types)
-
-    #         if not pdf_types or pdf_types == ['Все']:
-    #             await query.edit_message_text("Типы PDF не найдены.")
-    #             return
-
-    #         keyboard = [[InlineKeyboardButton(pdf_type, callback_data=f"type_{pdf_type}")] for pdf_type in pdf_types]
-    #         keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-
-    #         reply_markup = InlineKeyboardMarkup(keyboard)
-    #         await query.edit_message_text("Выберите тип PDF:", reply_markup=reply_markup)
-
-    #     except Exception as e:
-    #         logger.error("Ошибка в set_pdf_type: %s", e)
-    #         await query.edit_message_text("❌ Ошибка при загрузке типов PDF.")
-    #     finally:
-    #         db.close()
 
     async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -1347,9 +1178,9 @@ class TransactionProcessorBot:
 
         # Для категории ищем оригинальное значение в базе
         if filter_type == 'cat':
-            db = Database()
             try:
-                categories = db.get_unique_values("category", query.from_user.id)
+                with DBConnection() as db:
+                    categories = get_unique_values('category', user_id=query.from_user.id, db=db)
                 # Ищем категорию, соответствующую safe_value
                 safe_value = value
                 original_value = next((cat for cat in categories if cat.replace(" ", "_").replace("'", "").replace('"', "")[:50] == safe_value), safe_value)
@@ -1359,8 +1190,6 @@ class TransactionProcessorBot:
                 logger.error("Ошибка при получении категорий: %s", e)
                 await query.edit_message_text("❌ Ошибка при выборе категории.")
                 return
-            finally:
-                db.close()
         elif filter_type == 'type':
             filters_storage['transaction_type'] = value
         elif filter_type == 'source':
@@ -1410,7 +1239,6 @@ class TransactionProcessorBot:
             # --- ДОБАВЛЕНО: Автоматическая установка даты начала при выборе ID импорта ---
             # Если выбран конкретный ID (не "Все"), устанавливаем давнюю дату начала
             if filters_storage['import_id'] != 'Все':
-                from datetime import datetime
                 past_start_date = datetime(2000, 1, 1) # Желаемая дата начала (например, 1 января 2000)
                 filters_storage['start_date'] = past_start_date.strftime('%d.%m.%Y')
                 logger.debug(f"handle_import_id_callback: Дата начала автоматически установлена в {filters_storage['start_date']} после выбора ID импорта.")
@@ -1423,159 +1251,103 @@ class TransactionProcessorBot:
                 logger.error(f"Ошибка при вызове show_filters_menu: {e}", exc_info=True)
                 await update.callback_query.message.reply_text("⚠️ Не удалось обновить меню. Фильтр ID импорта установлен.")
                     
+                    
     async def generate_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Генерация и отправка отчета"""
         query = update.callback_query
         await query.answer("Формирую отчет...")
-        
-        # user_id = query.from_user.id
-        # user_data = context.user_data
-        # filters = user_data['export_filters']
+
         filters = context.user_data.get('export_filters')
         if not filters:
-            await query.edit_message_text("❌ Ошибка: Фильтры экспорта не найдены. Пожалуйста, начните заново /export")
+            await query.edit_message_text("❌ Ошибка: фильтры экспорта не найдены.")
             return
-        logger.debug("Генерация отчета с фильтрами: %s", filters)
 
-        db_filters = {}
-        filter_keys_to_transfer = [
-            'category', 'transaction_type', 'cash_source', 'description',
-            'counterparty', 'check_num', 'transaction_class', 'pdf_type' 
-        ]
-
-        for key in filter_keys_to_transfer:
-            # Проверяем, существует ли ключ в filters и не равно ли значение 'Все'
-            if key in filters and filters[key] != 'Все':
-                 # Дополнительная проверка для текстовых полей, что значение не пустая строка после strip()
-                if key in ['counterparty', 'check_num', 'description']:
-                    if isinstance(filters[key], str) and filters[key].strip():
-                         db_filters[key] = filters[key].strip() # Сохраняем очищенное значение
-                    # Иначе, если строка пустая или не строка, пропускаем
-                else:
-                    db_filters[key] = filters[key] # Для нетекстовых полей сохраняем как есть
-
-        # Проверка для import_id, так как оно может быть числом или 'Все'
-        if filters.get('import_id') is not None and filters['import_id'] != 'Все':
-            db_filters['import_id'] = filters['import_id']
-
-        logger.debug(f"db_filters для generate_report: {db_filters}") # Логируем финальные фильтры для БД
-
-        filters['start_date'] = datetime.strptime(filters['start_date'], '%d.%m.%Y')
-        filters['end_date'] = datetime.strptime(filters['end_date'], '%d.%m.%Y')
-
-        db = Database()
         try:
-            df = db.get_transactions(
-                user_id=query.from_user.id,
-                start_date=filters['start_date'],
-                end_date=filters['end_date'],
-                filters=db_filters if db_filters else None
-            )
-            logger.info("Получено %d записей из базы данных", len(df))
-            
+            # Преобразование дат из строки в datetime
+            filters['start_date'] = datetime.strptime(filters['start_date'], '%d.%m.%Y')
+            filters['end_date'] = datetime.strptime(filters['end_date'], '%d.%m.%Y')
+
+            # Очистка фильтров: убираем 'Все', None и пустые, кроме текстовых
+            db_filters = {}
+            for key, value in filters.items():
+                if key in ['description', 'counterparty', 'check_num']:
+                    if isinstance(value, str) and value.strip():
+                        db_filters[key] = value.strip()
+                elif value not in ('Все', None, ''):
+                    db_filters[key] = value
+
+            logger.debug("Генерация отчета. user_id=%s, filters=%s", query.from_user.id, db_filters)
+
+            # Получение транзакций
+            with DBConnection() as db:
+                df = get_transactions(
+                    user_id=query.from_user.id,
+                    start_date=filters['start_date'],
+                    end_date=filters['end_date'],
+                    filters=db_filters,
+                    db=db
+                )
+
             if df.empty:
-                await query.edit_message_text("⚠ По вашему запросу ничего не найдено")
-                db.close()
-                if 'export_filters' in context.user_data:
-                    del context.user_data['export_filters']
+                await query.edit_message_text("⚠ По вашему запросу ничего не найдено.")
                 return
 
-            df.fillna('', inplace=True)
+            df = df.fillna('').replace('NaN', '').astype(str)
             df['transaction_date'] = pd.to_datetime(df['transaction_date']).dt.strftime('%d.%m.%Y %H:%M')
-            df.replace('NaN', '', inplace=True) # Дополнительная замена строки "NaN"
-            
-            logger.debug("Значения NaN (и другие отсутствующие) заменены на пустые строки.")
-            
-            # Словарь для переименования столбцов
+
             column_mapping = {
-                'id': 'ID',
-                'transaction_date': 'Дата',
-                'amount': 'Сумма',
-                'cash_source': 'Наличность',
-                'target_amount': 'Сумма (куда)',
-                'target_cash_source': 'Наличность (куда)',
-                'category': 'Категория',
-                'description': 'Описание',
-                'transaction_type': 'Тип транзакции',
-                'counterparty': 'Контрагент',
-                'check_num': 'Чек #',
-                'transaction_class': 'Класс'
+                'id': 'ID', 'transaction_date': 'Дата', 'amount': 'Сумма',
+                'cash_source': 'Наличность', 'target_amount': 'Сумма (куда)',
+                'target_cash_source': 'Наличность (куда)', 'category': 'Категория',
+                'description': 'Описание', 'transaction_type': 'Тип транзакции',
+                'counterparty': 'Контрагент', 'check_num': 'Чек #', 'transaction_class': 'Класс'
             }
-            
-            # Переименовываем столбцы
-            # df = df.rename(columns=column_mapping)
-            df_renamed = df.rename(columns=column_mapping)
-            logger.debug("Столбцы после переименования: %s", df_renamed.columns.tolist())
-            
+
+            df.rename(columns=column_mapping, inplace=True)
+
             with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
-                df_renamed.to_csv(tmp.name, index=False, encoding='utf-8', sep=',')
-                
-            try:    
-                await context.bot.send_document(
-                    chat_id=query.from_user.id,
-                    document=open(tmp.name, 'rb'),
-                    caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} - {filters['end_date'].strftime('%d.%m.%Y')}\n"
-                            f"📌 Всего записей: {len(df_renamed)}"
-                )
-            
-                # --- ФОРМИРОВАНИЕ СВОДКИ ПО ФИЛЬТРАМ ---
-                filter_summary_lines = []
-                # Добавляем диапазон дат (он всегда есть)
-                filter_summary_lines.append(f"📅 Период: {filters.get('start_date').strftime('%d.%m.%Y')} - {filters.get('end_date').strftime('%d.%m.%Y')}")
+                df.to_csv(tmp.name, index=False, sep=',')
+                tmp_path = tmp.name
 
-                # Словарь для красивых названий фильтров
-                filter_display_names = {
-                    'category': '🏷 Категория',
-                    'transaction_type': '🔀 Тип',
-                    'cash_source': '💳 Наличность',
-                    'description': '📝 Описание',
-                    'counterparty': '👥 Контрагент',
-                    'check_num': '🧾 Чек',
-                    'transaction_class': '📊 Класс',
-                    'import_id': '📦 ID импорта',
-                    'pdf_type': '📄 Тип PDF'
-                }
+            await context.bot.send_document(
+                chat_id=query.from_user.id,
+                document=open(tmp_path, 'rb'),
+                filename='report.csv',
+                caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}\n"
+                        f"📌 Записей: {len(df)}"
+            )
 
-                # Добавляем остальные активные фильтры (те, что не 'Все')
-                for key, display_name in filter_display_names.items():
-                    filter_value = filters.get(key)
-                    # Показываем фильтр, если он был задан и не равен 'Все'
-                    if filter_value and filter_value != 'Все':
-                        filter_summary_lines.append(f"{display_name}: {filter_value}")
+            os.unlink(tmp_path)
 
-                filter_summary = "\n".join(filter_summary_lines)
-                # -----------------------------------------
+            def format_filters(filters: dict) -> str:
+                lines = []
+                if 'start_date' in filters and 'end_date' in filters:
+                    lines.append(f"📅 Период: {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}")
+                for key, label in [
+                    ('cash_source', '💳 Наличность'),
+                    ('target_cash_source', '💸 Куда'),
+                    ('category', '📂 Категория'),
+                    ('transaction_type', '🔄 Тип'),
+                    ('transaction_class', '🏷 Класс'),
+                    ('description', '📝 Описание'),
+                    ('counterparty', '👤 Контрагент'),
+                    ('check_num', '🔢 Чек #'),
+                    ('pdf_type', '📎 Тип PDF'),
+                    ('import_id', '🆔 ID импорта')
+                ]:
+                    if filters.get(key) not in [None, '', 'Все']:
+                        lines.append(f"{label}: {filters[key]}")
+                return "\n".join(lines)
 
-                # --- ОБНОВЛЕНИЕ СООБЩЕНИЯ ОБ УСПЕХЕ ---
-                success_message = "✅ Отчет успешно сформирован"
-                # Добавляем сводку по фильтрам, если она не пустая
-                if filter_summary:
-                    success_message += "\n\n⚙️ <b>Примененные фильтры:</b>\n" + filter_summary
-
-                # Используем parse_mode='HTML' для жирного шрифта
-                await query.edit_message_text(success_message, parse_mode='HTML')
-                # -----------------------------------------
-
-            # await query.edit_message_text("✅ Отчет успешно сформирован") 
-
-            except Exception as send_error:
-                # ... (обработка ошибки отправки) ...
-                logger.error(f"Ошибка отправки файла отчета: {send_error}", exc_info=True)
-                await query.edit_message_text("❌ Ошибка при отправке файла отчета.")
-            finally:
-                # ... (удаление временного файла) ...
-                if os.path.exists(tmp.name):
-                    os.unlink(tmp.name)
+            applied_filters = format_filters(filters)
+            await query.edit_message_text(
+                f"✅ Отчет успешно сформирован\n\n"
+                f"⚙️ Примененные фильтры:\n{applied_filters}"
+            )
 
         except Exception as e:
             logger.error("Ошибка генерации отчета: %s", e, exc_info=True)
-            await query.edit_message_text("❌ Ошибка при формировании отчета")
-        finally:
-            # Гарантированно закрываем соединение с БД
-            if db:
-                db.close()
-            # Гарантированно очищаем фильтры из user_data *после* их использования
-            context.user_data.pop('export_filters', None)
+            await query.edit_message_text("❌ Ошибка при формировании отчета. Попробуйте позже.")
+
 
     @admin_only
     async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1803,8 +1575,8 @@ class TransactionProcessorBot:
     async def add_pattern(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды добавления нового паттерна"""
         try:
-        # Разбираем аргументы с учетом кавычек
-            args = shlex.split(update.message.text)
+            # Разделяем команду на три части: /add_pattern, категория, паттерн
+            args = update.message.text.split(maxsplit=2)
             # Проверяем количество аргументов (команда + 2 аргумента)
             if len(args) != 3:
                 await update.message.reply_text(
@@ -2545,6 +2317,11 @@ class TransactionProcessorBot:
         pending_data = user_data.get('pending_data', {})
         pdf_type_to_save = pending_data.get('pdf_type')
 
+        user_id = update.effective_user.id
+        df = context.user_data['pending_data']['df']
+        # pdf_type = context.user_data['pending_data']['pdf_type']
+
+
         # if not pending_data or 'timestamp' not in pending_data or 'df' not in pending_data:
         if not pending_data or 'df' not in pending_data or 'pdf_type' not in pending_data:
             await query.edit_message_text("Данные для сохранения не найдены или повреждены (DataFrame или pdf_type отсутствуют)")
@@ -2557,8 +2334,9 @@ class TransactionProcessorBot:
         logger.debug("Сохранение данных в БД: %s", pending_data['df'][['Дата']].head().to_dict())
         db = None
         try:
-            db = Database()
-            stats = db.save_transactions(pending_data['df'], query.from_user.id, pdf_type_to_save)
+            db = DBConnection()
+            stats = save_transactions(df, user_id=user_id, pdf_type=pdf_type_to_save, db=db)
+            db.close()
             
             logger.info(
                 f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
@@ -2628,42 +2406,37 @@ class TransactionProcessorBot:
 
         if query.data == 'update_duplicates':
             try:
-                db = Database()
                 updated = 0
-                
-                for row in duplicates:
-                    # Находим ID транзакции по критериям дубликата
-                    with db.get_cursor(dict_cursor=True) as cur:
-                        cur.execute("""
-                            SELECT id FROM transactions 
-                            WHERE transaction_date = %s 
-                            AND amount = %s 
-                            AND cash_source = %s
-                        """, (row['дата'], row['сумма'], row.get('наличность')))
-                        result = cur.fetchone()
-                        if result:
-                            # Обновляем транзакцию по ID
-                            updates = {'category': (row.get('категория', None), 'replace')}
-                            updated_ids = db.update_transactions(
-                                user_id=query.from_user.id,
-                                ids=[result['id']],
-                                updates=updates
-                            )
-                            if updated_ids:
-                                updated += 1
-                
+                with DBConnection() as db:
+                    for row in duplicates:
+                        # Находим ID транзакции по критериям дубликата
+                        with db.cursor(dict_cursor=True) as cur:
+                            cur.execute("""
+                                SELECT id FROM transactions 
+                                WHERE transaction_date = %s 
+                                AND amount = %s 
+                                AND cash_source = %s
+                            """, (row['дата'], row['сумма'], row.get('наличность')))
+                            result = cur.fetchone()
+                            if result:
+                                # Обновляем транзакцию по ID
+                                updates = {'category': (row.get('категория', None), 'replace')}
+                                updated_ids = update_transactions(
+                                    user_id=query.from_user.id,
+                                    ids=[result['id']],
+                                    updates=updates,
+                                    db=db
+                                )
+                                if updated_ids:
+                                    updated += 1
                 logger.info(f"Обновлено {updated} дубликатов")
                 await query.edit_message_text(
                     f"✅ Обновлено {updated} записей\n"
                     f"🆕 Сохранено ранее: {stats['new']} записей"
                 )
-                
             except Exception as e:
                 logger.error(f"Ошибка обновления: {e}", exc_info=True)
                 await query.edit_message_text("❌ Ошибка при обновлении")
-                
-            finally:
-                db.close()
         
         elif query.data == 'skip_duplicates':
             response = (
@@ -2906,7 +2679,7 @@ class TransactionProcessorBot:
                 return
             
             logger.info("Запуск нового процесса...")
-            subprocess.Popen([sys.executable, __file__])
+            os.execv(sys.executable, [sys.executable, __file__])
             
             logger.info("Завершение текущего процесса...")
             await asyncio.sleep(3)  # Даем время для завершения

@@ -4,7 +4,8 @@ from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
 )
-from database import Database
+from db.base import DBConnection
+from db.transactions import get_unique_values
 
 # единственное состояние
 PDF_TYPE = 0
@@ -23,14 +24,13 @@ async def ask_pdf_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
  
     user_id = query.from_user.id
 
-    db = Database()
     try:
-        pdf_types = ["Все"] + db.get_unique_values("pdf_type", user_id)
+        with DBConnection() as db:
+            pdf_types = ["Все"] + get_unique_values("pdf_type", user_id=user_id, db=db)
+
     except Exception:
         await query.edit_message_text("❌ Не удалось загрузить типы PDF.")
         return ConversationHandler.END
-    finally:
-        db.close()
 
     keyboard = [
         [InlineKeyboardButton(t, callback_data=f"pdf_{t}")]

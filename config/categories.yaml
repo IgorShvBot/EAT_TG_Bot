@@ -172,6 +172,7 @@ categories:
   - name: Путешествия. Авиаперелеты
     patterns:
       - YANDEX.PAY
+      - T-BankAir
   - name: Долги. Кредитная карта
     patterns:
       - КОМИССИЯ ЗА ОПЕРАЦИЮ В КРЕДИТНЫХ ОРГАНИЗАЦИЯХ
