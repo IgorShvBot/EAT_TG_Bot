@@ -43,11 +43,17 @@ Security — обновления безопасности -->
 
 
 
-
 ------------------
+
+## [v3.7.1] - 2025-05-29
+### Изменено
+- Рефакторинг и оптимизация bot.py, ссылка: ![alt text](shot/handlers.png)
+- Перемещение logging.py из utils/ в config/
+
+
 ## [v3.7.0] - 2025-05-26
 ### Изменено
-- Рефакторинг и оптимизация bot.py
+- Рефакторинг и оптимизация database.py, ссылка: ![alt text](shot/database-db.png)
     23/05: Начнём с первого этапа рефакторинга (database.py -> db/..): вынесем логику подключения к базе и основных транзакционных операций в модули /db/base.py и /db/transactions.py (save_transactions, get_transactions, update_transactions, get_last_import_ids, get_unique_values, get_min_max_dates_by_pdf_type, check_existing_ids)
     + setup_logging в utils/logging.py
 

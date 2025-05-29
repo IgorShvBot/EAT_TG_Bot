@@ -1,4 +1,4 @@
-__version__ = "3.7.0"
+__version__ = "3.7.1"
 
 # === Standard library imports ===
 import os
@@ -33,7 +33,9 @@ from telegram.ext.filters import BaseFilter
 from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
 # === Local imports ===
-from handlers.pdf_type_filter import register_pdf_type_handler, make_pdf_type_button
+from handlers.pdf_type_filter import register_pdf_type_handler #, make_pdf_type_button
+from handlers.export import register_export_handlers, show_filters_menu, generate_report
+
 from db.base import DBConnection
 from db.transactions import (
     save_transactions,
@@ -44,7 +46,13 @@ from db.transactions import (
     check_existing_ids,
     get_min_max_dates_by_pdf_type,
 )
-from utils.logging import setup_logging
+from config.env import TELEGRAM_BOT_TOKEN, ADMINS, DOCKER_MODE
+from config.logging import setup_logging
+from config.general import load_general_settings
+from config.timeouts import load_timeouts
+
+from utils.parser import parse_settings_from_text
+
 
 print(">>> setup_logging() должен сейчас вызваться <<<")
 
@@ -53,31 +61,12 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 # Добавляем загрузку списка админов
-def load_admins():
-    """Загружает список админов из переменной окружения"""
-    admins = os.getenv('ADMINS', '').split(',')
-    return set(map(int, filter(None, admins)))  # Преобразуем в set[int]
+# def load_admins():
+#     """Загружает список админов из переменной окружения"""
+#     admins = os.getenv('ADMINS', '').split(',')
+#     return set(map(int, filter(None, admins)))  # Преобразуем в set[int]
 
-ALLOWED_USERS = load_admins()
-
-def load_general_settings(config_path: str = None) -> Dict:
-    """Загружает общие настройки из YAML-файла"""
-    if config_path is None:
-        config_path = os.path.join(os.path.dirname(__file__), 'config', 'settings.yaml')
-    
-    try:
-        with open(config_path, 'r', encoding='utf-8') as file:
-            settings = yaml.safe_load(file)
-            if settings is None:  # Если файл пустой
-                logger.warning(f"Файл настроек {config_path} пуст. Используются значения по умолчанию.")
-                return {'LOG_LEVEL': 'INFO'}  # Возвращаем настройки по умолчанию
-            return settings
-    except FileNotFoundError:
-        logger.warning(f"Файл настроек {config_path} не найден. Используются значения по умолчанию.")
-        return {'LOG_LEVEL': 'INFO'}  # Настройки по умолчанию
-    except Exception as e:
-        logger.error(f"Ошибка загрузки файла настроек {config_path}: {e}", exc_info=True)
-        return {'LOG_LEVEL': 'INFO'}  # Настройки по умолчанию
+ALLOWED_USERS = ADMINS
     
 # Декоратор для проверки доступа
 def admin_only(func):
@@ -138,7 +127,7 @@ try:
     lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
     lock_socket.bind('\0' + 'transaction_bot_lock')  # Уникальное имя для вашего бота
 except socket.error:
-    print("Бот уже запущен! Завершаю работу.")
+    print("Бот уже запущен! Завершаю работу")
     sys.exit(1)
 
 # Импорт ваших скриптов
@@ -146,47 +135,6 @@ from extract_transactions_pdf1 import process_pdf as extract_pdf1
 from extract_transactions_pdf2 import process_csv as extract_pdf2
 from classify_transactions_pdf import (classify_transactions, add_pattern_to_category)
 
-def load_timeouts(config_path: str = None) -> Dict[str, int]:
-    """Загружает конфигурацию таймаутов из YAML-файла"""
-    if config_path is None:
-        config_path = os.path.join(os.path.dirname(__file__), 'config', 'timeouts.yaml')
-    with open(config_path, 'r', encoding='utf-8') as file:
-        return yaml.safe_load(file)['timeouts']
-
-def parse_user_settings(message_text: str) -> dict:
-    settings = {}
-    if not message_text:
-        return settings
-    
-    # lines = [line.strip() for line in message_text.split('\n') if line.strip()]
-    lines = [line.strip() for line in message_text.split('\n')[:100] if line and len(line) < 100]
-    pattern = re.compile(r"^(.+?)\s*:\s*(\+?)\s*(.*)$", re.IGNORECASE)
-    
-    for line in lines:
-        match = pattern.match(line)
-        if match:
-            key = match.group(1).strip().lower()
-            operator = match.group(2).strip()
-            value = match.group(3).strip()
-            
-            # Приводим названия полей к стандартному виду
-            if key in ['контрагент', 'контрагента']:
-                key = 'Контрагент'
-            elif key in ['чек', 'чек #', 'чек№']:
-                key = 'Чек #'
-            elif key in ['описание', 'описании']:
-                key = 'Описание'
-            elif key in ['наличность', 'нал', 'наличка']:
-                key = 'Наличность'
-            elif key in ['класс']:
-                key = 'Класс'
-                
-            settings[key] = {
-                'operator': operator,
-                'value': value
-            }
-    
-    return settings
 
 class TransactionProcessorBot:
     def __init__(self, token: str):
@@ -258,17 +206,17 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings))
         self.application.add_handler(CommandHandler("settings", self.show_settings))
-        self.application.add_handler(CommandHandler("export", self.export_start))
         self.application.add_handler(CommandHandler("edit", self.start_edit))
         self.application.add_handler(CommandHandler("reset", self.reset_settings))
         self.application.add_handler(CommandHandler("date_ranges", self.get_min_max_dates))
 
         # автоматически создаем вложенный ConversationHandler
-        register_pdf_type_handler(self.application,self.show_filters_menu)
+        register_pdf_type_handler(self.application, show_filters_menu)
+        register_export_handlers(self.application)
         
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
-        self.application.add_handler(CallbackQueryHandler(self.generate_report, pattern='^generate_report'))
-        self.application.add_handler(CallbackQueryHandler(self.show_filters_menu, pattern='^back_to_filters'))
+        self.application.add_handler(CallbackQueryHandler(generate_report, pattern='^generate_report'))
+        self.application.add_handler(CallbackQueryHandler(show_filters_menu, pattern='^back_to_filters'))
         self.application.add_handler(CallbackQueryHandler(self.set_description_filter, pattern='^set_description$'))
         self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
         self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
@@ -471,81 +419,6 @@ class TransactionProcessorBot:
         await query.edit_message_text(f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.")
         await self._select_fields_to_edit(update, context)
 
-    async def show_filters_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE, edit_mode: bool = False):
-        user_id = update.effective_user.id
-        logger.debug(f"show_filters_menu вызвана для user_id: {user_id}, edit_mode: {edit_mode}")
-
-        # Получаем текущие фильтры или создаем новый словарь, если их нет
-        current_filters = context.user_data.get('export_filters', {})
-        default_filters = self.get_default_filters()
-            # Значения по умолчанию для всех полей фильтра
-
-        # Объединяем: приоритет у current_filters, недостающие берутся из default_filters
-        filters = {**default_filters, **current_filters}
-        
-        # Сохраняем обновленные фильтры
-        context.user_data['export_filters'] = filters
-
-        if edit_mode:
-            if 'edit_mode' not in context.user_data:
-                context.user_data['edit_mode'] = {}
-            filters = context.user_data['edit_mode'].setdefault('edit_filters', default_filters.copy()) 
-        else:
-            filters = context.user_data.setdefault('export_filters', default_filters.copy())
-
-        logger.debug(f"show_filters_menu: Используемые фильтры для генерации меню: {filters}")
-
-        # Формируем клавиатуру
-        if edit_mode:
-            keyboard = [
-                [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
-                [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
-                [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
-                [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
-                [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
-                [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
-                [InlineKeyboardButton(f"📝 Описание: {filters['description']}", callback_data='set_description')],
-                [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
-                [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
-                [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
-                [make_pdf_type_button(filters)],
-                [InlineKeyboardButton("➡️ К выбору полей", callback_data='edit_filter_proceed_to_fields')],
-                [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
-            ]
-            message_text = "⚙ Настройте фильтры для выбора записей для редактирования:"
-        else:
-            keyboard = [
-                [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
-                [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
-                [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
-                [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
-                [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
-                [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
-                [InlineKeyboardButton(f"📝 Описание: {filters['description']}", callback_data='set_description')],
-                [InlineKeyboardButton(f"👥 Контрагент: {filters['counterparty']}", callback_data='set_counterparty')],
-                [InlineKeyboardButton(f"🧾 Чек: {filters['check_num']}", callback_data='set_check_num')],
-                [InlineKeyboardButton(f"📊 Класс: {filters['transaction_class']}", callback_data='set_class')],
-                [make_pdf_type_button(filters)],
-                [InlineKeyboardButton("✅ Сформировать отчет", callback_data='generate_report')],
-                [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_export')]
-            ]
-            message_text = "⚙ Настройте параметры отчета:"
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        if update.callback_query and update.callback_query.message:
-            try:
-                await update.callback_query.edit_message_text(
-                    text=message_text,
-                    reply_markup=reply_markup
-                )
-            except telegram.error.BadRequest as e:
-                logger.error(f"Ошибка при редактировании сообщения: {e}")
-        else:
-            await update.message.reply_text(
-                text=message_text,
-                reply_markup=reply_markup
-            )
 
     @admin_only
     async def start_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -581,7 +454,7 @@ class TransactionProcessorBot:
                 default_filters = self.get_default_filters()
                 context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
             context.user_data['edit_mode']['type'] = 'edit_by_filter'
-            await self.show_filters_menu(update, context, edit_mode=True)
+            await show_filters_menu(update, context, edit_mode=True)
 
         if query.data == 'edit_by_id':
             context.user_data['edit_mode'] = {'type': 'edit_by_id', 'awaiting_ids': True} # Устанавливаем флаг
@@ -590,7 +463,7 @@ class TransactionProcessorBot:
                 "Или диапазон через дефис (15-28)"
             )
         else:  # edit_by_filter
-            await self.show_filters_menu(update, context, edit_mode=True)
+            await show_filters_menu(update, context, edit_mode=True)
 
     async def process_ids_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает ввод ID записей"""
@@ -784,7 +657,7 @@ class TransactionProcessorBot:
             'transaction_class': 'Все'
             }
         
-        await self.show_filters_menu(update, context)
+        await show_filters_menu(update, context)
 
 
     async def set_start_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -902,7 +775,7 @@ class TransactionProcessorBot:
             if "calendar_context" in context.user_data:
                 del context.user_data["calendar_context"]
 
-            await self.show_filters_menu(update, context, edit_mode=is_editing_filters)
+            await show_filters_menu(update, context, edit_mode=is_editing_filters)
 
     async def set_category(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info("Обработчик set_category вызван для user_id=%s", update.effective_user.id)
@@ -1159,7 +1032,7 @@ class TransactionProcessorBot:
 
         # После установки значения для фильтра (контрагент, чек #, или описание),
         # показываем обновленное меню фильтров
-        await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
+        await show_filters_menu(update, context, edit_mode=edit_mode_active)
 
     async def handle_filter_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -1198,7 +1071,7 @@ class TransactionProcessorBot:
             filters_storage['transaction_class'] = value
 
         
-        await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
+        await show_filters_menu(update, context, edit_mode=edit_mode_active)
 
     async def handle_import_id_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
             """Обрабатывает выбор import_id из меню"""
@@ -1246,109 +1119,12 @@ class TransactionProcessorBot:
 
             # Возвращаемся к основному меню фильтров
             try:
-                await self.show_filters_menu(update, context, edit_mode=edit_mode_active)
+                await show_filters_menu(update, context, edit_mode=edit_mode_active)
             except Exception as e:
                 logger.error(f"Ошибка при вызове show_filters_menu: {e}", exc_info=True)
                 await update.callback_query.message.reply_text("⚠️ Не удалось обновить меню. Фильтр ID импорта установлен.")
                     
                     
-    async def generate_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        query = update.callback_query
-        await query.answer("Формирую отчет...")
-
-        filters = context.user_data.get('export_filters')
-        if not filters:
-            await query.edit_message_text("❌ Ошибка: фильтры экспорта не найдены.")
-            return
-
-        try:
-            # Преобразование дат из строки в datetime
-            filters['start_date'] = datetime.strptime(filters['start_date'], '%d.%m.%Y')
-            filters['end_date'] = datetime.strptime(filters['end_date'], '%d.%m.%Y')
-
-            # Очистка фильтров: убираем 'Все', None и пустые, кроме текстовых
-            db_filters = {}
-            for key, value in filters.items():
-                if key in ['description', 'counterparty', 'check_num']:
-                    if isinstance(value, str) and value.strip():
-                        db_filters[key] = value.strip()
-                elif value not in ('Все', None, ''):
-                    db_filters[key] = value
-
-            logger.debug("Генерация отчета. user_id=%s, filters=%s", query.from_user.id, db_filters)
-
-            # Получение транзакций
-            with DBConnection() as db:
-                df = get_transactions(
-                    user_id=query.from_user.id,
-                    start_date=filters['start_date'],
-                    end_date=filters['end_date'],
-                    filters=db_filters,
-                    db=db
-                )
-
-            if df.empty:
-                await query.edit_message_text("⚠ По вашему запросу ничего не найдено.")
-                return
-
-            df = df.fillna('').replace('NaN', '').astype(str)
-            df['transaction_date'] = pd.to_datetime(df['transaction_date']).dt.strftime('%d.%m.%Y %H:%M')
-
-            column_mapping = {
-                'id': 'ID', 'transaction_date': 'Дата', 'amount': 'Сумма',
-                'cash_source': 'Наличность', 'target_amount': 'Сумма (куда)',
-                'target_cash_source': 'Наличность (куда)', 'category': 'Категория',
-                'description': 'Описание', 'transaction_type': 'Тип транзакции',
-                'counterparty': 'Контрагент', 'check_num': 'Чек #', 'transaction_class': 'Класс'
-            }
-
-            df.rename(columns=column_mapping, inplace=True)
-
-            with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
-                df.to_csv(tmp.name, index=False, sep=',')
-                tmp_path = tmp.name
-
-            await context.bot.send_document(
-                chat_id=query.from_user.id,
-                document=open(tmp_path, 'rb'),
-                filename='report.csv',
-                caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}\n"
-                        f"📌 Записей: {len(df)}"
-            )
-
-            os.unlink(tmp_path)
-
-            def format_filters(filters: dict) -> str:
-                lines = []
-                if 'start_date' in filters and 'end_date' in filters:
-                    lines.append(f"📅 Период: {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}")
-                for key, label in [
-                    ('cash_source', '💳 Наличность'),
-                    ('target_cash_source', '💸 Куда'),
-                    ('category', '📂 Категория'),
-                    ('transaction_type', '🔄 Тип'),
-                    ('transaction_class', '🏷 Класс'),
-                    ('description', '📝 Описание'),
-                    ('counterparty', '👤 Контрагент'),
-                    ('check_num', '🔢 Чек #'),
-                    ('pdf_type', '📎 Тип PDF'),
-                    ('import_id', '🆔 ID импорта')
-                ]:
-                    if filters.get(key) not in [None, '', 'Все']:
-                        lines.append(f"{label}: {filters[key]}")
-                return "\n".join(lines)
-
-            applied_filters = format_filters(filters)
-            await query.edit_message_text(
-                f"✅ Отчет успешно сформирован\n\n"
-                f"⚙️ Примененные фильтры:\n{applied_filters}"
-            )
-
-        except Exception as e:
-            logger.error("Ошибка генерации отчета: %s", e, exc_info=True)
-            await query.edit_message_text("❌ Ошибка при формировании отчета. Попробуйте позже.")
-
-
     @admin_only
     async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /add_settings для настройки параметров обработки"""
@@ -1368,7 +1144,7 @@ class TransactionProcessorBot:
         full_text = update.message.text[len('/add_settings'):].strip()
 
         # Парсим настройки из текста
-        settings = parse_user_settings(full_text)
+        settings = parse_settings_from_text(full_text)
 
         if not settings:
             await update.message.reply_text("Не удалось распознать настройки. Проверьте формат.")
@@ -1412,7 +1188,7 @@ class TransactionProcessorBot:
         message_text = update.message.text
         
         # Парсим настройки
-        settings = parse_user_settings(message_text)
+        settings = parse_settings_from_text(message_text)
         
         # Сохраняем настройки в контексте пользователя
         user_data['processing_settings'] = settings
@@ -2673,7 +2449,7 @@ class TransactionProcessorBot:
                 await asyncio.sleep(1)
             
             # Запускаем новый процесс (только вне Docker)
-            TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+            TOKEN = TELEGRAM_BOT_TOKEN
             if not TOKEN:
                 logger.error("Не удалось получить токен бота")
                 return
@@ -2760,7 +2536,7 @@ if __name__ == '__main__':
     # Проверка на дублирующийся запуск уже добавлена в начале файла
     
     # Получаем токен из переменной окружения
-    TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+    TOKEN = TELEGRAM_BOT_TOKEN
     if not TOKEN:
         print("Необходимо установить переменную окружения TELEGRAM_BOT_TOKEN")
         sys.exit(1)

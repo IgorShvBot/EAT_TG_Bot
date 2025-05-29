@@ -44,9 +44,11 @@ categories:
       - "5814"
       - YAKITORIYA
       - PITTORE
+      - VASILCHUKI
   - name: Обеды
     patterns:
       - FLOOR TEA
+      - Внутренний перевод на договор 5641921902
   - name: Бытовые расходы
     patterns:
       - SBER\*5732\*MEGAMARKET
@@ -137,6 +139,7 @@ categories:
   - name: Дети. Медицина
     patterns:
       - NMITS
+      - DETSKAYA KLINIKA
   - name: Дети. Образование | Сад
     patterns:
       - "03224643450000007300"
@@ -182,3 +185,4 @@ categories:
   - name: AppStore | подписки
     patterns:
       - inconnect
+      - "Внутренний перевод на карту 5536\\ 91\\*\\*\\ \\*\\*\\*\\*\\ 4051"
