@@ -1,11 +1,11 @@
-__version__ = "3.7.1"
+__version__ = "3.7.2"
 
 # === Standard library imports ===
 import os
 import sys
 import socket
 import logging
-from logging.handlers import TimedRotatingFileHandler
+# from logging.handlers import TimedRotatingFileHandler
 from io import BytesIO
 from typing import Dict
 from tempfile import NamedTemporaryFile
@@ -13,7 +13,7 @@ import asyncio
 import time
 import yaml
 import re
-from datetime import datetime, timedelta
+from datetime import datetime #, timedelta
 import inspect
 
 # === Third-party imports ===
@@ -27,23 +27,23 @@ from telegram.ext import (
     ContextTypes,
     CallbackQueryHandler,
     filters,
-    ConversationHandler,
 )
-from telegram.ext.filters import BaseFilter
+# from telegram.ext.filters import BaseFilter
 from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
 # === Local imports ===
-from handlers.pdf_type_filter import register_pdf_type_handler #, make_pdf_type_button
+from handlers.pdf_type_filter import register_pdf_type_handler
 from handlers.export import register_export_handlers, show_filters_menu, generate_report
+from handlers.edit import build_edit_keyboard, get_valid_ids, apply_edits
+from handlers.filters import get_default_filters
+
 
 from db.base import DBConnection
 from db.transactions import (
     save_transactions,
     get_transactions,
-    update_transactions,
     get_last_import_ids,
     get_unique_values,
-    check_existing_ids,
     get_min_max_dates_by_pdf_type,
 )
 from config.env import TELEGRAM_BOT_TOKEN, ADMINS, DOCKER_MODE
@@ -215,21 +215,7 @@ class TransactionProcessorBot:
         register_export_handlers(self.application)
         
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
-        self.application.add_handler(CallbackQueryHandler(generate_report, pattern='^generate_report'))
-        self.application.add_handler(CallbackQueryHandler(show_filters_menu, pattern='^back_to_filters'))
-        self.application.add_handler(CallbackQueryHandler(self.set_description_filter, pattern='^set_description$'))
-        self.application.add_handler(CallbackQueryHandler(self.handle_filter_callback, pattern='^(cat|type|source|class)_'))
-        self.application.add_handler(CallbackQueryHandler(self.set_start_date, pattern='^set_start_date$'))
-        self.application.add_handler(CallbackQueryHandler(self.set_end_date, pattern='^set_end_date$'))     
-        self.application.add_handler(CallbackQueryHandler(self.set_category, pattern='^set_category$'))
-        self.application.add_handler(CallbackQueryHandler(self.set_type, pattern='^set_type$'))
-        self.application.add_handler(CallbackQueryHandler(self.set_cash_source, pattern='^set_cash_source'))
-        self.application.add_handler(CallbackQueryHandler(self.set_counterparty, pattern='^set_counterparty'))
-        self.application.add_handler(CallbackQueryHandler(self.set_check_num, pattern='^set_check_num'))
-        self.application.add_handler(CallbackQueryHandler(self.set_class, pattern='^set_class'))
-        self.application.add_handler(CallbackQueryHandler(self.set_import_id, pattern='^set_import_id$'))
         self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
-        self.application.add_handler(CallbackQueryHandler(self.cancel_export, pattern='^cancel_export$'))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
 
         # Редактирование записей
@@ -350,20 +336,6 @@ class TransactionProcessorBot:
             logger.error(f"Ошибка при выполнении команды /date_ranges: {e}", exc_info=True)
             await update.message.reply_text("❌ Произошла ошибка при получении данных. Пожалуйста, попробуйте позже.")
 
-    def get_default_filters(self) -> dict:
-        return {
-            'start_date': datetime.now().replace(day=1).strftime('%d.%m.%Y'),
-            'end_date': datetime.now().strftime('%d.%m.%Y'),
-            'category': 'Все',
-            'transaction_type': 'Все',
-            'cash_source': 'Все',
-            'description': 'Все',
-            'counterparty': 'Все',
-            'check_num': 'Все',
-            'transaction_class': 'Все',
-            'pdf_type': 'Все'
-        }
-
     async def handle_edit_filter_proceed(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -417,7 +389,7 @@ class TransactionProcessorBot:
             context.user_data.pop('edit_mode', None)
             return
         await query.edit_message_text(f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.")
-        await self._select_fields_to_edit(update, context)
+        await build_edit_keyboard(update, context)
 
 
     @admin_only
@@ -451,7 +423,7 @@ class TransactionProcessorBot:
                 context.user_data['edit_mode'] = {}
             if 'edit_filters' not in context.user_data['edit_mode']:
                 # Получаем default_filters асинхронно
-                default_filters = self.get_default_filters()
+                default_filters = get_default_filters()
                 context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
             context.user_data['edit_mode']['type'] = 'edit_by_filter'
             await show_filters_menu(update, context, edit_mode=True)
@@ -465,56 +437,27 @@ class TransactionProcessorBot:
         else:  # edit_by_filter
             await show_filters_menu(update, context, edit_mode=True)
 
+
     async def process_ids_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Обрабатывает ввод ID записей"""
-        edit_mode_data = context.user_data.get('edit_mode', {})
-        if not (edit_mode_data.get('type') == 'edit_by_id' and edit_mode_data.get('awaiting_ids')):
-            # Это не тот случай, когда мы ждем ID, передаем дальше или игнорируем
-            return 
-        logger.debug(f"Получены ID для редактирования: {update.message.text}")        
-        
+        """
+        Обрабатывает ввод ID записей от пользователя, проверяет существование и предлагает поля для редактирования.
+        """
         try:
-            ids_input = update.message.text.strip()
-            ids = []
-            if '-' in ids_input:
-                try:
-                    start, end = map(int, ids_input.split('-'))
-                    ids = list(range(start, end + 1))
-                except ValueError:
-                    await update.message.reply_text("⚠️ Неверный формат диапазона. Пример: 10-20")
-                    return
-            else:
-                try:
-                    ids = [int(id_str.strip()) for id_str in ids_input.split(',')]
-                except ValueError:
-                    await update.message.reply_text("⚠️ Неверный формат ID. Пример: 15, 28, 42")
-                    return
-            # Проверка существующих ID через DBConnection и функцию из db.transactions
-            with DBConnection() as db:
-                existing_ids_from_db = check_existing_ids(ids, db=db)
-            if len(existing_ids_from_db) != len(ids):
-                missing = set(ids) - set(existing_ids_from_db)
-                ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
-                if not ids:
-                    await update.message.reply_text("⚠️ Нет действительных ID для редактирования.")
-                    context.user_data.pop('edit_mode', None)
-                    return
-                await update.message.reply_text(f"⚠ ID {', '.join(map(str, missing))} не найдены в базе. Будут обработаны только существующие.")
-                ids = [id_val for id_val in ids if id_val in existing_ids_from_db]
-                if not ids:
-                    await update.message.reply_text("⚠️ Ошибка: нет действительных ID для редактирования после проверки.")
-                    context.user_data.pop('edit_mode', None)
-                    return
-            context.user_data['edit_mode']['ids'] = ids
-            context.user_data['edit_mode'] = {'type': 'edit_by_id','ids': ids}
-            await self._select_fields_to_edit(update, context)
-        except Exception as db_err:
-            logger.error(f"Ошибка базы данных при обработке ID: {db_err}", exc_info=True)
-            await update.message.reply_text("❌ Критическая ошибка конфигурации базы данных. Обратитесь к администратору.")
+            ids = get_valid_ids(update.message.text.strip())
+        except ValueError as e:
+            await update.message.reply_text(str(e))
             return
-        except Exception as e:
-            logger.error(f"Ошибка обработки ID: {e}", exc_info=True)
-            await update.message.reply_text("❌ Ошибка обработки. Проверьте формат ввода")
+
+        context.user_data['edit_mode'] = {
+            'type': 'edit_by_id',
+            'ids': ids
+        }
+
+        await update.message.reply_text(
+            "✏️ Выберите поле для редактирования:",
+            reply_markup=build_edit_keyboard()
+        )
+
 
     async def _select_fields_to_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора полей для редактирования"""
@@ -534,12 +477,12 @@ class TransactionProcessorBot:
         if isinstance(update, Update) and update.callback_query:
             await update.callback_query.edit_message_text(
                 "✏️ Выберите поле для редактирования:",
-                reply_markup=InlineKeyboardMarkup(keyboard)
+                reply_markup=build_edit_keyboard()
             )
         else:
             await update.message.reply_text(
                 "✏️ Выберите поле для редактирования:",
-                reply_markup=InlineKeyboardMarkup(keyboard)
+                reply_markup=build_edit_keyboard()
             )
 
     async def select_edit_mode(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -575,147 +518,29 @@ class TransactionProcessorBot:
 
 
     async def apply_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Применяет изменения к базе данных"""
-        edit_data = context.user_data.get('edit_mode', {})
-        new_value = update.message.text
-        
-        if not edit_data or 'field' not in edit_data or 'mode' not in edit_data: # Добавил проверку 'mode'
-            # Эта проверка может быть избыточной, если первая проверка выше работает
-            logger.warning("apply_edits: edit_data неполный. edit_data: %s", edit_data)
-            # Не отправляем сообщение об ошибке здесь, чтобы не дублировать, если проблема в другом
-            return
-
+        """
+        Применяет новое значение к выбранному полю для записей, хранящихся в context.user_data['edit_mode'].
+        """
         try:
-            if edit_data['type'] == 'edit_by_filter':
-                ids = edit_data.get('ids', [])
-                if not ids:
-                    logger.warning("apply_edits (edit_by_filter): 'ids' не найдены в edit_data.")
-                    edit_filters_data = context.user_data.get('edit_mode', {}).get('edit_filters')
-                    if not edit_filters_data:
-                        await update.message.reply_text("⚠ Ошибка: Фильтры для редактирования не найдены.")
-                        context.user_data.pop('edit_mode', None)
-                        return
-                    with DBConnection() as db:
-                        df = get_transactions(
-                            user_id=update.effective_user.id,
-                            start_date=datetime.strptime(edit_filters_data['start_date'], '%d.%m.%Y'),
-                            end_date=datetime.strptime(edit_filters_data['end_date'], '%d.%m.%Y'),
-                            filters={k: v for k, v in edit_filters_data.items() if v != 'Все'},
-                            db=db
-                        )
-                    ids = df['id'].tolist()
-                    if not ids:
-                        await update.message.reply_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
-                        context.user_data.pop('edit_mode', None)
-                        return
-            else:
-                ids = edit_data.get('ids', [])
-            updates = {
-                edit_data['field']: (new_value, edit_data['mode'])
-            }
-            with DBConnection() as db:
-                updated_ids = update_transactions(
-                    user_id=update.effective_user.id,
-                    ids=ids,
-                    updates=updates,
-                    db=db
-                )
-            logger.info(
-                f"User {update.effective_user.id} edited {len(updated_ids)} records. "
-                f"IDs: {updated_ids}. Changes: {updates}"
-            )
+            user_id = update.effective_user.id
+            edit_mode = context.user_data.get('edit_mode', {})
+            new_value = update.message.text
+
+            count, field = await apply_edits(context, user_id, edit_mode, new_value)
+
             await update.message.reply_text(
-                f"✅ Успешно обновлено {len(updated_ids)} записей!\n"
-                f"Измененное поле: {edit_data['field']}\n"
+                f"✅ Успешно обновлено {count} записей!\n"
+                f"Поле: {field}\n"
                 f"Новое значение: {new_value}"
             )
+
         except Exception as e:
             logger.error(f"Ошибка при редактировании: {e}", exc_info=True)
             await update.message.reply_text("❌ Ошибка при обновлении. Проверьте подключение к базе данных или обратитесь к администратору.")
+
         finally:
-            logger.debug("Очистка состояния edit_mode после apply_edits")
             context.user_data.pop('edit_mode', None)
-            # Чтобы точно предотвратить дальнейшую обработку этого текстового сообщения
-            # другими общими текстовыми хендлерами, которые могут среагировать,
-            # можно попробовать установить флаг, но обычно очистки user_data достаточно
-            # context.user_data['message_handled_by_apply_edits'] = True 
-            # И тогда в handle_config_edit и handle_text_input проверять этот флаг.
-            # Но проще всего, если группы хендлеров и их специфичность настроены правильно.
 
-    @admin_only
-    async def export_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Начало процесса экспорта с предзаполненными фильтрами"""
-        user_data = context.user_data
-        user_data['export_filters'] = {
-            'start_date': datetime.now().replace(day=1).strftime('%d.%m.%Y'),
-            'end_date': datetime.now().strftime('%d.%m.%Y'),
-            'category': 'Все',
-            'transaction_type': 'Все',
-            'cash_source': 'Все',
-            'counterparty': 'Все',
-            'check_num': 'Все',
-            'transaction_class': 'Все'
-            }
-        
-        await show_filters_menu(update, context)
-
-
-    async def set_start_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.debug("Создание календаря для выбора даты начала")
-        logger.debug("Вызов set_start_date для user_id=%s", update.effective_user.id)
-        query = update.callback_query
-        await query.answer()
-        calendar, step = DetailedTelegramCalendar(locale='ru').build()
-        await query.edit_message_text(
-            text=f"📅 Выберите дату начала ({LSTEP[step]}):",  # Используем LSTEP для отображения текущего шага (год/месяц/день)
-            reply_markup=calendar
-        )
-        context.user_data["calendar_context"] = "start_date" 
-
-    async def set_end_date(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.debug("Вызов set_end_date для user_id=%s", update.effective_user.id)
-        query = update.callback_query
-        await query.answer()
-        calendar, step = DetailedTelegramCalendar(locale='ru').build()
-        await query.edit_message_text(
-            text=f"📅 Выберите дату окончания ({LSTEP[step]}):", # Используем LSTEP для отображения текущего шага
-            reply_markup=calendar
-        )
-        context.user_data["calendar_context"] = "end_date"
-
-    async def set_import_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-            """Меню выбора Import ID"""
-            logger.info("Обработчик set_import_id вызван")
-            query = update.callback_query
-            await query.answer()
-
-            user_id = query.from_user.id
-            try:
-                with DBConnection() as db:
-                    last_imports = get_last_import_ids(
-                        user_id=query.from_user.id,
-                        limit=self.export_last_import_ids_count,
-                        db=db
-                    )
-                logger.debug(f"Получены последние {len(last_imports)} import_id для user_id {user_id}")
-                keyboard = [[InlineKeyboardButton('Все', callback_data='import_id_Все')]]
-                for import_id, created_at, pdf_type_val in last_imports:
-                    date_str = created_at.strftime('%d.%m.%Y %H:%M')
-                    button_text = f"#{import_id} ({date_str}"
-                    if pdf_type_val:
-                        button_text += f", {pdf_type_val}"
-                    button_text += ")"
-                    keyboard.append([InlineKeyboardButton(button_text, callback_data=f'import_id_{import_id}')])
-                keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-                reply_markup = InlineKeyboardMarkup(keyboard)
-                await query.edit_message_text(
-                    f"Выберите ID импорта (последние {self.export_last_import_ids_count}):",
-                    reply_markup=reply_markup
-                )
-                context.user_data['awaiting_input'] = None
-            except Exception as e:
-                logger.error(f"Ошибка в set_import_id: {e}", exc_info=True)
-                await query.edit_message_text("❌ Ошибка при загрузке ID импортов. Попробуйте позже.")
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -751,13 +576,13 @@ class TransactionProcessorBot:
                 if 'edit_filters' not in context.user_data.get('edit_mode', {}): # Проверка, что edit_mode существует
                     if 'edit_mode' not in context.user_data: # Инициализация edit_mode если его нет
                          context.user_data['edit_mode'] = {}
-                    context.user_data['edit_mode']['edit_filters'] = self.get_default_filters().copy()
+                    context.user_data['edit_mode']['edit_filters'] = get_default_filters().copy()
                 
                 target_filters_dict = context.user_data['edit_mode']['edit_filters']
                 log_source_for_filters = "edit_mode['edit_filters']"
             else:
                 if 'export_filters' not in context.user_data:
-                    context.user_data['export_filters'] = self.get_default_filters().copy()
+                    context.user_data['export_filters'] = get_default_filters().copy()
                 target_filters_dict = context.user_data['export_filters']
                 log_source_for_filters = "export_filters"
             
@@ -777,154 +602,6 @@ class TransactionProcessorBot:
 
             await show_filters_menu(update, context, edit_mode=is_editing_filters)
 
-    async def set_category(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.info("Обработчик set_category вызван для user_id=%s", update.effective_user.id)
-        query = update.callback_query
-        await query.answer()
-
-        try:
-            with DBConnection() as db:
-                categories = ['Все'] + get_unique_values('category', user_id=query.from_user.id, db=db)
-
-            logger.debug("Полученные категории: %s", categories)
-
-            if not categories or categories == ['Все']:
-                try:
-                    await query.edit_message_text(
-                        "Категории не найдены. Убедитесь, что в базе данных есть транзакции с категориями."
-                    )
-                except telegram.error.BadRequest as e:
-                    logger.warning(f"Ошибка Telegram API: {e}")
-                    await query.message.reply_text(
-                        "Категории не найдены. Убедитесь, что в базе данных есть транзакции с категориями."
-                    )
-                return
-
-            keyboard = []
-
-            for cat in categories:
-                safe_cat = cat.replace(" ", "_").replace("'", "").replace('"', "").replace("|", "")[:50]
-                keyboard.append([InlineKeyboardButton(cat, callback_data=f"cat_{safe_cat}")])
-            keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            try:
-                await query.edit_message_text("Выберите категорию:", reply_markup=reply_markup)
-            except telegram.error.BadRequest as e:
-                logger.warning(f"Ошибка Telegram API при обновлении сообщения: {e}")
-                await query.message.reply_text("Выберите категорию:", reply_markup=reply_markup)
-
-        except Exception as e:
-            logger.error("Ошибка в set_category: %s", e, exc_info=True)
-            try:
-                await query.edit_message_text("❌ Ошибка при загрузке категорий. Попробуйте позже.")
-            except telegram.error.BadRequest as e:
-                logger.warning(f"Ошибка Telegram API: {e}")
-                await query.message.reply_text("❌ Ошибка при загрузке категорий. Попробуйте позже.")
-
-
-    async def set_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        logger.info("Обработчик set_type вызван")
-        query = update.callback_query
-        await query.answer()
-
-        # Получение типов из базы
-        with DBConnection() as db:
-            types = ['Все'] + get_unique_values('transaction_type', user_id=query.from_user.id, db=db)
-
-        keyboard = [
-            [InlineKeyboardButton(type, callback_data=f"type_{type}")]
-            for type in types
-        ]
-        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text("Выберите тип транзакции:", reply_markup=reply_markup)
-
-    async def set_cash_source(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Меню выбора Наличности"""
-        logger.info("Обработчик set_cash_source вызван")
-        query = update.callback_query
-        await query.answer()
-        
-        with DBConnection() as db:
-            sources = ['Все'] + get_unique_values('cash_source', user_id=query.from_user.id, db=db)
-        
-        keyboard = [
-            [InlineKeyboardButton(src, callback_data=f'source_{src}') 
-            for src in sources[i:i+2]]
-            for i in range(0, len(sources), 2)
-        ]
-        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-        
-        await query.edit_message_text(
-            "Выберите источник средств:",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-
-    async def set_description_filter(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Запрашивает у пользователя текст для фильтрации по описанию"""
-        logger.debug("Обработчик set_description_filter вызван")
-        query = update.callback_query
-        await query.answer()
-
-        await query.edit_message_text(
-            "Введите текст для фильтрации по описанию (или 'Все' для сброса фильтра):\n"
-            "ℹ️ Будет выполнен поиск по частичному совпадению без учета регистра."
-        )
-        # Устанавливаем флаг ожидания ввода для поля 'description'
-        context.user_data['awaiting_input'] = 'description'
-
-    async def set_counterparty(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Меню выбора Контрагента"""
-        logger.info("Обработчик set_counterparty вызван")
-        query = update.callback_query
-        await query.answer()
-        
-        await query.edit_message_text(
-            "Введите имя контрагента или часть названия:"
-        )
-        context.user_data['awaiting_input'] = 'counterparty'
-
-
-    async def set_check_num(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Меню выбора Чека"""
-        logger.info("Обработчик set_check_num вызван")
-        query = update.callback_query
-        await query.answer()
-        
-        await query.edit_message_text(
-            "Введите номер чека или часть номера:"
-        )
-        context.user_data['awaiting_input'] = 'check_num'
-
-
-    async def set_class(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Меню выбора Класса"""
-        logger.info("Обработчик set_class вызван")
-        query = update.callback_query
-        await query.answer()
-        
-        with DBConnection() as db:
-            classes = ['Все'] + get_unique_values('transaction_class', user_id=query.from_user.id, db=db)
-        
-        keyboard = [
-            [InlineKeyboardButton(cls, callback_data=f'class_{cls}') 
-            for cls in classes[i:i+3]]
-            for i in range(0, len(classes), 3)
-        ]
-        keyboard.append([InlineKeyboardButton("↩️ Назад", callback_data='back_to_filters')])
-        
-        await query.edit_message_text(
-            "Выберите класс транзакции:",
-            reply_markup=InlineKeyboardMarkup(keyboard))
-
-
-    async def cancel_export(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        query = update.callback_query
-        await query.answer()
-        context.user_data.pop('export_filters', None)
-        await query.edit_message_text("ℹ️ Экспорт отменен")
-
 
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -936,7 +613,7 @@ class TransactionProcessorBot:
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
-        edit_mode_data = context.user_data.get('edit_mode', {})
+        edit_mode_data = context.user_data.get('edit_mode') or {}
         is_in_edit_process = bool(edit_mode_data.get('field') and edit_mode_data.get('mode')) # Уточненная проверка, ждем ли мы значение для редактирования поля
 
         logger.debug(f"handle_text_input: Обработка текста '{text}' для user_id {user_id}. Режим: {'edit_mode' if is_in_edit_process else 'фильтры/awaiting_input'}")
@@ -965,7 +642,15 @@ class TransactionProcessorBot:
 
         # --- Проверка на ожидание ввода ID для редактирования по ID ---
         # Этот блок должен быть вторым
-        if context.user_data.get('edit_mode', {}).get('type') == 'edit_by_id' and context.user_data.get('edit_mode', {}).get('awaiting_ids'):
+        # if context.user_data.get('edit_mode', {}).get('type') == 'edit_by_id' and context.user_data.get('edit_mode', {}).get('awaiting_ids'):
+
+        edit_mode_data = context.user_data.get('edit_mode')
+        if not isinstance(edit_mode_data, dict):
+            edit_mode_data = {}
+            context.user_data['edit_mode'] = edit_mode_data
+
+        if edit_mode_data.get('type') == 'edit_by_id' and edit_mode_data.get('awaiting_ids'):
+
              logger.debug(f"handle_text_input: Обнаружен ожидающий ввод ID для edit_by_id. Передача в process_ids_input.")
              # process_ids_input должен сам сбросить awaiting_ids при успешной обработке
              await self.process_ids_input(update, context)
@@ -977,7 +662,7 @@ class TransactionProcessorBot:
 
         # --- Логика для фильтров (экспорт или edit_by_filter), когда вводится значение ---
         # Получаем default_filters асинхронно ОДИН РАЗ
-        default_filters = self.get_default_filters() # Этот вызов уже синхронный, не нужно await
+        default_filters = get_default_filters() # Этот вызов уже синхронный, не нужно await
 
         edit_mode_active = edit_mode_data.get('type') == 'edit_by_filter'
 
@@ -1034,44 +719,6 @@ class TransactionProcessorBot:
         # показываем обновленное меню фильтров
         await show_filters_menu(update, context, edit_mode=edit_mode_active)
 
-    async def handle_filter_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        query = update.callback_query
-        await query.answer()
-        
-        data = query.data.split('_', 1)  # Разделяем только на первую часть
-        filter_type = data[0]
-        value = data[1] if len(data) > 1 else ''
-        
-        edit_mode_active = context.user_data.get('edit_mode') and context.user_data['edit_mode'].get('type') == 'edit_by_filter'
-
-        if edit_mode_active:
-            filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', self.get_default_filters())
-        else:
-            filters_storage = context.user_data.setdefault('export_filters', self.get_default_filters())
-
-        # Для категории ищем оригинальное значение в базе
-        if filter_type == 'cat':
-            try:
-                with DBConnection() as db:
-                    categories = get_unique_values('category', user_id=query.from_user.id, db=db)
-                # Ищем категорию, соответствующую safe_value
-                safe_value = value
-                original_value = next((cat for cat in categories if cat.replace(" ", "_").replace("'", "").replace('"', "")[:50] == safe_value), safe_value)
-                context.user_data['export_filters']['category'] = original_value
-                filters_storage['category'] = original_value
-            except Exception as e:
-                logger.error("Ошибка при получении категорий: %s", e)
-                await query.edit_message_text("❌ Ошибка при выборе категории.")
-                return
-        elif filter_type == 'type':
-            filters_storage['transaction_type'] = value
-        elif filter_type == 'source':
-            filters_storage['cash_source'] = value
-        elif filter_type == 'class':
-            filters_storage['transaction_class'] = value
-
-        
-        await show_filters_menu(update, context, edit_mode=edit_mode_active)
 
     async def handle_import_id_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
             """Обрабатывает выбор import_id из меню"""
@@ -1101,9 +748,9 @@ class TransactionProcessorBot:
             # Определяем, какой словарь фильтров использовать
             edit_mode_active = context.user_data.get('edit_mode') and context.user_data['edit_mode'].get('type') == 'edit_by_filter'
             if edit_mode_active:
-                filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', self.get_default_filters())
+                filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', get_default_filters())
             else:
-                filters_storage = context.user_data.setdefault('export_filters', self.get_default_filters())
+                filters_storage = context.user_data.setdefault('export_filters', get_default_filters())
 
             # Сохраняем определенное значение import_id
             filters_storage['import_id'] = selected_import_id
@@ -2197,7 +1844,7 @@ class TransactionProcessorBot:
                             if result:
                                 # Обновляем транзакцию по ID
                                 updates = {'category': (row.get('категория', None), 'replace')}
-                                updated_ids = update_transactions(
+                                updated_ids = apply_edits(
                                     user_id=query.from_user.id,
                                     ids=[result['id']],
                                     updates=updates,
