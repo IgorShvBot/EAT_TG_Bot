@@ -44,10 +44,33 @@ Security — обновления безопасности -->
 
 
 ------------------
+## [v3.7.3] - 2025-06-02
+### Изменено
+- Рефакторинг и оптимизация bot.py (GPT-4o):
+
+    | Модуль                       | Назначение                                               |
+    | ---------------------------- | -------------------------------------------------------- |
+    | `handlers/config.py`         | Обработка конфигов: YAML-редактирование, просмотр        |
+    | `handlers/pdf_processing.py` | Обработка PDF/CSV и сохранение в базу                    |
+    | `handlers/logs.py`           | Просмотр логов, лог-файлы                                |
+    | `handlers/duplicates.py`     | Обработка дубликатов, `save_yes/no`, `update_duplicates` |
+    | `handlers/restart.py`        | Отдельная перезагрузка, shutdown                         |
+
+    handlers/
+    ├── __init__.py
+    ├── config.py
+    ├── edit.py
+    ├── export.py
+    ├── filters.py
+    ├── logs.py
+    ├── pdf_processing.py
+    ├── duplicates.py
+    ├── restart.py
+
 
 ## [v3.7.2] - 2025-05-31
 ### Изменено
-- Рефакторинг и оптимизация bot.py, ссылка: ![alt text](shot/handlers_2905.png)
+- Рефакторинг и оптимизация bot.py (GPT-4o), ссылка: ![alt text](shot/handlers_2905.png)
 - вынос в handlers/edit.py логики работы команды /edit
 - устранение ошибок установки фильтров для /export
 
