@@ -1,6 +1,6 @@
 import os
 import logging
-from database import Database
+from db.backup import create_backup
 from dotenv import load_dotenv
 
 # Настройка логирования
@@ -31,11 +31,9 @@ if __name__ == '__main__':
     
     try:
         logger.info("Инициализация подключения к базе данных")
-        db = Database()
         logger.info("Создание резервной копии")
-        backup_file = db.create_backup()
+        backup_file = create_backup()
         logger.info(f"Резервная копия успешно создана: {backup_file}")
-        db.close()
     except Exception as e:
         logger.error(f"Ошибка при создании резервной копии: {e}", exc_info=True)
         exit(1)

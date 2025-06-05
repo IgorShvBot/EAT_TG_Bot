@@ -42,7 +42,63 @@ Security — обновления безопасности -->
 - 
 
 
+
 ------------------
+## [v3.7.3] - 2025-06-02
+### Изменено
+- Рефакторинг и оптимизация bot.py (GPT-4o):
+
+    | Модуль                       | Назначение                                               |
+    | ---------------------------- | -------------------------------------------------------- |
+    | `handlers/config.py`         | Обработка конфигов: YAML-редактирование, просмотр        |
+    | `handlers/pdf_processing.py` | Обработка PDF/CSV и сохранение в базу                    |
+    | `handlers/logs.py`           | Просмотр логов, лог-файлы                                |
+    | `handlers/duplicates.py`     | Обработка дубликатов, `save_yes/no`, `update_duplicates` |
+    | `handlers/restart.py`        | Отдельная перезагрузка, shutdown                         |
+
+    handlers/
+    ├── __init__.py
+    ├── config.py
+    ├── edit.py
+    ├── export.py
+    ├── filters.py
+    ├── logs.py
+    ├── pdf_processing.py
+    ├── duplicates.py
+    ├── restart.py
+
+
+## [v3.7.2] - 2025-05-31
+### Изменено
+- Рефакторинг и оптимизация bot.py (GPT-4o), ссылка: ![alt text](shot/handlers_2905.png)
+- вынос в handlers/edit.py логики работы команды /edit
+- устранение ошибок установки фильтров для /export
+
+
+## [v3.7.1] - 2025-05-29
+### Изменено
+- Рефакторинг и оптимизация bot.py, ссылка: ![alt text](shot/handlers.png)
+- Перемещение logging.py из utils/ в config/
+
+
+## [v3.7.0] - 2025-05-26
+### Изменено
+- Рефакторинг и оптимизация database.py, ссылка: ![alt text](shot/database-db.png)
+    23/05: Начнём с первого этапа рефакторинга (database.py -> db/..): вынесем логику подключения к базе и основных транзакционных операций в модули /db/base.py и /db/transactions.py (save_transactions, get_transactions, update_transactions, get_last_import_ids, get_unique_values, get_min_max_dates_by_pdf_type, check_existing_ids)
+    + setup_logging в utils/logging.py
+
+
+## [v3.6.4] - 2025-05-22
+### Изменено
+- Добавлено поле pdf_type в Настройки фильтров отчета (через скрпты в отдельном handlers/)
+
+### Removed
+- Удален флаг DISABLE_DUPLICATE_CHECK и связанный код
+
+### Fix
+- Исправление лишнего сообщения при скачивании логов, как файлом, так и последние "50" строк.
+
+
 ## [v3.6.3(2)] - 2025-05-20 21:25
 ### Изменено
 - Вернул в database.py проверку DISABLE_DUPLICATE_CHECK и связанное логирование
@@ -52,6 +108,7 @@ Security — обновления безопасности -->
 ## [v3.6.3(1)] - 2025-05-20 15:20
 ### Изменено
 - Удаляем в database.py проверку DISABLE_DUPLICATE_CHECK и связанное логирование
+
 
 ## [v3.6.3] - 2025-05-20
 ### Добавлено

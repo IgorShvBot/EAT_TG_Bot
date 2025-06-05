@@ -1,0 +1,63 @@
+.
+├── config
+│   ├── __init__.py
+│   ├── categories.yaml
+│   ├── class_contractor.yaml
+│   ├── env.py
+│   ├── general.py
+│   ├── logging.py
+│   ├── pdf_patterns.yaml
+│   ├── settings.yaml
+│   ├── special_conditions.yaml
+│   ├── timeouts.py
+│   └── timeouts.yaml
+├── db
+│   ├── __init__.py
+│   ├── backup.py
+│   ├── base.py
+│   ├── config.py
+│   ├── schema.py
+│   └── transactions.py
+├── handlers
+│   ├── __init__.py
+│   ├── config_handlers.py
+│   ├── config.py
+│   ├── duplicates.py
+│   ├── edit.py
+│   ├── export.py
+│   ├── filters.py
+│   ├── logs.py
+│   ├── pdf_processing.py
+│   ├── pdf_type_filter.py
+│   ├── restart.py
+│   ├── states.py
+│   └── utils.py
+├── scripts
+│   └── init_db.py
+├── sql
+│   ├── indexes.sql
+│   └── tables.sql
+├── tests
+│   ├── __init__.py
+│   └── test_filters.py
+├── utils
+│   ├── __init__.py
+│   └── parser.py
+├── .dockerignore
+├── .env
+├── .gitignore
+├── backup_manual.py
+├── backup_script.py
+├── bot.py
+├── CHANGELOG.md
+├── classify_transactions_pdf.py
+├── convert_files.sh
+├── database.py
+├── docker-compose.yml
+├── Dockerfile
+├── extract_transactions_pdf1.py
+├── extract_transactions_pdf2.py
+├── ReadMe.md
+└── requirements.txt
+
+8 directories, 53 files

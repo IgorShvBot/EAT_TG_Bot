@@ -44,9 +44,11 @@ categories:
       - "5814"
       - YAKITORIYA
       - PITTORE
+      - VASILCHUKI
   - name: Обеды
     patterns:
       - FLOOR TEA
+      - Внутренний перевод на договор 5641921902
   - name: Бытовые расходы
     patterns:
       - SBER\*5732\*MEGAMARKET
@@ -87,16 +89,16 @@ categories:
       - YANTARNAYA ZARYA
       - tortbar
       - KHMYZOV
-  - name: Транспорт. Транспорт
+  - name: Транспорт
     patterns:
       - METRO
       - TRANSPORT
-  - name: Транспорт. Такси
+  - name: Такси
     patterns:
       - TAXI
       - "412"
       - "4121"
-  - name: Транспорт. Каршеринг
+  - name: Каршеринг
     patterns:
       - CITYDRIVE
       - DELIMOBIL
@@ -137,6 +139,7 @@ categories:
   - name: Дети. Медицина
     patterns:
       - NMITS
+      - DETSKAYA KLINIKA
   - name: Дети. Образование | Сад
     patterns:
       - "03224643450000007300"
@@ -172,6 +175,7 @@ categories:
   - name: Путешествия. Авиаперелеты
     patterns:
       - YANDEX.PAY
+      - T-BankAir
   - name: Долги. Кредитная карта
     patterns:
       - КОМИССИЯ ЗА ОПЕРАЦИЮ В КРЕДИТНЫХ ОРГАНИЗАЦИЯХ
@@ -181,3 +185,4 @@ categories:
   - name: AppStore | подписки
     patterns:
       - inconnect
+      - "Внутренний перевод на карту 5536\\ 91\\*\\*\\ \\*\\*\\*\\*\\ 4051"
