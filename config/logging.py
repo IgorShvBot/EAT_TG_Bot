@@ -12,13 +12,12 @@ DATE_FORMAT = "%d-%m-%Y %H:%M:%S"
 
 
 def setup_logging():
-    """
-    Инициализирует логирование:
+    """Инициализирует логирование.
+
     - Лог в консоль
     - Лог в файл вида logs/YYYY-MM-DD_bot.log
     - Удаление старых логов (оставляет последние MAX_BACKUPS)
     """
-def setup_logging():
     os.makedirs(LOG_DIR, exist_ok=True)
     today_str = datetime.now().strftime("%Y-%m-%d")
     log_path = os.path.join(LOG_DIR, f"{today_str}_bot.log")
