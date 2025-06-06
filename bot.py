@@ -1,3 +1,10 @@
+"""
+Основной модуль Telegram-бота для обработки банковских выписок.
+
+Бот принимает PDF-файлы, классифицирует транзакции и сохраняет их в базу данных,
+а также предоставляет административные команды.
+"""
+
 __version__ = "3.7.3"
 
 # === Standard library imports ===
@@ -67,7 +74,8 @@ ALLOWED_USERS = ADMINS
     
 # Декоратор для проверки доступа
 def admin_only(func):
-    async def wrapper(*args, **kwargs): # Сам wrapper должен быть async
+    """Проверяет, что пользователь является администратором."""
+    async def wrapper(*args, **kwargs):  # Сам wrapper должен быть async
         _update_ = None 
 
         # --- Начало: Логика поиска объекта update и user_id ---
@@ -135,6 +143,7 @@ from classify_transactions_pdf import (classify_transactions, add_pattern_to_cat
 
 class TransactionProcessorBot:
     def __init__(self, token: str):
+        """Инициализирует бота, загружая настройки и регистрируя обработчики."""
         self._active_tasks = 0
         self._max_active_tasks = 3  # Максимум 3 одновременно обрабатываемых файла
 
@@ -183,6 +192,7 @@ class TransactionProcessorBot:
         self.setup_handlers()
 
     def setup_handlers(self):
+        """Регистрирует обработчики команд и сообщений."""
         # Основные команды (только для админов)
         self.application.add_handler(CommandHandler("start", self.start))
         # self.application.add_handler(CommandHandler("config", show_config_menu))
@@ -279,6 +289,7 @@ class TransactionProcessorBot:
             await update.message.reply_text("❌ Произошла ошибка при получении данных. Пожалуйста, попробуйте позже.")
 
     async def handle_edit_filter_proceed(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Применяет фильтры и получает список ID для редактирования."""
         query = update.callback_query
         await query.answer()
 
@@ -485,6 +496,7 @@ class TransactionProcessorBot:
 
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает выбор даты пользователем."""
         query = update.callback_query
         logger.debug(f"Получен callback от календаря: {query.data}")
         # await query.answer()
@@ -546,12 +558,14 @@ class TransactionProcessorBot:
 
 
     async def debug_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Логирует данные callback для отладки."""
         query = update.callback_query
         # logger.info("Получен callback: %s", query.data)
         logger.debug(f"DEBUG_CALLBACK: Получен callback_data: '{query.data}' от user_id: {query.from_user.id}") # Улучшенный лог
         await query.answer()
 
     async def handle_text_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает текстовые сообщения как фильтры или данные для редактирования."""
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
@@ -1266,6 +1280,7 @@ class TransactionProcessorBot:
 
 
     async def handle_save_confirmation(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Сохраняет данные после подтверждения пользователя."""
         query = update.callback_query
         await query.answer()
         
@@ -1352,6 +1367,7 @@ class TransactionProcessorBot:
 
 
     async def handle_duplicates_decision(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает выбор пользователя для найденных дубликатов."""
         query = update.callback_query
         await query.answer()
         
@@ -1416,13 +1432,19 @@ class TransactionProcessorBot:
         user_data.pop('last_save_stats', None)
 
     async def cleanup_files(self, file_paths):
+        """Асинхронно удаляет временные файлы."""
+        tasks = []
+        valid_paths = []
         for path in file_paths:
             if path and os.path.exists(path) and os.path.isfile(path):
-                try:
-                    await asyncio.to_thread(os.unlink, path)
-                    logger.debug(f"Удален временный файл: {path}")
-                except Exception as e:
-                    logger.error(f"Ошибка удаления {path}: {e}")
+                tasks.append(asyncio.to_thread(os.unlink, path))
+                valid_paths.append(path)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for path, res in zip(valid_paths, results):
+            if isinstance(res, Exception):
+                logger.error(f"Ошибка удаления {path}: {res}")
+            else:
+                logger.debug(f"Удален временный файл: {path}")
 
 
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
