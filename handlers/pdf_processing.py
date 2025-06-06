@@ -24,6 +24,7 @@ def register_pdf_handlers(application, bot_instance):
 
 
 async def cleanup_files(file_paths):
+    """Удаляет временные файлы последовательно."""
     for path in file_paths:
         if path and os.path.exists(path) and os.path.isfile(path):
             try:

@@ -41,7 +41,7 @@ from handlers.export import register_export_handlers, show_filters_menu, generat
 from handlers.edit import build_edit_keyboard, get_valid_ids, apply_edits
 from handlers.filters import get_default_filters
 # from handlers.config import register_config_handlers
-from handlers.pdf_processing import register_pdf_handlers
+from handlers.pdf_processing import register_pdf_handlers, cleanup_files
 from handlers.logs import register_log_handlers, sanitize_log_content
 from handlers.restart import register_restart_handlers
 from handlers.duplicates import register_duplicate_handlers
@@ -1290,7 +1290,7 @@ class TransactionProcessorBot:
             await query.edit_message_text("ℹ️ Данные не сохранены")
             
             if 'temp_files' in user_data:
-                await self.cleanup_files(user_data['temp_files'])
+                await cleanup_files(user_data['temp_files'])
                 del user_data['temp_files']
             
             if 'pending_data' in user_data:
@@ -1359,7 +1359,7 @@ class TransactionProcessorBot:
             
             # Очистка временных данных
             if 'temp_files' in user_data:
-                await self.cleanup_files(user_data['temp_files'])
+                await cleanup_files(user_data['temp_files'])
                 del user_data['temp_files']
             
             if 'pending_data' in user_data:
@@ -1431,20 +1431,6 @@ class TransactionProcessorBot:
         user_data.pop('pending_duplicates', None)
         user_data.pop('last_save_stats', None)
 
-    async def cleanup_files(self, file_paths):
-        """Асинхронно удаляет временные файлы."""
-        tasks = []
-        valid_paths = []
-        for path in file_paths:
-            if path and os.path.exists(path) and os.path.isfile(path):
-                tasks.append(asyncio.to_thread(os.unlink, path))
-                valid_paths.append(path)
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        for path, res in zip(valid_paths, results):
-            if isinstance(res, Exception):
-                logger.error(f"Ошибка удаления {path}: {res}")
-            else:
-                logger.debug(f"Удален временный файл: {path}")
 
 
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
