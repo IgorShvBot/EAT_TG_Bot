@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     transaction_class VARCHAR(100),  -- Класс
     target_amount NUMERIC(12, 2),    -- Сумма (куда)
     target_cash_source VARCHAR(100), -- Наличность (куда)
-    created_at TIMESTAMP WITH TIME ZONE,
-    CONSTRAINT unique_transaction UNIQUE (user_id, transaction_date, cash_source, amount)
+    created_at TIMESTAMP WITH TIME ZONE --,
+    -- CONSTRAINT unique_transaction UNIQUE (user_id, transaction_date, cash_source, amount)
 );
 
 -- Для фиксации изменений в БД

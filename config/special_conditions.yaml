@@ -14,6 +14,14 @@ special_conditions:
     actions:
       - field: "Тип транзакции"
         value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "инькофф. Платинум"
+      - field: "Наличность (куда)"
+        value: "WB"
+      - field: "Категория"
+        value: ""
 
   - condition: "Перевод средств из Кубышки"
     actions:
@@ -41,7 +49,7 @@ special_conditions:
       - field: "Наличность (куда)"
         value: "Тинькофф.Кубышка"
 
-  - condition: "Внутренний перевод с договора 5174820778"
+  - condition: "перевод с договора 5174820778"
     actions:
       - field: "Тип транзакции"
         value: "Перевод"
@@ -54,7 +62,7 @@ special_conditions:
       - field: "Категория"
         value: ""
 
-  - condition: "Внутренний перевод на договор 0589803758"
+  - condition: "перевод на договор 0589803758"
     actions:
       - field: "Тип транзакции"
         value: "Перевод"
@@ -67,7 +75,20 @@ special_conditions:
       - field: "Категория"
         value: ""
 
-  - condition: "Внутрибанковский перевод с договора 5363074237"
+  - condition: "перевод счёт 30111810500000003257"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Тинькофф"
+      - field: "Наличность (куда)"
+        value: "МБанк ₽"
+      - field: "Категория"
+        value: ""
+
+  - condition: "перевод с договора 5363074237"
     actions:
       - field: "Тип транзакции"
         value: "Доход"
@@ -78,6 +99,18 @@ special_conditions:
       - field: "Чек #"
         value: "$CURRENT"
         comment: "Машиноместо: 04.2025-14.5к, 09.2023-11к, 03.2022-9к"
+
+  - condition: "Компенсация покупки"
+    actions:
+      - field: "Тип транзакции"
+        value: "Доход"
+      - field: "Наличность"
+        value: "Тинькофф. Платинум"
+      - field: "Категория"
+        value: "Cashback"
+      - field: "Чек #"
+        value: "$CURRENT"
+        comment: "Тинькофф бонусы"
 
   - condition: "Пополнение. Система быстрых платежей"
     actions:
@@ -126,6 +159,19 @@ special_conditions:
         value: "$SELF"
       - field: "Наличность"
         value: "Яндекс"
+      - field: "Наличность (куда)"
+        value: "Тинькофф"
+      - field: "Категория"
+        value: ""
+
+  - condition: "Пополнение. Сбербанк Онлайн"
+    actions:
+      - field: "Тип транзакции"
+        value: "Перевод"
+      - field: "Сумма (куда)"
+        value: "$SELF"
+      - field: "Наличность"
+        value: "Visa Gold"
       - field: "Наличность (куда)"
         value: "Тинькофф"
       - field: "Категория"
@@ -199,7 +245,7 @@ special_conditions:
       - field: "Контрагент"
         value: "Квартира_Ипотека"
 
-  - condition: "КОМ. ПЛАТЕЖИ. ВЕРНАДСКОГО 54"
+  - condition: "Вернадского 54"
     actions:
       - field: "Чек #"
         value: "$CURRENT"
@@ -236,3 +282,17 @@ special_conditions:
         value: "! М"
       - field: "Класс"
         value: "03 Родные, близкие"
+
+  - condition: "EAPTEKA"
+    actions:
+      - field: "Контрагент"
+        value: ""
+      - field: "Класс"
+        value: "01 Личное"
+
+  - condition: "SAMOKAT"
+    actions:
+      - field: "Контрагент"
+        value: ""
+      - field: "Класс"
+        value: "01 Личное"

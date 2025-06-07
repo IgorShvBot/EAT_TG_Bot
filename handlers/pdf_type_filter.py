@@ -4,6 +4,7 @@ from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
 )
+from handlers.utils import ADMIN_FILTER
 from db.base import DBConnection
 from db.transactions import get_unique_values
 
@@ -91,15 +92,15 @@ def register_pdf_type_handler(application, show_filters_menu_func):
 
     conv = ConversationHandler(
         entry_points=[
-            CallbackQueryHandler(ask_pdf_type, pattern="^set_pdf_type$"),
+            CallbackQueryHandler(ask_pdf_type, pattern="^set_pdf_type$", filters=ADMIN_FILTER),
         ],
         states={
             PDF_TYPE: [
-                CallbackQueryHandler(receive_pdf_type, pattern="^pdf_"),
+                CallbackQueryHandler(receive_pdf_type, pattern="^pdf_", filters=ADMIN_FILTER),
             ],
         },
         fallbacks=[
-            CallbackQueryHandler(cancel_pdf_type, pattern="^back_to_filters$"),
+            CallbackQueryHandler(cancel_pdf_type, pattern="^back_to_filters$", filters=ADMIN_FILTER),
         ],
         per_user=True,
         per_chat=True,

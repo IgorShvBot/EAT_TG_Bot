@@ -1,6 +1,7 @@
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler, ContextTypes
+from handlers.utils import ADMIN_FILTER
 from db.base import DBConnection
 from handlers.edit import apply_edits
 
@@ -11,7 +12,8 @@ def register_duplicate_handlers(application, bot_instance):
     """Регистрирует хендлер обработки дубликатов."""
     application.add_handler(CallbackQueryHandler(
         bot_instance.handle_duplicates_decision,
-        pattern='^(update_duplicates|skip_duplicates)$'
+        pattern='^(update_duplicates|skip_duplicates)$',
+        filters=ADMIN_FILTER
     ))
 
 

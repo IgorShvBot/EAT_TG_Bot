@@ -4,14 +4,16 @@ import asyncio
 import logging
 from telegram import Update
 from telegram.ext import ContextTypes, CallbackQueryHandler, CommandHandler
+from handlers.utils import ADMIN_FILTER
 
 logger = logging.getLogger(__name__)
 
 
 def register_restart_handlers(application, bot_instance):
     """Регистрирует хендлеры, связанные с перезапуском."""
-    application.add_handler(CommandHandler("restart", bot_instance.restart_bot))
-    application.add_handler(CallbackQueryHandler(bot_instance.restart_bot, pattern='^restart$'))
+    application.add_handler(CommandHandler("restart", bot_instance.restart_bot, filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(bot_instance.restart_bot, pattern='^restart$', filters=ADMIN_FILTER))
+
 
 
 async def safe_restart(bot_instance):
