@@ -10,6 +10,7 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler,
 )
+from handlers.utils import ADMIN_FILTER
 from telegram.error import BadRequest
 from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
@@ -457,27 +458,25 @@ def register_export_handlers(application):
     Регистрирует все хендлеры, связанные с экспортом отчёта.
     """
     # application.add_handler(CommandHandler("export", export_start))
-    application.add_handler(CommandHandler("export", handle_export_command))
-    application.add_handler(CallbackQueryHandler(generate_report, pattern="^generate_report$"))
-    application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^back_to_main$"))
-    application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^apply_export_filters$"))
-    # application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^set_"))
-    # application.add_handler(CallbackQueryHandler(set_export_filter, pattern="^set_"))
-    application.add_handler(CallbackQueryHandler(set_start_date, pattern="^set_start_date$"))
-    application.add_handler(CallbackQueryHandler(set_end_date, pattern="^set_end_date$"))
-    application.add_handler(CallbackQueryHandler(set_import_id, pattern="^set_import_id$"))
-    application.add_handler(CallbackQueryHandler(set_category, pattern="^set_category$"))
-    application.add_handler(CallbackQueryHandler(set_type, pattern="^set_type$"))
-    application.add_handler(CallbackQueryHandler(set_cash_source, pattern="^set_cash_source$"))
-    application.add_handler(CallbackQueryHandler(set_description_filter, pattern="^set_description$"))
-    application.add_handler(CallbackQueryHandler(set_counterparty, pattern="^set_counterparty$"))
-    application.add_handler(CallbackQueryHandler(set_check_num, pattern="^set_check_num$"))
-    application.add_handler(CallbackQueryHandler(set_class, pattern="^set_class$"))
-    application.add_handler(CallbackQueryHandler(cancel_export, pattern="^cancel_export$"))
+    application.add_handler(CommandHandler("export", handle_export_command, filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(generate_report, pattern="^generate_report$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^back_to_main$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^apply_export_filters$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_start_date, pattern="^set_start_date$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_end_date, pattern="^set_end_date$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_import_id, pattern="^set_import_id$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_category, pattern="^set_category$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_type, pattern="^set_type$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_cash_source, pattern="^set_cash_source$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_description_filter, pattern="^set_description$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_counterparty, pattern="^set_counterparty$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_check_num, pattern="^set_check_num$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(set_class, pattern="^set_class$", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(cancel_export, pattern="^cancel_export$", filters=ADMIN_FILTER))
     # Четыре отдельных хендлера 2-го уровня:
-    application.add_handler(CallbackQueryHandler(handle_category_selection, pattern="^cat_"))
-    application.add_handler(CallbackQueryHandler(handle_type_selection,     pattern="^type_"))
-    application.add_handler(CallbackQueryHandler(handle_source_selection,   pattern="^source_"))
-    application.add_handler(CallbackQueryHandler(handle_class_selection,    pattern="^class_"))
+    application.add_handler(CallbackQueryHandler(handle_category_selection, pattern="^cat_", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(handle_type_selection,     pattern="^type_", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(handle_source_selection,   pattern="^source_", filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(handle_class_selection,    pattern="^class_", filters=ADMIN_FILTER))
         # Хендлер для кнопки «↩️ Назад» во втором уровне:
-    application.add_handler(CallbackQueryHandler(show_filters_menu,         pattern="^back_to_filters$"))
+    application.add_handler(CallbackQueryHandler(show_filters_menu,         pattern="^back_to_filters$", filters=ADMIN_FILTER))

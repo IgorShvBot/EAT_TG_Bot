@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.7.3"
+__version__ = "3.7.4"
 
 # === Standard library imports ===
 import os
@@ -62,7 +62,7 @@ from config.general import load_general_settings
 from config.timeouts import load_timeouts
 
 from utils.parser import parse_settings_from_text
-
+from handlers.utils import ADMIN_FILTER
 
 print(">>> setup_logging() должен сейчас вызваться <<<")
 
@@ -194,15 +194,15 @@ class TransactionProcessorBot:
     def setup_handlers(self):
         """Регистрирует обработчики команд и сообщений."""
         # Основные команды (только для админов)
-        self.application.add_handler(CommandHandler("start", self.start))
+        self.application.add_handler(CommandHandler("start", self.start, filters=ADMIN_FILTER))
         # self.application.add_handler(CommandHandler("config", show_config_menu))
-        self.application.add_handler(CommandHandler("restart", self.restart_bot))
-        self.application.add_handler(CommandHandler("add_pattern", self.add_pattern))
-        self.application.add_handler(CommandHandler("add_settings", self.add_settings))
-        self.application.add_handler(CommandHandler("settings", self.show_settings))
-        self.application.add_handler(CommandHandler("edit", self.start_edit))
-        self.application.add_handler(CommandHandler("reset", self.reset_settings))
-        self.application.add_handler(CommandHandler("date_ranges", self.get_min_max_dates))
+        self.application.add_handler(CommandHandler("restart", self.restart_bot, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("add_pattern", self.add_pattern, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("add_settings", self.add_settings, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("settings", self.show_settings, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("edit", self.start_edit, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("reset", self.reset_settings, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("date_ranges", self.get_min_max_dates, filters=ADMIN_FILTER))
 
         # автоматически создаем вложенный ConversationHandler
         register_pdf_type_handler(self.application, show_filters_menu)
@@ -213,48 +213,54 @@ class TransactionProcessorBot:
         register_restart_handlers(self.application, self)
         register_duplicate_handlers(self.application, self)
         register_config_menu_handlers(self.application)
-
-        
-        self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
-        self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
+ 
+        self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_", filters=ADMIN_FILTER),group=0)
+        self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_', filters=ADMIN_FILTER))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
+
+
 
         # Редактирование записей
         self.application.add_handler(CallbackQueryHandler(
             self.handle_edit_choice,
-            pattern='^(edit_by_id|edit_by_filter|cancel_edit)$'
+            pattern='^(edit_by_id|edit_by_filter|cancel_edit)$',
+            filters=ADMIN_FILTER
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.select_edit_mode,
-            pattern='^edit_field_[a-z_]+$'
+            pattern='^edit_field_[a-z_]+$',
+            filters=ADMIN_FILTER
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.get_new_value,
-            pattern='^edit_mode_(replace|append)$'
+            pattern='^edit_mode_(replace|append)$',
+            filters=ADMIN_FILTER
         ))
 
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$'),self.process_ids_input)) #, group=1)
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text_input)) # Добавить перед apply_edits
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND,self.apply_edits))
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$') & ADMIN_FILTER, self.process_ids_input)) #, group=1)
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & ADMIN_FILTER, self.handle_text_input)) # Добавить перед apply_edits
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & ADMIN_FILTER, self.apply_edits))
         
         # Обработчики callback-запросов (только для админов)        
         self.application.add_handler(
             CallbackQueryHandler(
                 self.handle_pattern_callback,
-                pattern='^addpat_'
+                pattern='^addpat_',
+                filters=ADMIN_FILTER
             )
         )
         
         self.application.add_handler(
             CallbackQueryHandler(
                 self.add_pattern_interactive,
-                pattern='^add_pattern_interactive$'
+                pattern='^add_pattern_interactive$',
+                filters=ADMIN_FILTER
             )
         )
         
-        self.application.add_handler(CallbackQueryHandler(self.handle_edit_filter_proceed, pattern='^edit_filter_proceed_to_fields$'))
+        self.application.add_handler(CallbackQueryHandler(self.handle_edit_filter_proceed, pattern='^edit_filter_proceed_to_fields$', filters=ADMIN_FILTER))
 
-        self.application.add_handler(CommandHandler("cancel", self.cancel_operation))
+        self.application.add_handler(CommandHandler("cancel", self.cancel_operation, filters=ADMIN_FILTER))
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)

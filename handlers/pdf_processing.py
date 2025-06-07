@@ -7,6 +7,7 @@ from io import BytesIO
 from tempfile import NamedTemporaryFile
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, MessageHandler, CallbackQueryHandler, filters
+from handlers.utils import ADMIN_FILTER
 from db.base import DBConnection
 from db.transactions import save_transactions
 from handlers.edit import apply_edits  # используется в обработке дубликатов
@@ -18,10 +19,9 @@ def register_pdf_handlers(application, bot_instance):
     """
     Регистрирует хендлеры, связанные с загрузкой PDF и подтверждением сохранения.
     """
-    application.add_handler(MessageHandler(filters.Document.PDF, bot_instance.handle_document))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_save_confirmation, pattern='^save_(yes|no)$'))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates)$'))
-
+    application.add_handler(MessageHandler(filters.Document.PDF & ADMIN_FILTER, bot_instance.handle_document))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_save_confirmation, pattern='^save_(yes|no)$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates)$', filters=ADMIN_FILTER))
 
 async def cleanup_files(file_paths):
     """Удаляет временные файлы последовательно."""

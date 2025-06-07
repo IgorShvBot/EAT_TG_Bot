@@ -6,6 +6,7 @@ import asyncio
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, MessageHandler, CallbackQueryHandler, filters, CommandHandler
+from handlers.utils import ADMIN_FILTER
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,12 @@ def register_config_menu_handlers(application):
     Регистрирует хендлеры, управляющие YAML-конфигами:
     просмотр, редактирование, загрузка, удаление.
     """
-    application.add_handler(CallbackQueryHandler(config_selection_callback, pattern=r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'))
-    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern='^(view_config|edit_config|restart|view_logs)$'))
-    application.add_handler(CallbackQueryHandler(edit_menu_callback, pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_config_edit), group=2)
-    application.add_handler(MessageHandler(filters.Document.ALL, handle_config_upload), group=2)
-    application.add_handler(CommandHandler("config", handle_config_command))
+    application.add_handler(CallbackQueryHandler(config_selection_callback, pattern=r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern='^(view_config|edit_config|restart|view_logs)$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(edit_menu_callback, pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$', filters=ADMIN_FILTER))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & ADMIN_FILTER, handle_config_edit), group=2)
+    application.add_handler(MessageHandler(filters.Document.ALL & ADMIN_FILTER, handle_config_upload), group=2)
+    application.add_handler(CommandHandler("config", handle_config_command, filters=ADMIN_FILTER))
 
 async def handle_config_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
@@ -96,19 +97,23 @@ async def show_config_selection(update: Update):
     ]
     await query.edit_message_text("Выберите конфигурационный файл:", reply_markup=InlineKeyboardMarkup(keyboard))
 
-
 async def send_single_config_file(query, filename):
-    """Отправляет пользователю YAML-файл как текст."""
+    """Отправляет пользователю YAML-файл."""
     config_dir = os.path.join(os.path.dirname(__file__), '..', 'config')
     filepath = os.path.join(config_dir, filename)
     
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
-        await query.message.reply_text(
-            f"*{filename}*:\n```yaml\n{content}\n```",
-            parse_mode='Markdown'
-        )
+
+        if len(content) > 4000:
+            with open(filepath, 'rb') as f_bin:
+                await query.message.reply_document(document=f_bin)
+        else:
+            await query.message.reply_text(
+                f"*{filename}*:\n```yaml\n{content}\n```",
+                parse_mode='Markdown'
+            )
     except Exception as e:
         logger.error(f"Ошибка при отправке файла {filename}: {e}")
         await query.message.reply_text(f"Ошибка при отправке файла {filename}")
