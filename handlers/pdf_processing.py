@@ -20,8 +20,8 @@ def register_pdf_handlers(application, bot_instance):
     Регистрирует хендлеры, связанные с загрузкой PDF и подтверждением сохранения.
     """
     application.add_handler(MessageHandler(filters.Document.PDF & ADMIN_FILTER, bot_instance.handle_document))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_save_confirmation, pattern='^save_(yes|no)$', filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates)$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_save_confirmation, pattern='^save_(yes|no)$'))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates)$'))
 
 async def cleanup_files(file_paths):
     """Удаляет временные файлы последовательно."""

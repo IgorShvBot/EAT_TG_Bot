@@ -10,9 +10,9 @@ logger = logging.getLogger(__name__)
 
 def register_log_handlers(application, bot_instance):
     """Регистрирует хендлеры, связанные с логами."""
-    application.add_handler(CallbackQueryHandler(bot_instance.view_logs_callback, pattern='^view_logs$', filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_logfile_selection, pattern='^logfile_', filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_log_view_option, pattern='^logview_', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(bot_instance.view_logs_callback, pattern='^view_logs$'))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_logfile_selection, pattern='^logfile_'))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_log_view_option, pattern='^logview_'))
 
 
 def sanitize_log_content(content: str) -> str:

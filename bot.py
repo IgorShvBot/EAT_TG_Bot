@@ -214,8 +214,8 @@ class TransactionProcessorBot:
         register_duplicate_handlers(self.application, self)
         register_config_menu_handlers(self.application)
  
-        self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_", filters=ADMIN_FILTER),group=0)
-        self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_', filters=ADMIN_FILTER))
+        self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
+        self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
 
 
@@ -223,18 +223,15 @@ class TransactionProcessorBot:
         # Редактирование записей
         self.application.add_handler(CallbackQueryHandler(
             self.handle_edit_choice,
-            pattern='^(edit_by_id|edit_by_filter|cancel_edit)$',
-            filters=ADMIN_FILTER
+            pattern='^(edit_by_id|edit_by_filter|cancel_edit)$'
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.select_edit_mode,
-            pattern='^edit_field_[a-z_]+$',
-            filters=ADMIN_FILTER
+            pattern='^edit_field_[a-z_]+$'
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.get_new_value,
-            pattern='^edit_mode_(replace|append)$',
-            filters=ADMIN_FILTER
+            pattern='^edit_mode_(replace|append)$'
         ))
 
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$') & ADMIN_FILTER, self.process_ids_input)) #, group=1)
@@ -245,20 +242,18 @@ class TransactionProcessorBot:
         self.application.add_handler(
             CallbackQueryHandler(
                 self.handle_pattern_callback,
-                pattern='^addpat_',
-                filters=ADMIN_FILTER
+                pattern='^addpat_'
             )
         )
         
         self.application.add_handler(
             CallbackQueryHandler(
                 self.add_pattern_interactive,
-                pattern='^add_pattern_interactive$',
-                filters=ADMIN_FILTER
+                pattern='^add_pattern_interactive$'
             )
         )
         
-        self.application.add_handler(CallbackQueryHandler(self.handle_edit_filter_proceed, pattern='^edit_filter_proceed_to_fields$', filters=ADMIN_FILTER))
+        self.application.add_handler(CallbackQueryHandler(self.handle_edit_filter_proceed, pattern='^edit_filter_proceed_to_fields$'))
 
         self.application.add_handler(CommandHandler("cancel", self.cancel_operation, filters=ADMIN_FILTER))
 
