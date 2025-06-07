@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def register_restart_handlers(application, bot_instance):
     """Регистрирует хендлеры, связанные с перезапуском."""
     application.add_handler(CommandHandler("restart", bot_instance.restart_bot, filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(bot_instance.restart_bot, pattern='^restart$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(bot_instance.restart_bot, pattern='^restart$'))
 
 
 

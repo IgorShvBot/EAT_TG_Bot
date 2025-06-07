@@ -12,8 +12,7 @@ def register_duplicate_handlers(application, bot_instance):
     """Регистрирует хендлер обработки дубликатов."""
     application.add_handler(CallbackQueryHandler(
         bot_instance.handle_duplicates_decision,
-        pattern='^(update_duplicates|skip_duplicates)$',
-        filters=ADMIN_FILTER
+        pattern='^(update_duplicates|skip_duplicates)$'
     ))
 
 

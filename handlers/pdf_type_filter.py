@@ -92,15 +92,15 @@ def register_pdf_type_handler(application, show_filters_menu_func):
 
     conv = ConversationHandler(
         entry_points=[
-            CallbackQueryHandler(ask_pdf_type, pattern="^set_pdf_type$", filters=ADMIN_FILTER),
+            CallbackQueryHandler(ask_pdf_type, pattern="^set_pdf_type$"),
         ],
         states={
             PDF_TYPE: [
-                CallbackQueryHandler(receive_pdf_type, pattern="^pdf_", filters=ADMIN_FILTER),
+                CallbackQueryHandler(receive_pdf_type, pattern="^pdf_"),
             ],
         },
         fallbacks=[
-            CallbackQueryHandler(cancel_pdf_type, pattern="^back_to_filters$", filters=ADMIN_FILTER),
+            CallbackQueryHandler(cancel_pdf_type, pattern="^back_to_filters$"),
         ],
         per_user=True,
         per_chat=True,
