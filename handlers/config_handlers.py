@@ -24,9 +24,9 @@ def register_config_menu_handlers(application):
     Регистрирует хендлеры, управляющие YAML-конфигами:
     просмотр, редактирование, загрузка, удаление.
     """
-    application.add_handler(CallbackQueryHandler(config_selection_callback, pattern=r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$', filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern='^(view_config|edit_config|restart|view_logs)$', filters=ADMIN_FILTER))
-    application.add_handler(CallbackQueryHandler(edit_menu_callback, pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$', filters=ADMIN_FILTER))
+    application.add_handler(CallbackQueryHandler(config_selection_callback, pattern=r'^(view_categories|view_special|view_pdf_patterns|view_timeouts|view_all|back_to_main)$'))
+    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern='^(view_config|edit_config|restart|view_logs)$'))
+    application.add_handler(CallbackQueryHandler(edit_menu_callback, pattern='^(edit_categories|edit_special|edit_pdf_patterns|edit_timeouts|cancel)$'))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & ADMIN_FILTER, handle_config_edit), group=2)
     application.add_handler(MessageHandler(filters.Document.ALL & ADMIN_FILTER, handle_config_upload), group=2)
     application.add_handler(CommandHandler("config", handle_config_command, filters=ADMIN_FILTER))
