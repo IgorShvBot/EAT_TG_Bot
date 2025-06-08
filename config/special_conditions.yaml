@@ -2,7 +2,7 @@ special_conditions:
   - condition: "Plati chastyami"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность (куда)"
@@ -13,11 +13,11 @@ special_conditions:
   - condition: "перевод по номеру телефона \\+79267660077"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
-        value: "инькофф. Платинум"
+        value: "Тинькофф. Платинум"
       - field: "Наличность (куда)"
         value: "WB"
       - field: "Категория"
@@ -52,7 +52,7 @@ special_conditions:
   - condition: "перевод с договора 5174820778"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -65,7 +65,7 @@ special_conditions:
   - condition: "перевод на договор 0589803758"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -78,7 +78,7 @@ special_conditions:
   - condition: "перевод счёт 30111810500000003257"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -115,7 +115,7 @@ special_conditions:
   - condition: "Пополнение. Система быстрых платежей"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -128,7 +128,7 @@ special_conditions:
   - condition: "Перевод между счетами одного клиента"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -141,7 +141,7 @@ special_conditions:
   - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., \\+7 926 766-00-77, Сбербанк"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -154,7 +154,7 @@ special_conditions:
   - condition: "Исходящий перевод СБП, Игорь Николаевич Ш., \\+7 926 766-00-77, Т- Банк"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -167,7 +167,7 @@ special_conditions:
   - condition: "Пополнение. Сбербанк Онлайн"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -180,7 +180,7 @@ special_conditions:
   - condition: "Погашение основного долга по договору № КС20231111787407688262"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"
@@ -193,7 +193,7 @@ special_conditions:
   - condition: "Перевод от Ш. Игорь Николаевич"
     actions:
       - field: "Тип транзакции"
-        value: "Перевод"
+        value: "Перевод средств"
       - field: "Сумма (куда)"
         value: "$SELF"
       - field: "Наличность"

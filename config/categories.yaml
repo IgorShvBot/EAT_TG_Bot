@@ -18,7 +18,7 @@ categories:
   - name: Кафе, посиделки
     patterns:
       - KOFEMANIYA
-      - FRANK BY BASTA
+      - FRANK BY BASTA MOSKVA
       - BUKHANKA
       - RESTORAN
       - SURF
@@ -46,6 +46,7 @@ categories:
       - YAKITORIYA
       - PITTORE
       - VASILCHUKI
+      - FRANK by BASTA S.PETERBURG
   - name: Обеды
     patterns:
       - FLOOR TEA

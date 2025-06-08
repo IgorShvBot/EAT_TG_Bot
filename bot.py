@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.7.4"
+__version__ = "3.7.5"
 
 # === Standard library imports ===
 import os
@@ -24,7 +24,13 @@ import inspect
 # === Third-party imports ===
 import pandas as pd
 import telegram
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    BotCommand,
+    BotCommandScopeChat,
+)
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -111,12 +117,12 @@ def admin_only(func):
         logger.debug(f"admin_only ({func.__name__}): Проверка доступа для user_id: {user_id}. Входит в ALLOWED_USERS: {user_id in ALLOWED_USERS}")
 
         if user_id not in ALLOWED_USERS:
-            logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id} к функции {func.__name__}")
+            logger.warning(f"Попытка доступа от неавторизованного пользователя: {user_id} ({_update_.effective_user.username or _update_.effective_user.full_name}) к функции {func.__name__}")
             if hasattr(_update_, 'message') and _update_.message:
-                await _update_.message.reply_text("🚫 Доступ запрещен. Вы не авторизованы для использования этого бота.")
+                await _update_.message.reply_text("🚫 Доступ ограничен. Обратитесь к администратору.")
             elif hasattr(_update_, 'callback_query') and _update_.callback_query:
-                await _update_.callback_query.answer("Доступ запрещен", show_alert=True)
-                logger.debug(f"admin_only ({func.__name__}): Отправлен ответ 'Доступ запрещен' пользователю {user_id}")
+                await _update_.callback_query.answer("🚫 Доступ ограничен. Обратитесь к администратору.", show_alert=True)
+                logger.info(f"admin_only ({func.__name__}): Отправлен ответ 'Доступ ограничен' пользователю {user_id}")
             return
         # --- Конец: Логика поиска ---
 
@@ -182,20 +188,23 @@ class TransactionProcessorBot:
         logger.debug(f"Количество последних import_id для фильтра экспорта установлено в: {self.export_last_import_ids_count}")
 
         # Настройка Application
-        self.application = Application.builder() \
-            .token(token) \
-            .read_timeout(self.request_timeout) \
-            .write_timeout(self.request_timeout) \
+        self.application = (
+            Application.builder()
+            .token(token)
+            .read_timeout(self.request_timeout)
+            .write_timeout(self.request_timeout)
+            .post_init(self._configure_bot)
             .build()
+        )
 
         # Регистрация обработчиков
         self.setup_handlers()
+
 
     def setup_handlers(self):
         """Регистрирует обработчики команд и сообщений."""
         # Основные команды (только для админов)
         self.application.add_handler(CommandHandler("start", self.start, filters=ADMIN_FILTER))
-        # self.application.add_handler(CommandHandler("config", show_config_menu))
         self.application.add_handler(CommandHandler("restart", self.restart_bot, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings, filters=ADMIN_FILTER))
@@ -207,7 +216,6 @@ class TransactionProcessorBot:
         # автоматически создаем вложенный ConversationHandler
         register_pdf_type_handler(self.application, show_filters_menu)
         register_export_handlers(self.application)
-        # register_config_handlers(self.application, self)
         register_pdf_handlers(self.application, self)
         register_log_handlers(self.application, self)
         register_restart_handlers(self.application, self)
@@ -217,7 +225,6 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
         # self.application.add_handler(CallbackQueryHandler(self.debug_callback, pattern='.*'),group=0)
-
 
 
         # Редактирование записей
@@ -259,6 +266,40 @@ class TransactionProcessorBot:
 
         # Обработчик ошибок
         self.application.add_error_handler(self.error_handler)
+
+
+    async def _configure_bot(self, app: Application) -> None:
+        """Устанавливает команды и описание бота."""
+        description = (
+            "EAT TG Bot \u2014 инструмент для обработки банковских выписок в формате PDF.\n"
+            "Создатель творения: вайб-кодер и ваш покорный слуга INS."
+        )
+        short_description = "Бот обработки PDF выписок"
+
+        await app.bot.set_my_description(description=description)
+        await app.bot.set_my_short_description(short_description=short_description)
+
+        default_commands = [BotCommand("start", "Запустить бота")]
+        await app.bot.set_my_commands(default_commands)
+
+        admin_commands = [
+            BotCommand("start", "Запустить бота"),
+            BotCommand("export", "Выгрузить транзакции"),
+            BotCommand("edit", "Редактировать записи"),
+            BotCommand("date_ranges", "Диапазоны дат"),
+            BotCommand("config", "Меню конфигурации"),
+            BotCommand("add_pattern", "Добавить категорию"),
+            BotCommand("add_settings", "Задать новые настройки"),
+            BotCommand("settings", "Показать текущие настройки"),
+            BotCommand("reset", "Сбросить настройки"),
+            BotCommand("restart", "Перезагрузить бота"),
+            BotCommand("cancel", "Отменить операцию"),
+        ]
+
+        for admin_id in ADMINS:
+            scope = BotCommandScopeChat(admin_id)
+            await app.bot.set_my_commands(admin_commands, scope=scope)
+
 
     @admin_only
     async def get_min_max_dates(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -342,9 +383,11 @@ class TransactionProcessorBot:
             await query.edit_message_text("⚠️ Ошибка при применении фильтров")
             context.user_data.pop('edit_mode', None)
             return
-        await query.edit_message_text(f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.")
-        await build_edit_keyboard(update, context)
-
+        await query.edit_message_text(
+            f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.\n"
+            "✏️ Выберите поле для редактирования:",
+            reply_markup=build_edit_keyboard()
+        )
 
     @admin_only
     async def start_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1059,6 +1102,9 @@ class TransactionProcessorBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /start"""
         welcome_text = (
+            "Добро пожаловать! Создатель: "
+            "<a href=\"https://t.me/INShvyrkin\">INS</a>.\n\n"
+            "Инфо по боту:\n"
             "👋 Привет! Я ваш личный финансовый помощник.\n"
             "Я помогу обработать PDF-выписки из банка, автоматически распределю транзакции по категориям и сохраню их в базу данных для дальнейшего анализа.\n\n"
             "<b>С чего начать:</b>\n"

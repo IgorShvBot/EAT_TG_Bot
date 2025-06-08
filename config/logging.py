@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 
 LOG_DIR = "logs"
-MAX_BACKUPS = 5
+MAX_BACKUPS = 15
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%d-%m-%Y %H:%M:%S"
