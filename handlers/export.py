@@ -25,12 +25,18 @@ EXPORT_FILTER_KEYS = ["category", "transaction_type", "cash_source", "transactio
 
 
 def build_filters_keyboard(filters: dict, edit_mode: bool = False) -> InlineKeyboardMarkup:
-    """
-    Генерирует клавиатуру фильтров с учетом режима: экспорт или редактирование.
-    """
+    """Генерирует клавиатуру фильтров с учетом режима."""
+
+    start_date = filters.get('start_date')
+    end_date = filters.get('end_date')
+    if isinstance(start_date, datetime):
+        start_date = start_date.strftime('%d.%m.%Y')
+    if isinstance(end_date, datetime):
+        end_date = end_date.strftime('%d.%m.%Y')
+
     keyboard = [
-        [InlineKeyboardButton(f"📅 Дата начала: {filters['start_date']}", callback_data='set_start_date')],
-        [InlineKeyboardButton(f"📅 Дата окончания: {filters['end_date']}", callback_data='set_end_date')],
+        [InlineKeyboardButton(f"📅 Дата начала: {start_date}", callback_data='set_start_date')],
+        [InlineKeyboardButton(f"📅 Дата окончания: {end_date}", callback_data='set_end_date')],
         [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
         [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
         [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
@@ -57,10 +63,13 @@ def build_filters_keyboard(filters: dict, edit_mode: bool = False) -> InlineKeyb
 
 
 async def show_filters_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, edit_mode: bool = False):
-    """
-    Показывает меню фильтров для экспорта или редактирования.
-    """
-    filters = context.user_data.setdefault("export_filters", {})
+    """Показывает меню фильтров для экспорта или редактирования."""
+
+    if edit_mode:
+        filters = context.user_data.setdefault('edit_mode', {}).setdefault('edit_filters', get_default_filters())
+    else:
+        filters = context.user_data.setdefault('export_filters', get_default_filters())
+
     text = "⚙️ Настройте параметры редактирования:" if edit_mode else "⚙️ Настройте параметры отчета:"
     reply_markup = build_filters_keyboard(filters, edit_mode=edit_mode)
 

@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.7.5"
+__version__ = "3.7.6"
 
 # === Standard library imports ===
 import os
@@ -154,8 +154,9 @@ class TransactionProcessorBot:
         self._max_active_tasks = 3  # Максимум 3 одновременно обрабатываемых файла
 
         self._is_running = False
-        self._is_restarting = False  # Флаг перезагрузки  
+        self._is_restarting = False  # Флаг перезагрузки
         self._in_docker = os.getenv('DOCKER_MODE') is not None
+
 
         # Логируем ID созданных хендлеров для отладки
         # for i, handler_obj in enumerate(self.config_handlers):
@@ -392,7 +393,8 @@ class TransactionProcessorBot:
     @admin_only
     async def start_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /edit"""
-        context.user_data['edit_mode'] = {}  # Сброс предыдущего состояния
+        context.user_data['edit_mode'] = {'edit_filters': get_default_filters()}  # Сброс фильтров
+        context.user_data['export_filters'] = get_default_filters()
         keyboard = [
             [InlineKeyboardButton("🆔 По ID записи", callback_data='edit_by_id')],
             [InlineKeyboardButton("🔍 По фильтру", callback_data='edit_by_filter')],
@@ -439,6 +441,13 @@ class TransactionProcessorBot:
         """
         Обрабатывает ввод ID записей от пользователя, проверяет существование и предлагает поля для редактирования.
         """
+        # Если бот не ожидает ввод ID, передаём обработку дальше
+        if not context.user_data.get('edit_mode', {}).get('awaiting_ids'):
+            logger.debug(
+                "process_ids_input вызван без флага awaiting_ids - передача в handle_text_input"
+            )
+            await self.handle_text_input(update, context)
+            return
         try:
             ids = get_valid_ids(update.message.text.strip())
         except ValueError as e:
@@ -614,7 +623,13 @@ class TransactionProcessorBot:
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
         edit_mode_data = context.user_data.get('edit_mode') or {}
-        is_in_edit_process = bool(edit_mode_data.get('field') and edit_mode_data.get('mode')) # Уточненная проверка, ждем ли мы значение для редактирования поля
+
+        is_in_edit_process = bool(edit_mode_data.get('field') and edit_mode_data.get('mode'))
+
+        # Если ожидается ввод паттерна, обрабатываем его отдельно
+        if 'adding_pattern' in context.user_data:
+            await self.handle_pattern_input(update, context)
+            return
 
         logger.debug(f"handle_text_input: Обработка текста '{text}' для user_id {user_id}. Режим: {'edit_mode' if is_in_edit_process else 'фильтры/awaiting_input'}")
         logger.debug(f"handle_text_input: awaiting_input = {context.user_data.get('awaiting_input')}, edit_mode = {edit_mode_data}")
@@ -903,7 +918,6 @@ class TransactionProcessorBot:
         """Отменяет текущую операцию"""
         if 'adding_pattern' in context.user_data:
             del context.user_data['adding_pattern']
-            self.application.remove_handler(self.pattern_handler)
             await update.message.reply_text("Добавление паттерна отменено")
         elif 'editing_file' in context.user_data:
             self.remove_config_handlers()
@@ -935,36 +949,33 @@ class TransactionProcessorBot:
             await query.edit_message_text("Категория не найдена")
             return
 
+        await query.edit_message_text(
+                f"Вы выбрали категорию: {full_category}\n"
+                "Теперь отправьте мне паттерн для добавления (текст или регулярное выражение).\n"
+            "Используйте /cancel для отмены"
+        )
         context.user_data['adding_pattern'] = {
             'category': full_category,
-            'message': await query.edit_message_text(
-            f"Вы выбрали категорию: {full_category}\n"
-            "Теперь отправьте мне паттерн для добавления (текст или регулярное выражение).\n"
-                "Используйте /cancel для отмены"
-        )
         }
-        
-        # Добавляем обработчик следующего сообщения
-        self.application.add_handler(MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            self.handle_pattern_input
-        ))
+
+        # Используем группу -1, чтобы хендлер сработал раньше базового обработчика текста
+        # self.application.add_handler(self.pattern_handler, group=-1)
 
 
-    def safe_calendar_pattern_wrapper(self, original_pattern_callable):
-        """Безопасно обрабатывает проверки паттернов календаря, перехватывая AttributeErrors."""
-        def wrapper(data: str) -> bool:
-            try:
-                # Вызываем оригинальную функцию проверки паттерна календаря
-                return original_pattern_callable(data)
-            except AttributeError as e:
-                # Перехватываем конкретную ошибку, указывающую на строку без .data
-                if "'str' object has no attribute 'data'" in str(e):
-                    return False # Считаем, что это не паттерн календаря
-                # Перевызываем другие AttributeErrors
-                raise
-            # Не перехватываем TypeError и другие исключения
-        return wrapper
+    # def safe_calendar_pattern_wrapper(self, original_pattern_callable):
+    #     """Безопасно обрабатывает проверки паттернов календаря, перехватывая AttributeErrors."""
+    #     def wrapper(data: str) -> bool:
+    #         try:
+    #             # Вызываем оригинальную функцию проверки паттерна календаря
+    #             return original_pattern_callable(data)
+    #         except AttributeError as e:
+    #             # Перехватываем конкретную ошибку, указывающую на строку без .data
+    #             if "'str' object has no attribute 'data'" in str(e):
+    #                 return False # Считаем, что это не паттерн календаря
+    #             # Перевызываем другие AttributeErrors
+    #             raise
+    #         # Не перехватываем TypeError и другие исключения
+    #     return wrapper
 
 
     async def handle_pattern_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -977,7 +988,6 @@ class TransactionProcessorBot:
         category = context.user_data['adding_pattern']['category']
         
         try:
-            from classify_transactions_pdf import add_pattern_to_category
             add_pattern_to_category(category, pattern)
             
             await update.message.reply_text(
@@ -989,10 +999,10 @@ class TransactionProcessorBot:
                 f"Ошибка при добавлении паттерна: {str(e)}"
             )
         finally:
-            # Удаляем временные данные и обработчик
+            # Очищаем временные данные
             if 'adding_pattern' in context.user_data:
                 del context.user_data['adding_pattern']
-            self.application.remove_handler(self.pattern_handler)
+
 
     @admin_only
     async def add_pattern(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1017,7 +1027,6 @@ class TransactionProcessorBot:
             #     pattern = args[-1].strip('"\'')
 
             # Вызываем функцию добавления паттерна
-            from classify_transactions_pdf import add_pattern_to_category
             add_pattern_to_category(category, pattern)
             
             await update.message.reply_text(f"Паттерн '{pattern}' успешно добавлен в категорию '{category}'")
@@ -1072,7 +1081,7 @@ class TransactionProcessorBot:
             )
         
         # Устанавливаем следующий шаг
-        context.user_data['next_step'] = 'await_pattern'
+        # context.user_data['next_step'] = 'await_pattern'
 
          
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE):
