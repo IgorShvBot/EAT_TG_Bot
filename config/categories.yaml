@@ -107,6 +107,7 @@ categories:
       - DELIMOBIL
       - YANDEX DRIVE
       - Сервисы Яндекса
+      - YANDEX\*751
   - name: Доставка
     patterns:
       - DOSTAVKA

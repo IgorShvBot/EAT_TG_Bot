@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.7.6"
+__version__ = "3.8.0"
 
 # === Standard library imports ===
 import os
@@ -52,6 +52,7 @@ from handlers.logs import register_log_handlers, sanitize_log_content
 from handlers.restart import register_restart_handlers
 from handlers.duplicates import register_duplicate_handlers
 from handlers.config_handlers import register_config_menu_handlers
+from handlers.templates import register_template_handlers
 # from handlers.config_handlers import show_config_menu
 
 from db.base import DBConnection
@@ -222,6 +223,7 @@ class TransactionProcessorBot:
         register_restart_handlers(self.application, self)
         register_duplicate_handlers(self.application, self)
         register_config_menu_handlers(self.application)
+        register_template_handlers(self.application)
  
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
@@ -289,6 +291,7 @@ class TransactionProcessorBot:
             BotCommand("edit", "Редактировать записи"),
             BotCommand("date_ranges", "Диапазоны дат"),
             BotCommand("config", "Меню конфигурации"),
+            BotCommand("templates", "Шаблоны фильтров"),
             BotCommand("add_pattern", "Добавить категорию"),
             BotCommand("add_settings", "Задать новые настройки"),
             BotCommand("settings", "Показать текущие настройки"),

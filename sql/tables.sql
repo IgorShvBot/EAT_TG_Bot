@@ -30,3 +30,11 @@ ALTER TABLE transactions
   
 -- Секвенция для импорта
 CREATE SEQUENCE IF NOT EXISTS import_id_seq;
+-- Таблица шаблонов фильтров
+CREATE TABLE IF NOT EXISTS filter_templates (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    filters_json JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

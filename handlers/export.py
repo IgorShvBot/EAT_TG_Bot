@@ -199,9 +199,14 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         os.unlink(tmp_path)
 
+        reply_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton("\ud83d\udcbe Сохранить как шаблон", callback_data="save_template")]
+        ])
+
         await query.edit_message_text(
             f"✅ Отчет успешно сформирован\n\n"
-            f"⚙️ Примененные фильтры:\n{applied_filters}"
+            f"⚙️ Примененные фильтры:\n{applied_filters}",
+            reply_markup=reply_markup
         )
 
     except Exception as e:
