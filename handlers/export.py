@@ -142,6 +142,11 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer("Формирую отчет...")
 
+    logger.info(
+        "Пользователь %s формирует отчет",
+        query.from_user.id,
+    )
+
     filters = context.user_data.get("export_filters")
     if not filters:
         await query.edit_message_text("❌ Ошибка: фильтры экспорта не найдены")
@@ -198,6 +203,12 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         os.unlink(tmp_path)
+
+        logger.info(
+            "Отчет для пользователя %s сформирован: %s записей",
+            query.from_user.id,
+            len(df),
+        )
 
         reply_markup = InlineKeyboardMarkup([
             [InlineKeyboardButton("\ud83d\udcbe Сохранить как шаблон", callback_data="save_template")]

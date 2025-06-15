@@ -41,7 +41,8 @@ def setup_logging():
 
     # Подавляем шумные логи от httpx
     logging.getLogger("httpx").setLevel(logging.WARNING)
-    
+    logging.getLogger("pdfminer").setLevel(logging.ERROR)
+
     # print(f"[DEBUG] Лог-файл инициализирован: {log_path}")
     # root_logger.info(">>> Инициализация логгера завершена <<<")
 

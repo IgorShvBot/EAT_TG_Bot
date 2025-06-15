@@ -78,7 +78,9 @@ async def cancel_pdf_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Fallback: просто вернуться в меню фильтров без изменений."""
     query = update.callback_query
     await query.answer()
-    await _show_filters_menu(update, context, edit_mode=True)
+    origin = context.user_data.pop('pdf_filter_origin', 'export')
+    edit_flag = origin == 'edit'
+    await _show_filters_menu(update, context, edit_mode=edit_flag)
     return ConversationHandler.END
 
 

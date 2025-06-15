@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.8.0"
+__version__ = "3.8.1"
 
 # === Standard library imports ===
 import os
@@ -126,6 +126,10 @@ def admin_only(func):
                 logger.info(f"admin_only ({func.__name__}): Отправлен ответ 'Доступ ограничен' пользователю {user_id}")
             return
         # --- Конец: Логика поиска ---
+
+        logger.info(
+            f"Пользователь {user_id} вызвал функцию {func.__name__}"
+        )
 
         # Если проверка на администратора пройдена, вызываем оригинальную функцию корректно
         if inspect.iscoroutinefunction(func):
@@ -289,9 +293,9 @@ class TransactionProcessorBot:
             BotCommand("start", "Запустить бота"),
             BotCommand("export", "Выгрузить транзакции"),
             BotCommand("edit", "Редактировать записи"),
+            BotCommand("templates", "Шаблоны фильтров"),
             BotCommand("date_ranges", "Диапазоны дат"),
             BotCommand("config", "Меню конфигурации"),
-            BotCommand("templates", "Шаблоны фильтров"),
             BotCommand("add_pattern", "Добавить категорию"),
             BotCommand("add_settings", "Задать новые настройки"),
             BotCommand("settings", "Показать текущие настройки"),
@@ -396,6 +400,10 @@ class TransactionProcessorBot:
     @admin_only
     async def start_edit(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /edit"""
+        logger.info(
+            "Пользователь %s начал редактирование",
+            update.effective_user.id,
+        )
         context.user_data['edit_mode'] = {'edit_filters': get_default_filters()}  # Сброс фильтров
         context.user_data['export_filters'] = get_default_filters()
         keyboard = [
@@ -418,8 +426,12 @@ class TransactionProcessorBot:
             return
         elif query.data == 'cancel_edit':
             await query.edit_message_text("ℹ️ Редактирование отменено")
-            context.user_data.pop('edit_mode', None)
-            return     
+            context.user_data.pop('edit_mode', None)  
+            logger.info(
+                "Пользователь %s отменил редактирование",
+                query.from_user.id,
+            )
+            return
         elif query.data == 'edit_by_filter': # было `else:`
             if 'edit_mode' not in context.user_data:
                 context.user_data['edit_mode'] = {}
@@ -428,10 +440,18 @@ class TransactionProcessorBot:
                 default_filters = get_default_filters()
                 context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
             context.user_data['edit_mode']['type'] = 'edit_by_filter'
+            logger.info(
+                "Пользователь %s выбрал редактирование по фильтру",
+                query.from_user.id,
+            )
             await show_filters_menu(update, context, edit_mode=True)
 
         if query.data == 'edit_by_id':
             context.user_data['edit_mode'] = {'type': 'edit_by_id', 'awaiting_ids': True} # Устанавливаем флаг
+            logger.info(
+                "Пользователь %s выбрал редактирование по ID",
+                query.from_user.id,
+            )
             await query.edit_message_text(
                 "📝 Введите ID записей через запятую (например: 15, 28, 42):\n"
                 "Или диапазон через дефис (15-28)"
@@ -457,6 +477,11 @@ class TransactionProcessorBot:
             await update.message.reply_text(str(e))
             return
 
+        logger.info(
+            "Пользователь %s ввел ID для редактирования: %s",
+            update.effective_user.id,
+            ids,
+        )
         context.user_data['edit_mode'] = {
             'type': 'edit_by_id',
             'ids': ids
@@ -624,6 +649,14 @@ class TransactionProcessorBot:
         """Обрабатывает текстовые сообщения как фильтры или данные для редактирования."""
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
+
+        # Пропускаем текст, если ожидается ввод имени шаблона. Его обработает другой хендлер
+        # if context.user_data.get('awaiting_template_name'):
+        #     logger.debug(
+        #         "handle_text_input: получено '%s' в ожидании имени шаблона, пропускаем",
+        #         text,
+        #     )
+        #     return
 
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
@@ -793,6 +826,11 @@ class TransactionProcessorBot:
     @admin_only
     async def add_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /add_settings для настройки параметров обработки"""
+        logger.info(
+            "Пользователь %s добавляет настройки: %s",
+            update.effective_user.id,
+            update.message.text,
+        )
         args = context.args
         if not args:
             await update.message.reply_text(
@@ -828,6 +866,10 @@ class TransactionProcessorBot:
     @admin_only
     async def show_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает текущие сохраненные настройки"""
+        logger.info(
+            "Пользователь %s запросил текущие настройки",
+            update.effective_user.id,
+        )
         settings = context.user_data.get('processing_settings', {})
         
         if not settings:
@@ -843,12 +885,20 @@ class TransactionProcessorBot:
     @admin_only
     async def reset_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Сбрасывает сохраненные настройки"""
+        logger.info(
+            "Пользователь %s сбросил настройки",
+            update.effective_user.id,
+        )
         context.user_data.pop('processing_settings', None)
         await update.message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
 
 
     async def handle_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик текстовых сообщений с настройками"""
+        logger.info(
+            "Пользователь %s отправил настройки текстом",
+            update.effective_user.id,
+        )
         user_data = context.user_data
         message_text = update.message.text
         
@@ -870,6 +920,10 @@ class TransactionProcessorBot:
 
     async def view_logs_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Показывает меню выбора логов"""
+        logger.info(
+            "Пользователь %s запросил список логов",
+            update.effective_user.id,
+        )
         query = update.callback_query
         await query.answer()
         
@@ -961,25 +1015,6 @@ class TransactionProcessorBot:
             'category': full_category,
         }
 
-        # Используем группу -1, чтобы хендлер сработал раньше базового обработчика текста
-        # self.application.add_handler(self.pattern_handler, group=-1)
-
-
-    # def safe_calendar_pattern_wrapper(self, original_pattern_callable):
-    #     """Безопасно обрабатывает проверки паттернов календаря, перехватывая AttributeErrors."""
-    #     def wrapper(data: str) -> bool:
-    #         try:
-    #             # Вызываем оригинальную функцию проверки паттерна календаря
-    #             return original_pattern_callable(data)
-    #         except AttributeError as e:
-    #             # Перехватываем конкретную ошибку, указывающую на строку без .data
-    #             if "'str' object has no attribute 'data'" in str(e):
-    #                 return False # Считаем, что это не паттерн календаря
-    #             # Перевызываем другие AttributeErrors
-    #             raise
-    #         # Не перехватываем TypeError и другие исключения
-    #     return wrapper
-
 
     async def handle_pattern_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает ввод паттерна"""
@@ -1010,6 +1045,11 @@ class TransactionProcessorBot:
     @admin_only
     async def add_pattern(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды добавления нового паттерна"""
+        logger.info(
+            "Пользователь %s вызывает add_pattern: %s",
+            update.effective_user.id,
+            update.message.text,
+        )
         try:
             # Разделяем команду на три части: /add_pattern, категория, паттерн
             args = update.message.text.split(maxsplit=2)
@@ -1044,6 +1084,10 @@ class TransactionProcessorBot:
 
     async def add_pattern_interactive(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Интерактивное добавление паттерна"""
+        logger.info(
+            "Пользователь %s начал интерактивное добавление паттерна",
+            update.effective_user.id,
+        )
         query = update.callback_query
         await query.answer()
         
@@ -1113,6 +1157,10 @@ class TransactionProcessorBot:
     @admin_only
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработчик команды /start"""
+        logger.info(
+            "Пользователь %s вызвал /start",
+            update.effective_user.id,
+        )
         welcome_text = (
             "Добро пожаловать! Создатель: "
             "<a href=\"https://t.me/INShvyrkin\">INS</a>.\n\n"
@@ -1207,6 +1255,12 @@ class TransactionProcessorBot:
 
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обновленный обработчик документов"""
+        logger.info(
+            "Пользователь %s отправил файл %s",
+            update.effective_user.id,
+            update.message.document.file_name,
+        )
+
         user_data = context.user_data
         
         # Получаем сохраненные настройки или используем по умолчанию
@@ -1347,7 +1401,12 @@ class TransactionProcessorBot:
         
         if query.data == 'save_no':
             await query.edit_message_text("ℹ️ Данные не сохранены")
-            
+
+            logger.info(
+                "Пользователь %s отказался сохранять данные",
+                query.from_user.id,
+            )
+
             if 'temp_files' in user_data:
                 await cleanup_files(user_data['temp_files'])
                 del user_data['temp_files']
@@ -1382,9 +1441,15 @@ class TransactionProcessorBot:
             db.close()
             
             logger.info(
-                f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
+                "Пользователь %s подтвердил сохранение данных (%s записей)",
+                user_id,
+                len(df),
             )
             
+            logger.info(
+                f"💾 Сохранено: 🆕 новых - {stats['new']}, 📑 дубликатов - {stats['duplicates']}"
+            )
+
             # Сохраняем статистику в user_data для использования в handle_duplicates_decision
             context.user_data['last_save_stats'] = stats
 
@@ -1466,6 +1531,7 @@ class TransactionProcessorBot:
                                 if updated_ids:
                                     updated += 1
                 logger.info(f"Обновлено {updated} дубликатов")
+                logger.info("Пользователь %s обновил дубликаты (%s записей)", query.from_user.id, updated)
                 await query.edit_message_text(
                     f"✅ Обновлено {updated} записей\n"
                     f"🆕 Сохранено ранее: {stats['new']} записей"
@@ -1486,7 +1552,8 @@ class TransactionProcessorBot:
                 )
             
             await query.edit_message_text(response)
-        
+            logger.info("Пользователь %s пропустил обновление дубликатов", query.from_user.id)
+
         user_data.pop('pending_duplicates', None)
         user_data.pop('last_save_stats', None)
 
@@ -1499,6 +1566,11 @@ class TransactionProcessorBot:
         
         # Поддерживаем префиксы logfile_, logview_file_, logview_text_
         filename = re.sub(r'^(?:logfile_|logview_file_|logview_text_)', '', query.data)
+        logger.info(
+            "Пользователь %s выбрал файл лога %s",
+            query.from_user.id,
+            filename,
+        )
         log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
         
         if not os.path.exists(log_path):
@@ -1545,6 +1617,13 @@ class TransactionProcessorBot:
             logger.error(f"Некорректные данные callback: {query.data}")
             await query.edit_message_text("Ошибка: неверная кнопка.")
             return
+
+        logger.info(
+            "Пользователь %s выбрал просмотр лога %s (%s)",
+            query.from_user.id,
+            filename,
+            action,
+        )
 
         # 2) Путь до лога и его размер
         log_path = os.path.join(os.path.dirname(__file__), 'logs', filename)
@@ -1630,6 +1709,10 @@ class TransactionProcessorBot:
     @admin_only
     async def restart_bot(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Перезапускает бота"""
+        logger.info(
+            "Пользователь %s инициировал перезагрузку",
+            update.effective_user.id if update.effective_user else 'unknown',
+        )
         try:
             # Получаем query из update
             query = update.callback_query if hasattr(update, 'callback_query') else None
