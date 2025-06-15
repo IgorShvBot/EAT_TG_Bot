@@ -1,6 +1,6 @@
 # Бот для обработки банковских выписок
 
-**Текущая версия**: v3.8.0
+**Текущая версия**: v3.8.1
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 

@@ -28,11 +28,15 @@ def get_templates(user_id: int, db) -> list[dict]:
 
 
 def get_template(user_id: int, template_id: int, db) -> dict | None:
-    query = "SELECT filters_json FROM filter_templates WHERE id = %s AND user_id = %s"
+    query = (
+        "SELECT filters_json FROM filter_templates "
+        "WHERE id = %s AND user_id = %s"
+    )
     with db.cursor() as cur:
         cur.execute(query, (template_id, user_id))
         row = cur.fetchone()
-        return json.loads(row[0]) if row else None
+        # Поля JSONB возвращаются как объекты Python, нет необходимости в json.loads
+        return row[0] if row else None
 
 
 def delete_template(user_id: int, template_id: int, db) -> bool:
