@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.8.1"
+__version__ = "3.9.0"
 
 # === Standard library imports ===
 import os
@@ -214,9 +214,11 @@ class TransactionProcessorBot:
         self.application.add_handler(CommandHandler("restart", self.restart_bot, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings, filters=ADMIN_FILTER))
-        self.application.add_handler(CommandHandler("settings", self.show_settings, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("settings", self.settings_menu, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("show_settings", self.show_settings, filters=ADMIN_FILTER))        
         self.application.add_handler(CommandHandler("edit", self.start_edit, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("reset", self.reset_settings, filters=ADMIN_FILTER))
+        self.application.add_handler(CallbackQueryHandler(self.handle_settings_menu, pattern='^settings_(add|show|reset)$'))
         self.application.add_handler(CommandHandler("date_ranges", self.get_min_max_dates, filters=ADMIN_FILTER))
 
         # автоматически создаем вложенный ConversationHandler
@@ -296,11 +298,8 @@ class TransactionProcessorBot:
             BotCommand("templates", "Шаблоны фильтров"),
             BotCommand("date_ranges", "Диапазоны дат"),
             BotCommand("config", "Меню конфигурации"),
-            BotCommand("add_pattern", "Добавить категорию"),
-            BotCommand("add_settings", "Задать новые настройки"),
-            BotCommand("settings", "Показать текущие настройки"),
-            BotCommand("reset", "Сбросить настройки"),
             BotCommand("restart", "Перезагрузить бота"),
+            BotCommand("settings", "Меню настроек"),
             BotCommand("cancel", "Отменить операцию"),
         ]
 
@@ -833,7 +832,8 @@ class TransactionProcessorBot:
         )
         args = context.args
         if not args:
-            await update.message.reply_text(
+            message = update.effective_message
+            await message.reply_text(
                 "Использование:\n"
                 "/add_settings Контрагент: ОАЭ 2025\n"
                 "или отправьте несколько настроек текстом после команды, например:\n\n"
@@ -844,13 +844,14 @@ class TransactionProcessorBot:
             return
 
         # Получаем весь текст сообщения с учётом переносов строк
-        full_text = update.message.text[len('/add_settings'):].strip()
+        full_text = update.effective_message.text[len('/add_settings'):].strip()
 
         # Парсим настройки из текста
         settings = parse_settings_from_text(full_text)
 
         if not settings:
-            await update.message.reply_text("Не удалось распознать настройки. Проверьте формат.")
+            message = update.effective_message
+            await message.reply_text("Не удалось распознать настройки. Проверьте формат.")
             return
 
         # Сохраняем настройки в контексте пользователя
@@ -861,7 +862,8 @@ class TransactionProcessorBot:
         for key, value in settings.items():
             response += f"{key}: {value['value']}\n"
 
-        await update.message.reply_text(response)
+        message = update.effective_message
+        await message.reply_text(response)
 
     @admin_only
     async def show_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -870,17 +872,18 @@ class TransactionProcessorBot:
             "Пользователь %s запросил текущие настройки",
             update.effective_user.id,
         )
+        message = update.effective_message
         settings = context.user_data.get('processing_settings', {})
         
         if not settings:
-            await update.message.reply_text("Настройки не заданы. Используются значения по умолчанию.")
+            await message.reply_text("Настройки не заданы. Используются значения по умолчанию.")
             return
         
         response = "⚙ Текущие настройки:\n"
         for key, value in settings.items():
             response += f"{key}: {value['value']}\n"
         
-        await update.message.reply_text(response)
+        await message.reply_text(response)
 
     @admin_only
     async def reset_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -889,8 +892,41 @@ class TransactionProcessorBot:
             "Пользователь %s сбросил настройки",
             update.effective_user.id,
         )
+        message = update.effective_message
         context.user_data.pop('processing_settings', None)
-        await update.message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
+        await message.reply_text("⚙ Все настройки сброшены к значениям по умолчанию.")
+
+
+    @admin_only
+    async def settings_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Показывает меню управления настройками обработки."""
+        message = update.effective_message
+        keyboard = [
+            [InlineKeyboardButton("📝 Задать новые настройки", callback_data='settings_add')],
+            [InlineKeyboardButton("📋 Показать текущие настройки", callback_data='settings_show')],
+            [InlineKeyboardButton("♻️ Сбросить настройки", callback_data='settings_reset')],
+        ]
+        await message.reply_text(
+            "Выберите действие с настройками:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    @admin_only
+    async def handle_settings_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обрабатывает выбор из меню настроек."""
+        query = update.callback_query
+        await query.answer()
+
+        if query.data == 'settings_add':
+            await query.edit_message_text(
+                "Используйте команду \n"
+                "/add_settings Контрагент: ОАЭ 2025\n"
+                "или отправьте несколько настроек текстом после команды."
+            )
+        elif query.data == 'settings_show':
+            await self.show_settings(update, context)
+        elif query.data == 'settings_reset':
+            await self.reset_settings(update, context)
 
 
     async def handle_settings(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1178,14 +1214,11 @@ class TransactionProcessorBot:
             "• /config - Центр управления: здесь можно настроить категории, паттерны для автоклассификации, просмотреть логи или перезагрузить бота.\n"
             "• <code>/add_pattern \"Категория\" \"Паттерн\"</code> - Быстро добавить новое правило для автоматической классификации транзакций (например, <code>/add_pattern \"Продукты\" \"АЗБУКА ВКУСА\"</code>).\n\n"
             "<b>Управление настройками обработки PDF:</b>\n"
-            "Перед отправкой PDF-файла (или используя команду /add_settings) вы можете задать специфические параметры для обработки. Например:\n"
+            "Перед отправкой PDF-файла  используйте команду /settings для доступа к меню настроек. Например:\n"
             "   <code>Описание: +Командировка СПб</code> (добавит текст к описанию всех транзакций из файла)\n"
             "   <code>PDF: 1</code> (для получения промежуточных файлов обработки)\n"
             "   <code>Класс: Личные расходы</code> (установит класс для всех транзакций)\n"
-            "Для управления этими настройками:\n"
-            "• /add_settings - Задать или изменить настройки обработки.\n"
-            "• /show_settings - Посмотреть текущие активные настройки.\n"
-            "• /reset_settings - Сбросить все настройки обработки к значениям по умолчанию.\n\n"
+            "Меню позволяет задать новые параметры, просмотреть или сбросить текущие настройки.\n\n"
             "⏳ <i>Обработка PDF-файла может занять некоторое время.</i>\n"
             "✨ Успешной работы и точного учета!"            
         )
@@ -1457,7 +1490,8 @@ class TransactionProcessorBot:
                 context.user_data['pending_duplicates'] = stats['duplicates_list']
                 keyboard = [
                     [InlineKeyboardButton("Обновить дубликаты 🔄", callback_data='update_duplicates')],
-                    [InlineKeyboardButton("Пропустить ➡️", callback_data='skip_duplicates')]
+                    [InlineKeyboardButton("Пропустить ➡️", callback_data='skip_duplicates')],
+                    [InlineKeyboardButton("Посмотреть дубликаты 📋", callback_data='view_duplicates')]
                 ]
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 
@@ -1539,7 +1573,10 @@ class TransactionProcessorBot:
             except Exception as e:
                 logger.error(f"Ошибка обновления: {e}", exc_info=True)
                 await query.edit_message_text("❌ Ошибка при обновлении")
-        
+
+            user_data.pop('pending_duplicates', None)
+            user_data.pop('last_save_stats', None)
+
         elif query.data == 'skip_duplicates':
             response = (
                 f"🔄 Дубликаты пропущены: {stats['duplicates']}\n"
@@ -1554,9 +1591,31 @@ class TransactionProcessorBot:
             await query.edit_message_text(response)
             logger.info("Пользователь %s пропустил обновление дубликатов", query.from_user.id)
 
-        user_data.pop('pending_duplicates', None)
-        user_data.pop('last_save_stats', None)
+            user_data.pop('pending_duplicates', None)
+            user_data.pop('last_save_stats', None)
 
+        elif query.data == 'view_duplicates':
+            try:
+                df = pd.DataFrame(duplicates)
+                if not df.empty:
+                    df['дата'] = pd.to_datetime(df['дата']).dt.strftime('%d.%m.%Y %H:%M')
+                    with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
+                        df.to_csv(tmp.name, index=False, sep=',')
+                        tmp_path = tmp.name
+                    await context.bot.send_document(
+                        chat_id=query.from_user.id,
+                        document=open(tmp_path, 'rb'),
+                        filename='duplicates.csv',
+                        caption=f"Найденные дубликаты: {len(df)}"
+                    )
+                    os.unlink(tmp_path)
+                else:
+                    await query.answer(text="Дубликатов нет", show_alert=True)
+            except Exception as e:
+                logger.error(f"Не удалось отправить список дубликатов: {e}")
+                await query.answer(text="Ошибка отправки списка", show_alert=True)
+
+            return
 
 
     async def handle_logfile_selection(self, update: Update, context: ContextTypes.DEFAULT_TYPE):

@@ -21,7 +21,7 @@ def register_pdf_handlers(application, bot_instance):
     """
     application.add_handler(MessageHandler(filters.Document.PDF & ADMIN_FILTER, bot_instance.handle_document))
     application.add_handler(CallbackQueryHandler(bot_instance.handle_save_confirmation, pattern='^save_(yes|no)$'))
-    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates)$'))
+    application.add_handler(CallbackQueryHandler(bot_instance.handle_duplicates_decision, pattern='^(update_duplicates|skip_duplicates|view_duplicates)$'))
 
 async def cleanup_files(file_paths):
     """Удаляет временные файлы последовательно."""

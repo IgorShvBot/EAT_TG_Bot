@@ -47,10 +47,23 @@ async def config_selection_callback(update: Update, context: ContextTypes.DEFAUL
         return
     elif query.data == 'view_all':
         await send_all_config_files(query)
+        # Удаляем меню после отправки всех файлов
+        try:
+            await query.delete_message()
+        except Exception:
+            # Fallback: просто убираем клавиатуру
+            await query.edit_message_reply_markup(reply_markup=None)
         return
 
     filename = CONFIG_FILES.get(query.data)
     await send_single_config_file(query, filename)
+
+    # Удаляем меню после отправки выбранного файла
+    try:
+        await query.delete_message()
+    except Exception:
+        # Если не удалось удалить, просто уберем клавиатуру
+        await query.edit_message_reply_markup(reply_markup=None)
 
 
 async def show_config_menu(message_or_update):
