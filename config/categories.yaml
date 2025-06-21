@@ -53,7 +53,7 @@ categories:
       - CAFE
       - Внутренний перевод на договор 5752781582
       - MITRICH
-  - name: Заказ еды
+  - name: Заказы еды
     patterns:
       - "5814"
       - YAKITORIYA
@@ -64,6 +64,7 @@ categories:
     patterns:
       - FLOOR TEA
       - Внутренний перевод на договор 5641921902
+      - KUTUZOVSKIJ 32
   - name: Бытовые расходы
     patterns:
       - SBER\*5732\*MEGAMARKET
@@ -84,6 +85,7 @@ categories:
       - ZDOROV
       - NIZHAPT52842
       - KDF-MOSKVA
+      - MELANOMA
   - name: Семья и личные расходы. Спорт
     patterns:
       - INSIGHT
@@ -202,6 +204,11 @@ categories:
   - name: Путешествия. Музеи | Билеты
     patterns:
       - BAZA KOPORE
+  - name: Путешествия. Виза, страховка
+    patterns:
+      - KOPIRKA
+      - NOVOSLOBODSKAYA
+      - КОПИРКА
   - name: Путешествия. Прочее
     patterns:
       - SHANAURIN O.O.
