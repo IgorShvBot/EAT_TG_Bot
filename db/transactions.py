@@ -23,6 +23,9 @@ def save_transactions(df: pd.DataFrame, user_id: int, pdf_type: str, db) -> dict
     if df.empty:
         return stats
 
+    # Сортировка по возрастанию даты для правильного порядка вставки в БД
+    df = df.sort_values(by='дата', ascending=True)
+
     with db.cursor() as cur:
         cur.execute("SELECT nextval('import_id_seq')")
         import_id = cur.fetchone()[0]
@@ -203,7 +206,7 @@ def get_last_import_ids(user_id: int, limit: int, db) -> list[tuple[int, str, st
         cur.execute(query, (user_id, limit))
         rows = cur.fetchall()
         logger.debug("Получено %d import_id для user_id=%s", len(rows), user_id)
-        return rows
+        return [(row[0], row[1].astimezone(MOSCOW_TZ), row[2]) for row in rows]
 
 
 def get_unique_values(column: str, user_id: int, db) -> list[str]:
