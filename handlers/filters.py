@@ -1,4 +1,5 @@
 from datetime import datetime
+import calendar
 from telegram import InlineKeyboardButton
 
 
@@ -8,9 +9,12 @@ def get_default_filters() -> dict:
     """
     today = datetime.now()
     start_of_month = today.replace(day=1)
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    end_of_month = today.replace(day=last_day)
+
     return {
         'start_date': start_of_month.strftime('%d.%m.%Y'),
-        'end_date': today.strftime('%d.%m.%Y'),
+        'end_date': end_of_month.strftime('%d.%m.%Y'),
         'category': 'Все',
         'transaction_type': 'Все',
         'cash_source': 'Все',

@@ -6,12 +6,14 @@ from db.config import DB_CONFIG
 
 logger = logging.getLogger(__name__)
 
-def create_backup(backup_dir: str = None) -> str:
+def create_backup(backup_dir: str = None, compress_level: int = 9) -> str:
     """
     Создаёт резервную копию базы в формате PostgreSQL custom dump (.backup)
+    Имя файла содержит дату и время создания в формате YYYY-MM-DD_HH-MM-SS
 
     Args:
         backup_dir: путь к папке с резервными копиями. Если не задан — используется .env BACKUP_DIR
+        compress_level: уровень сжатия от 0 до 9 (0 — без сжатия, 9 — максимальное)
 
     Returns:
         Путь к созданному файлу
@@ -21,7 +23,7 @@ def create_backup(backup_dir: str = None) -> str:
     if not os.path.exists(backup_dir):
         os.makedirs(backup_dir)
 
-    backup_file = os.path.join(backup_dir, f"{datetime.now().strftime('%Y-%m-%d')}.backup")
+    backup_file = os.path.join(backup_dir, f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.backup")
 
     db_url = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
 
@@ -30,6 +32,7 @@ def create_backup(backup_dir: str = None) -> str:
             "pg_dump",
             f"--dbname={db_url}",
             "-Fc",
+            f"--compress={compress_level}",
             "-f", backup_file
         ]
         subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -44,7 +47,8 @@ def create_backup(backup_dir: str = None) -> str:
 
 def cleanup_old_backups(backup_dir: str, days: int = 30) -> None:
     """
-    Удаляет резервные копии старше указанного количества дней
+    Удаляет резервные копии старше указанного количества дней. Файлы
+    должны иметь имя в формате YYYY-MM-DD_HH-MM-SS.backup
 
     Args:
         backup_dir: путь к папке с резервными копиями
@@ -55,7 +59,7 @@ def cleanup_old_backups(backup_dir: str, days: int = 30) -> None:
         file_path = os.path.join(backup_dir, file)
         if file.endswith(".backup"):
             try:
-                file_date = datetime.strptime(file.split(".")[0], "%Y-%m-%d")
+                file_date = datetime.strptime(file.split(".")[0], "%Y-%m-%d_%H-%M-%S")
                 if file_date < cutoff_date:
                     os.unlink(file_path)
                     logger.info("Удалена старая резервная копия: %s", file_path)

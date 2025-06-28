@@ -2,6 +2,7 @@ import os
 import logging
 import pandas as pd
 from datetime import datetime
+import calendar
 from tempfile import NamedTemporaryFile
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -24,6 +25,15 @@ logger = logging.getLogger(__name__)
 EXPORT_FILTER_KEYS = ["category", "transaction_type", "cash_source", "transaction_class", "pdf_type", "import_id"]
 
 
+def shift_month(date_obj: datetime, months: int) -> datetime:
+    """Shift datetime by the specified number of months."""
+    month = date_obj.month - 1 + months
+    year = date_obj.year + month // 12
+    month = month % 12 + 1
+    day = min(date_obj.day, calendar.monthrange(year, month)[1])
+    return date_obj.replace(year=year, month=month, day=day)
+
+
 def build_filters_keyboard(filters: dict, edit_mode: bool = False) -> InlineKeyboardMarkup:
     """Генерирует клавиатуру фильтров с учетом режима."""
 
@@ -35,8 +45,20 @@ def build_filters_keyboard(filters: dict, edit_mode: bool = False) -> InlineKeyb
         end_date = end_date.strftime('%d.%m.%Y')
 
     keyboard = [
-        [InlineKeyboardButton(f"📅 Дата начала: {start_date}", callback_data='set_start_date')],
-        [InlineKeyboardButton(f"📅 Дата окончания: {end_date}", callback_data='set_end_date')],
+        [InlineKeyboardButton(
+            f"📅 Дата начала: {start_date}", callback_data="set_start_date"
+        )],
+        [
+            InlineKeyboardButton("⬅️", callback_data="start_date_prev_month"),
+            InlineKeyboardButton("➡️", callback_data="start_date_next_month"),
+        ],
+        [InlineKeyboardButton(
+            f"📅 Дата окончания: {end_date}", callback_data="set_end_date"
+        )],
+        [
+            InlineKeyboardButton("⬅️", callback_data="end_date_prev_month"),
+            InlineKeyboardButton("➡️", callback_data="end_date_next_month"),
+        ],
         [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
         [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
         [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
@@ -194,13 +216,14 @@ async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         applied_filters = format_filters(filters)
 
-        await context.bot.send_document(
-            chat_id=query.from_user.id,
-            document=open(tmp_path, 'rb'),
-            filename='report.csv',
-            caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}\n"
-                    f"📌 Записей: {len(df)}"
-        )
+        with open(tmp_path, 'rb') as f:
+            await context.bot.send_document(
+                chat_id=query.from_user.id,
+                document=f,
+                filename='report.csv',
+                caption=f"Отчет за {filters['start_date'].strftime('%d.%m.%Y')} – {filters['end_date'].strftime('%d.%m.%Y')}\n"
+                        f"📌 Записей: {len(df)}"
+            )
 
         os.unlink(tmp_path)
 
@@ -376,6 +399,65 @@ async def set_end_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     context.user_data["calendar_context"] = "end_date"
 
+
+async def change_start_date_month(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Shift start date by one month back or forward."""
+    query = update.callback_query
+    await query.answer()
+
+    offset = -1 if 'prev' in query.data else 1
+
+    edit_mode_active = (
+        context.user_data.get('edit_mode') and
+        context.user_data['edit_mode'].get('type') == 'edit_by_filter'
+    )
+
+    if edit_mode_active:
+        filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', get_default_filters())
+    else:
+        filters_storage = context.user_data.setdefault('export_filters', get_default_filters())
+
+    start_date_str = filters_storage.get('start_date')
+    try:
+        start_date_dt = datetime.strptime(start_date_str, '%d.%m.%Y')
+    except Exception:
+        start_date_dt = datetime.now()
+
+    new_date = shift_month(start_date_dt, offset)
+    filters_storage['start_date'] = new_date.strftime('%d.%m.%Y')
+
+    await show_filters_menu(update, context, edit_mode=edit_mode_active)
+
+
+async def change_end_date_month(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Shift end date by one month back or forward."""
+    query = update.callback_query
+    await query.answer()
+
+    offset = -1 if 'prev' in query.data else 1
+
+    edit_mode_active = (
+        context.user_data.get('edit_mode') and
+        context.user_data['edit_mode'].get('type') == 'edit_by_filter'
+    )
+
+    if edit_mode_active:
+        filters_storage = context.user_data['edit_mode'].setdefault('edit_filters', get_default_filters())
+    else:
+        filters_storage = context.user_data.setdefault('export_filters', get_default_filters())
+
+    end_date_str = filters_storage.get('end_date')
+    try:
+        end_date_dt = datetime.strptime(end_date_str, '%d.%m.%Y')
+    except Exception:
+        end_date_dt = datetime.now()
+
+    new_date = shift_month(end_date_dt, offset)
+    filters_storage['end_date'] = new_date.strftime('%d.%m.%Y')
+
+    await show_filters_menu(update, context, edit_mode=edit_mode_active)
+
+
 async def set_import_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -488,7 +570,9 @@ def register_export_handlers(application):
     application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^back_to_main$"))
     application.add_handler(CallbackQueryHandler(show_filters_menu, pattern="^apply_export_filters$"))
     application.add_handler(CallbackQueryHandler(set_start_date, pattern="^set_start_date$"))
+    application.add_handler(CallbackQueryHandler(change_start_date_month, pattern="^start_date_(prev|next)_month$"))
     application.add_handler(CallbackQueryHandler(set_end_date, pattern="^set_end_date$"))
+    application.add_handler(CallbackQueryHandler(change_end_date_month, pattern="^end_date_(prev|next)_month$"))
     application.add_handler(CallbackQueryHandler(set_import_id, pattern="^set_import_id$"))
     application.add_handler(CallbackQueryHandler(set_category, pattern="^set_category$"))
     application.add_handler(CallbackQueryHandler(set_type, pattern="^set_type$"))

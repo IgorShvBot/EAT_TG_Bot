@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.9.0"
+__version__ = "3.10.0"
 
 # === Standard library imports ===
 import os
@@ -59,10 +59,12 @@ from db.base import DBConnection
 from db.transactions import (
     save_transactions,
     get_transactions,
+    update_transactions,
     get_last_import_ids,
     get_unique_values,
     get_min_max_dates_by_pdf_type,
 )
+from db.backup import create_backup
 from config.env import TELEGRAM_BOT_TOKEN, ADMINS, DOCKER_MODE
 from config.logging import setup_logging
 from config.general import load_general_settings
@@ -212,6 +214,7 @@ class TransactionProcessorBot:
         # Основные команды (только для админов)
         self.application.add_handler(CommandHandler("start", self.start, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("restart", self.restart_bot, filters=ADMIN_FILTER))
+        self.application.add_handler(CommandHandler("backup", self.create_db_backup, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_pattern", self.add_pattern, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("add_settings", self.add_settings, filters=ADMIN_FILTER))
         self.application.add_handler(CommandHandler("settings", self.settings_menu, filters=ADMIN_FILTER))
@@ -248,6 +251,10 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(
             self.get_new_value,
             pattern='^edit_mode_(replace|append)$'
+        ))
+        self.application.add_handler(CallbackQueryHandler(
+            self.confirm_edits,
+            pattern="^confirm_edits$"
         ))
 
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex(r'^(\d+[\s,-]*)+\d+$') & ADMIN_FILTER, self.process_ids_input)) #, group=1)
@@ -298,8 +305,9 @@ class TransactionProcessorBot:
             BotCommand("templates", "Шаблоны фильтров"),
             BotCommand("date_ranges", "Диапазоны дат"),
             BotCommand("config", "Меню конфигурации"),
-            BotCommand("restart", "Перезагрузить бота"),
+            BotCommand("backup", "Создать бэкап БД"),
             BotCommand("settings", "Меню настроек"),
+            BotCommand("restart", "Перезагрузить бота"),
             BotCommand("cancel", "Отменить операцию"),
         ]
 
@@ -352,6 +360,7 @@ class TransactionProcessorBot:
         # Фильтры уже должны быть в context.user_data['edit_mode']['edit_filters']
         # Здесь можно (если еще не сделано) получить ID транзакций по этим фильтрам
         # и сохранить их в context.user_data['edit_mode']['ids']
+            context.user_data["edit_mode"]["updates"] = {}
         try:
             filters_for_db = context.user_data['edit_mode']['edit_filters']
             db_parsed_filters = {}
@@ -384,6 +393,7 @@ class TransactionProcessorBot:
                 await query.edit_message_text("⚠ По выбранным фильтрам не найдено записей для редактирования.")
                 return
             context.user_data['edit_mode']['ids'] = ids_from_filter
+            context.user_data["edit_mode"]["updates"] = {}
             logger.info(f"Редактирование по фильтру: найдено {len(ids_from_filter)} ID. IDs: {ids_from_filter[:10]}...")
         except Exception as e:
             logger.error(f"Ошибка получения ID по фильтрам: {e}", exc_info=True)
@@ -393,7 +403,7 @@ class TransactionProcessorBot:
         await query.edit_message_text(
             f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.\n"
             "✏️ Выберите поле для редактирования:",
-            reply_markup=build_edit_keyboard()
+            reply_markup=build_edit_keyboard(add_confirm=True)
         )
 
     @admin_only
@@ -438,6 +448,7 @@ class TransactionProcessorBot:
                 # Получаем default_filters асинхронно
                 default_filters = get_default_filters()
                 context.user_data['edit_mode']['edit_filters'] = default_filters.copy()
+            context.user_data['edit_mode']['updates'] = {}
             context.user_data['edit_mode']['type'] = 'edit_by_filter'
             logger.info(
                 "Пользователь %s выбрал редактирование по фильтру",
@@ -446,7 +457,11 @@ class TransactionProcessorBot:
             await show_filters_menu(update, context, edit_mode=True)
 
         if query.data == 'edit_by_id':
-            context.user_data['edit_mode'] = {'type': 'edit_by_id', 'awaiting_ids': True} # Устанавливаем флаг
+            context.user_data['edit_mode'] = {
+                'type': 'edit_by_id',
+                'awaiting_ids': True,
+                'updates': {}
+            }
             logger.info(
                 "Пользователь %s выбрал редактирование по ID",
                 query.from_user.id,
@@ -483,12 +498,16 @@ class TransactionProcessorBot:
         )
         context.user_data['edit_mode'] = {
             'type': 'edit_by_id',
+            'updates': {},
             'ids': ids
         }
 
         await update.message.reply_text(
             "✏️ Выберите поле для редактирования:",
-            reply_markup=build_edit_keyboard()
+            reply_markup=build_edit_keyboard(
+                context.user_data['edit_mode'].get('updates'),
+                add_confirm=True,
+            ),
         )
 
 
@@ -496,26 +515,35 @@ class TransactionProcessorBot:
         """Показывает меню выбора полей для редактирования"""
         logger.debug(f"Вызов _select_fields_to_edit для user_id: {update.effective_user.id}")
 
-        keyboard = [
-            [InlineKeyboardButton("🏷 Категория", callback_data='edit_field_category')],
-            [InlineKeyboardButton("📝 Описание", callback_data='edit_field_description')],
-            [InlineKeyboardButton("👥 Контрагент", callback_data='edit_field_counterparty')],
-            [InlineKeyboardButton("🧾 Чек #", callback_data='edit_field_check_num')],
-            [InlineKeyboardButton("💳 Наличность", callback_data='edit_field_cash_source')],
-            [InlineKeyboardButton("📄 Тип PDF", callback_data='edit_field_pdf_type')],
-            [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_edit_choice')],
-            [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
-        ]
+        # keyboard = [
+        #     [InlineKeyboardButton("🏷 Категория", callback_data='edit_field_category')],
+        #     [InlineKeyboardButton("📝 Описание", callback_data='edit_field_description')],
+        #     [InlineKeyboardButton("👥 Контрагент", callback_data='edit_field_counterparty')],
+        #     [InlineKeyboardButton("🧾 Чек #", callback_data='edit_field_check_num')],
+        #     [InlineKeyboardButton("💳 Наличность", callback_data='edit_field_cash_source')],
+        #     [InlineKeyboardButton("💸 Наличность (куда)", callback_data='edit_field_target_cash_source')],
+        #     [InlineKeyboardButton("🔀 Тип", callback_data='edit_field_transaction_type')],
+        #     [InlineKeyboardButton("📊 Класс", callback_data='edit_field_transaction_class')],
+        #     [InlineKeyboardButton("📄 Тип PDF", callback_data='edit_field_pdf_type')],
+        #     [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_edit_choice')],
+        #     [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
+        # ]
         
         if isinstance(update, Update) and update.callback_query:
             await update.callback_query.edit_message_text(
                 "✏️ Выберите поле для редактирования:",
-                reply_markup=build_edit_keyboard()
+                reply_markup=build_edit_keyboard(
+                    context.user_data.get('edit_mode', {}).get('updates'),
+                    add_confirm=True,
+                ),
             )
         else:
             await update.message.reply_text(
                 "✏️ Выберите поле для редактирования:",
-                reply_markup=build_edit_keyboard()
+                reply_markup=build_edit_keyboard(
+                    context.user_data.get('edit_mode', {}).get('updates'),
+                    add_confirm=True,
+                ),
             )
 
     async def select_edit_mode(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -551,35 +579,71 @@ class TransactionProcessorBot:
 
 
     async def apply_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """
-        Применяет новое значение к выбранному полю для записей, хранящихся в context.user_data['edit_mode'].
-        """
+        """Сохраняет новое значение выбранного поля для последующего применения."""
+        edit_mode = context.user_data.get('edit_mode')
+        # Если редактирование не активно, игнорируем сообщение
+        if not isinstance(edit_mode, dict) or not edit_mode.get('field') or not edit_mode.get('mode'):
+            return
+        
         try:
-            user_id = update.effective_user.id
-            edit_mode = context.user_data.get('edit_mode', {})
+            edit_mode = context.user_data.setdefault('edit_mode', {})
+            field = edit_mode.get('field')
+            mode = edit_mode.get('mode')
             new_value = update.message.text
 
-            count, field = await apply_edits(context, user_id, edit_mode, new_value)
+            if not field or not mode:
+                await update.message.reply_text("⚠️ Не выбрано поле или режим редактирования")
+                return
+
+            updates = edit_mode.setdefault('updates', {})
+            updates[field] = (new_value, mode)
+
+            edit_mode.pop('field', None)
+            edit_mode.pop('mode', None)
 
             await update.message.reply_text(
-                f"✅ Успешно обновлено {count} записей!\n"
-                f"Поле: {field}\n"
-                f"Новое значение: {new_value}"
+                f"Поле '{field}' будет обновлено. Выберите следующее поле или подтвердите изменения:",
+                reply_markup=build_edit_keyboard(add_confirm=True)
             )
 
         except Exception as e:
             logger.error(f"Ошибка при редактировании: {e}", exc_info=True)
-            await update.message.reply_text("❌ Ошибка при обновлении. Проверьте подключение к базе данных или обратитесь к администратору.")
+            await update.message.reply_text("❌ Ошибка при обновлении.")
 
+
+    async def confirm_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Применяет накопленные изменения к выбранным записям."""
+        query = update.callback_query
+        await query.answer()
+
+        edit_mode = context.user_data.get('edit_mode', {})
+        ids = edit_mode.get('ids')
+        updates = edit_mode.get('updates')
+
+        if not ids or not updates:
+            await query.edit_message_text("ℹ️ Нет выбранных изменений")
+            context.user_data.pop('edit_mode', None)
+            return
+
+        try:
+            with DBConnection() as db:
+                updated_ids = update_transactions(
+                    user_id=query.from_user.id,
+                    ids=ids,
+                    updates=updates,
+                    db=db,
+                )
+            await query.edit_message_text(f"✅ Успешно обновлено {len(updated_ids)} записей")
+        except Exception as e:
+            logger.error(f"Ошибка при применении изменений: {e}", exc_info=True)
+            await query.edit_message_text("❌ Ошибка при обновлении записей")
         finally:
             context.user_data.pop('edit_mode', None)
-
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор даты пользователем."""
         query = update.callback_query
         logger.debug(f"Получен callback от календаря: {query.data}")
-        # await query.answer()
         
         result, key, step = DetailedTelegramCalendar(locale='ru').process(query.data)
 
@@ -1602,12 +1666,13 @@ class TransactionProcessorBot:
                     with NamedTemporaryFile(suffix='.csv', delete=False, mode='w', encoding='utf-8') as tmp:
                         df.to_csv(tmp.name, index=False, sep=',')
                         tmp_path = tmp.name
-                    await context.bot.send_document(
-                        chat_id=query.from_user.id,
-                        document=open(tmp_path, 'rb'),
-                        filename='duplicates.csv',
-                        caption=f"Найденные дубликаты: {len(df)}"
-                    )
+                    with open(tmp_path, 'rb') as f:
+                        await context.bot.send_document(
+                            chat_id=query.from_user.id,
+                            document=f,
+                            filename='duplicates.csv',
+                            caption=f"Найденные дубликаты: {len(df)}"
+                        )
                     os.unlink(tmp_path)
                 else:
                     await query.answer(text="Дубликатов нет", show_alert=True)
@@ -1762,6 +1827,34 @@ class TransactionProcessorBot:
             chat_id=update.effective_chat.id,
             text="Ошибка: неизвестное действие."
         )
+
+
+    @admin_only
+    async def create_db_backup(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Создает резервную копию базы данных и отправляет файл пользователю."""
+        logger.info(
+            "Пользователь %s инициировал создание бэкапа БД",
+            update.effective_user.id if update.effective_user else 'unknown',
+        )
+
+        message = update.effective_message
+        if message:
+            await message.reply_text("⏳ Создаю резервную копию базы...")
+
+        try:
+            backup_file = create_backup()
+            await context.bot.send_document(
+                chat_id=update.effective_chat.id,
+                document=open(backup_file, 'rb'),
+                filename=os.path.basename(backup_file),
+                caption="📦 Бэкап базы данных",
+            )
+        except Exception as e:
+            logger.error("Ошибка при создании бэкапа: %s", e, exc_info=True)
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"❌ Ошибка при создании бэкапа: {e}",
+            )
 
 
     # Перезагрузка бота
