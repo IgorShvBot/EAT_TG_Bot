@@ -12,9 +12,13 @@ logger = logging.getLogger(__name__)
 
 CONFIG_FILES = {
     'view_categories': 'categories.yaml',
+    'edit_categories': 'categories.yaml',
     'view_special': 'special_conditions.yaml',
+    'edit_special': 'special_conditions.yaml',
     'view_pdf_patterns': 'pdf_patterns.yaml',
+    'edit_pdf_patterns': 'pdf_patterns.yaml',
     'view_timeouts': 'timeouts.yaml',
+    'edit_timeouts': 'timeouts.yaml',
     'view_all': None
 }
 
@@ -77,6 +81,8 @@ async def show_config_menu(message_or_update):
         [InlineKeyboardButton("🔎 Просмотреть конфиг", callback_data='view_config')],
         [InlineKeyboardButton("✏️ Редактировать конфиг", callback_data='edit_config')],
         [InlineKeyboardButton("📝 Добавить Категорию - Паттерн", callback_data='add_pattern_interactive')],
+        [InlineKeyboardButton("📝 /add_pattern <Категория> <Паттерн>",
+                              switch_inline_query_current_chat='/add_pattern ')],
         [InlineKeyboardButton("👁️ Просмотреть логи", callback_data='view_logs')],
         [InlineKeyboardButton("🔄 Перезагрузить бота", callback_data='restart')]
     ]

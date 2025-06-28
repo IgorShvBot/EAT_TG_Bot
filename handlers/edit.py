@@ -9,20 +9,37 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def build_edit_keyboard() -> InlineKeyboardMarkup:
-    """
-    Возвращает клавиатуру для выбора редактируемого поля.
-    """
+
+def build_edit_keyboard(updates: dict | None = None, add_confirm: bool = False) -> InlineKeyboardMarkup:
+    """Возвращает клавиатуру выбора полей с учётом введённых значений."""
+
+    def button_text(label: str, field: str) -> str:
+        if updates and field in updates:
+            value = updates[field][0]
+            short = value if len(value) <= 20 else value[:17] + "..."
+            return f"{label}: {short}"
+        return label
+
     keyboard = [
-        [InlineKeyboardButton("🏷 Категория", callback_data='edit_field_category')],
-        [InlineKeyboardButton("📝 Описание", callback_data='edit_field_description')],
-        [InlineKeyboardButton("👥 Контрагент", callback_data='edit_field_counterparty')],
-        [InlineKeyboardButton("🧾 Чек #", callback_data='edit_field_check_num')],
-        [InlineKeyboardButton("💳 Наличность", callback_data='edit_field_cash_source')],
-        [InlineKeyboardButton("📄 Тип PDF", callback_data='edit_field_pdf_type')],
+        [InlineKeyboardButton(button_text("🏷 Категория", "category"), callback_data='edit_field_category')],
+        [InlineKeyboardButton(button_text("📝 Описание", "description"), callback_data='edit_field_description')],
+        [InlineKeyboardButton(button_text("👥 Контрагент", "counterparty"), callback_data='edit_field_counterparty')],
+        [InlineKeyboardButton(button_text("🧾 Чек #", "check_num"), callback_data='edit_field_check_num')],
+        [InlineKeyboardButton(button_text("💳 Наличность", "cash_source"), callback_data='edit_field_cash_source')],
+        [InlineKeyboardButton(button_text("💸 Наличность (куда)", "target_cash_source"), callback_data='edit_field_target_cash_source')],
+        [InlineKeyboardButton(button_text("🔀 Тип", "transaction_type"), callback_data='edit_field_transaction_type')],
+        [InlineKeyboardButton(button_text("📊 Класс", "transaction_class"), callback_data='edit_field_transaction_class')],
+        [InlineKeyboardButton(button_text("📄 Тип PDF", "pdf_type"), callback_data='edit_field_pdf_type')],
+    ]
+
+    if add_confirm:
+        keyboard.append([InlineKeyboardButton("✅ Подтвердить", callback_data='confirm_edits')])
+
+    keyboard.extend([
         [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_edit_choice')],
         [InlineKeyboardButton("✖️ Отмена", callback_data='cancel_edit')]
-    ]
+    ])
+
     return InlineKeyboardMarkup(keyboard)
 
 

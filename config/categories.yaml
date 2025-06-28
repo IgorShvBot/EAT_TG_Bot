@@ -109,6 +109,7 @@ categories:
       - tortbar
       - KHMYZOV
       - Внутренний перевод на договор 5215573489
+      - перевод по номеру телефона \+79031115143
   - name: Транспорт
     patterns:
       - METRO
@@ -150,6 +151,7 @@ categories:
   - name: Дом. Текущий ремонт и обслуживание
     patterns:
       - cadastr
+      - перевод на договор 5229536221
   - name: Дети. Одежда
     patterns:
       - WB
@@ -191,10 +193,12 @@ categories:
       - RADISSON
       - Внутренний перевод на договор 5174820778
       - "70"
+      - IP LOGINOV NIKOLAY
   - name: Путешествия. Авиаперелеты
     patterns:
       - YANDEX.PAY
       - T-BankAir
+      - s7 CertPay
   - name: Путешествия. Наземный транспорт
     patterns:
       - takecars
@@ -209,6 +213,7 @@ categories:
       - KOPIRKA
       - NOVOSLOBODSKAYA
       - КОПИРКА
+      - Оформление туристической визы
   - name: Путешествия. Прочее
     patterns:
       - SHANAURIN O.O.

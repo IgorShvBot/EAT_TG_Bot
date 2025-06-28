@@ -8,7 +8,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libpq-dev \
     libpoppler-cpp-dev \
-    poppler-utils && \
+    poppler-utils \
+    postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -31,7 +32,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get install -y --no-install-recommends \
     libpq-dev \
     libpoppler-cpp-dev \
-    poppler-utils && \
+    poppler-utils \
+    postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 # Копирование установленных пакетов
