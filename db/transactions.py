@@ -296,3 +296,17 @@ def check_existing_ids(ids: list[int], db) -> list[int]:
     with db.cursor() as cur:
         cur.execute(query, (ids,))
         return [row[0] for row in cur.fetchall()]
+
+
+def get_transaction_fields(tx_id: int, db) -> dict | None:
+    """Возвращает значения основных полей для указанной транзакции."""
+    query = """
+        SELECT cash_source, target_cash_source, category, description,
+               transaction_type, counterparty, check_num, transaction_class
+        FROM transactions
+        WHERE id = %s
+    """
+    with db.cursor(dict_cursor=True) as cur:
+        cur.execute(query, (tx_id,))
+        row = cur.fetchone()
+        return dict(row) if row else None
