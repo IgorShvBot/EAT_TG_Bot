@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.10.0"
+__version__ = "3.11.0"
 
 # === Standard library imports ===
 import os
@@ -53,6 +53,7 @@ from handlers.restart import register_restart_handlers
 from handlers.duplicates import register_duplicate_handlers
 from handlers.config_handlers import register_config_menu_handlers
 from handlers.templates import register_template_handlers
+from handlers.edit_templates import register_edit_template_handlers
 # from handlers.config_handlers import show_config_menu
 
 from db.base import DBConnection
@@ -63,6 +64,7 @@ from db.transactions import (
     get_last_import_ids,
     get_unique_values,
     get_min_max_dates_by_pdf_type,
+    get_transaction_fields,
 )
 from db.backup import create_backup
 from config.env import TELEGRAM_BOT_TOKEN, ADMINS, DOCKER_MODE
@@ -233,6 +235,7 @@ class TransactionProcessorBot:
         register_duplicate_handlers(self.application, self)
         register_config_menu_handlers(self.application)
         register_template_handlers(self.application)
+        register_edit_template_handlers(self.application)
  
         self.application.add_handler(CallbackQueryHandler(self.handle_calendar_callback, pattern=r"^cbcal_"),group=0)
         self.application.add_handler(CallbackQueryHandler(self.handle_import_id_callback, pattern='^import_id_'))
@@ -247,6 +250,10 @@ class TransactionProcessorBot:
         self.application.add_handler(CallbackQueryHandler(
             self.select_edit_mode,
             pattern='^edit_field_[a-z_]+$'
+        ))
+        self.application.add_handler(CallbackQueryHandler(
+            self.request_copy_id,
+            pattern='^edit_copy_from_id$'
         ))
         self.application.add_handler(CallbackQueryHandler(
             self.get_new_value,
@@ -578,6 +585,15 @@ class TransactionProcessorBot:
         )
 
 
+    async def request_copy_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Запрашивает ID записи для копирования полей."""
+        query = update.callback_query
+        await query.answer()
+
+        context.user_data.setdefault('edit_mode', {})['awaiting_copy_id'] = True
+        await query.edit_message_text("Введите ID записи, из которой скопировать данные:")
+
+
     async def apply_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Сохраняет новое значение выбранного поля для последующего применения."""
         edit_mode = context.user_data.get('edit_mode')
@@ -633,12 +649,37 @@ class TransactionProcessorBot:
                     updates=updates,
                     db=db,
                 )
-            await query.edit_message_text(f"✅ Успешно обновлено {len(updated_ids)} записей")
+            copied_from = edit_mode.get('copied_from_id')
+            reply_markup = InlineKeyboardMarkup([
+                [InlineKeyboardButton("\ud83d\udcbe Сохранить шаблон", callback_data="edit_save_template")]
+            ])
+            await query.edit_message_text(
+                f"✅ Успешно обновлено {len(updated_ids)} записей",
+                reply_markup=reply_markup
+            )
+            if copied_from:
+                logger.info(
+                    "Пользователь %s обновил %s записей из записи %s: %s",
+                    query.from_user.id,
+                    len(updated_ids),
+                    copied_from,
+                    updated_ids,
+                )
+            else:
+                logger.info(
+                    "Пользователь %s обновил %s записей: %s",
+                    query.from_user.id,
+                    len(updated_ids),
+                    updated_ids,
+                )
         except Exception as e:
             logger.error(f"Ошибка при применении изменений: {e}", exc_info=True)
             await query.edit_message_text("❌ Ошибка при обновлении записей")
-        finally:
-            context.user_data.pop('edit_mode', None)
+        # finally:
+            # context.user_data.pop('edit_mode', None)
+            # Не очищаем edit_mode, чтобы дать возможность сохранить шаблон
+            # Данные будут удалены после сохранения или новой операции
+
 
     async def handle_calendar_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает выбор даты пользователем."""
@@ -771,6 +812,34 @@ class TransactionProcessorBot:
              # Важно: process_ids_input должен сам решать, продолжать ли обработку (например, вызывать _select_fields_to_edit) или завершить (если ID не найдены).
              # Возвращаемся, чтобы не попасть в логику фильтров ниже.
              return
+
+        if edit_mode_data.get('awaiting_copy_id'):
+            try:
+                source_id = int(text)
+            except ValueError:
+                await update.message.reply_text("Введите числовой ID")
+                return
+
+            with DBConnection() as db:
+                fields = get_transaction_fields(source_id, db=db)
+
+            if not fields:
+                await update.message.reply_text("Запись с таким ID не найдена")
+                return
+
+            updates = edit_mode_data.setdefault('updates', {})
+            for key, value in fields.items():
+                if value is not None:
+                    updates[key] = (value, 'replace')
+
+            edit_mode_data['copied_from_id'] = source_id
+            edit_mode_data.pop('awaiting_copy_id', None)
+
+            await update.message.reply_text(
+                f"Скопированы поля из записи {source_id}. Подтвердите изменения или выберите другие поля:",
+                reply_markup=build_edit_keyboard(updates, add_confirm=True)
+            )
+            return
         # ----------------------------------------------------------
 
 

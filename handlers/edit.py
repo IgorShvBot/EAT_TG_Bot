@@ -3,7 +3,12 @@
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 from db.base import DBConnection
-from db.transactions import check_existing_ids, get_transactions, update_transactions
+from db.transactions import (
+    check_existing_ids,
+    get_transactions,
+    update_transactions,
+    get_transaction_fields,
+)
 from datetime import datetime
 import logging
 
@@ -14,13 +19,17 @@ def build_edit_keyboard(updates: dict | None = None, add_confirm: bool = False) 
     """Возвращает клавиатуру выбора полей с учётом введённых значений."""
 
     def button_text(label: str, field: str) -> str:
-        if updates and field in updates:
-            value = updates[field][0]
-            short = value if len(value) <= 20 else value[:17] + "..."
-            return f"{label}: {short}"
+        if updates is not None:
+            if field in updates:
+                value = updates[field][0]
+                short = value if len(value) <= 20 else value[:17] + "..."
+                return f"{label}: {short}"
+            else:
+                return f"{label}: без изменений"
         return label
 
     keyboard = [
+        [InlineKeyboardButton(button_text("📋 Из ID", "copy_from_id"), callback_data='edit_copy_from_id')],
         [InlineKeyboardButton(button_text("🏷 Категория", "category"), callback_data='edit_field_category')],
         [InlineKeyboardButton(button_text("📝 Описание", "description"), callback_data='edit_field_description')],
         [InlineKeyboardButton(button_text("👥 Контрагент", "counterparty"), callback_data='edit_field_counterparty')],

@@ -38,3 +38,12 @@ CREATE TABLE IF NOT EXISTS filter_templates (
     filters_json JSONB NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Таблица шаблонов редактирования
+CREATE TABLE IF NOT EXISTS edit_templates (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    fields_json JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
