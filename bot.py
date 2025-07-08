@@ -44,7 +44,7 @@ from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 # === Local imports ===
 from handlers.pdf_type_filter import register_pdf_type_handler
 from handlers.export import register_export_handlers, show_filters_menu, generate_report
-from handlers.edit import build_edit_keyboard, get_valid_ids, apply_edits
+from handlers.edit import build_edit_keyboard, get_valid_ids, apply_edits, parse_ids_input
 from handlers.filters import get_default_filters
 # from handlers.config import register_config_handlers
 from handlers.pdf_processing import register_pdf_handlers, cleanup_files
@@ -310,6 +310,7 @@ class TransactionProcessorBot:
             BotCommand("export", "Выгрузить транзакции"),
             BotCommand("edit", "Редактировать записи"),
             BotCommand("templates", "Шаблоны фильтров"),
+            BotCommand("edit_templates", "Шаблоны редактирования"),
             BotCommand("date_ranges", "Диапазоны дат"),
             BotCommand("config", "Меню конфигурации"),
             BotCommand("backup", "Создать бэкап БД"),
@@ -410,7 +411,11 @@ class TransactionProcessorBot:
         await query.edit_message_text(
             f"ℹ️ Найдено {len(ids_from_filter)} записей для редактирования.\n"
             "✏️ Выберите поле для редактирования:",
-            reply_markup=build_edit_keyboard(add_confirm=True)
+            reply_markup=build_edit_keyboard(
+                context.user_data.get("edit_mode", {}).get("updates"),
+                add_confirm=True,
+                copied_from_id=context.user_data.get('edit_mode', {}).get('copied_from_id'),
+            )
         )
 
     @admin_only
@@ -486,7 +491,8 @@ class TransactionProcessorBot:
         Обрабатывает ввод ID записей от пользователя, проверяет существование и предлагает поля для редактирования.
         """
         # Если бот не ожидает ввод ID, передаём обработку дальше
-        if not context.user_data.get('edit_mode', {}).get('awaiting_ids'):
+        edit_mode_data = context.user_data.get('edit_mode')
+        if not isinstance(edit_mode_data, dict) or not edit_mode_data.get('awaiting_ids'):
             logger.debug(
                 "process_ids_input вызван без флага awaiting_ids - передача в handle_text_input"
             )
@@ -514,6 +520,7 @@ class TransactionProcessorBot:
             reply_markup=build_edit_keyboard(
                 context.user_data['edit_mode'].get('updates'),
                 add_confirm=True,
+                copied_from_id=context.user_data.get('edit_mode', {}).get('copied_from_id'),                
             ),
         )
 
@@ -542,6 +549,7 @@ class TransactionProcessorBot:
                 reply_markup=build_edit_keyboard(
                     context.user_data.get('edit_mode', {}).get('updates'),
                     add_confirm=True,
+                    copied_from_id=context.user_data.get('edit_mode', {}).get('copied_from_id'),
                 ),
             )
         else:
@@ -550,6 +558,7 @@ class TransactionProcessorBot:
                 reply_markup=build_edit_keyboard(
                     context.user_data.get('edit_mode', {}).get('updates'),
                     add_confirm=True,
+                    copied_from_id=context.user_data.get('edit_mode', {}).get('copied_from_id'),
                 ),
             )
 
@@ -597,6 +606,9 @@ class TransactionProcessorBot:
     async def apply_edits(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Сохраняет новое значение выбранного поля для последующего применения."""
         edit_mode = context.user_data.get('edit_mode')
+        # Пропускаем ввод, если ожидается название шаблона
+        if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
+            return
         # Если редактирование не активно, игнорируем сообщение
         if not isinstance(edit_mode, dict) or not edit_mode.get('field') or not edit_mode.get('mode'):
             return
@@ -619,7 +631,11 @@ class TransactionProcessorBot:
 
             await update.message.reply_text(
                 f"Поле '{field}' будет обновлено. Выберите следующее поле или подтвердите изменения:",
-                reply_markup=build_edit_keyboard(add_confirm=True)
+                reply_markup=build_edit_keyboard(
+                    context.user_data.get("edit_mode", {}).get("updates"),
+                    add_confirm=True,
+                    copied_from_id=context.user_data.get('edit_mode', {}).get('copied_from_id'),
+                )
             )
 
         except Exception as e:
@@ -649,6 +665,10 @@ class TransactionProcessorBot:
                     updates=updates,
                     db=db,
                 )
+            # Сохраняем обновлённые поля для последующего создания шаблона
+            context.user_data["last_edit_updates"] = {
+                k: v[0] for k, v in updates.items()
+            }
             copied_from = edit_mode.get('copied_from_id')
             reply_markup = InlineKeyboardMarkup([
                 [InlineKeyboardButton("\ud83d\udcbe Сохранить шаблон", callback_data="edit_save_template")]
@@ -754,13 +774,13 @@ class TransactionProcessorBot:
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
-        # Пропускаем текст, если ожидается ввод имени шаблона. Его обработает другой хендлер
-        # if context.user_data.get('awaiting_template_name'):
-        #     logger.debug(
-        #         "handle_text_input: получено '%s' в ожидании имени шаблона, пропускаем",
-        #         text,
-        #     )
-        #     return
+        # Пропускаем текст, если ожидается ввод имени шаблона (для экспорта или редактирования)
+        if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
+            logger.debug(
+                "handle_text_input: получено '%s' в ожидании имени шаблона, пропускаем",
+                text,
+            )
+            return
 
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
@@ -837,7 +857,11 @@ class TransactionProcessorBot:
 
             await update.message.reply_text(
                 f"Скопированы поля из записи {source_id}. Подтвердите изменения или выберите другие поля:",
-                reply_markup=build_edit_keyboard(updates, add_confirm=True)
+                reply_markup=build_edit_keyboard(
+                    updates,
+                    add_confirm=True,
+                    copied_from_id=source_id,
+                )
             )
             return
         # ----------------------------------------------------------
@@ -877,6 +901,16 @@ class TransactionProcessorBot:
         elif awaiting_input_type == 'check_num':
             filters_storage['check_num'] = text
             logger.debug(f"handle_text_input: Установлен фильтр 'check_num' = '{text}'")
+        elif awaiting_input_type == 'id':
+            try:
+                ids = parse_ids_input(text)
+            except Exception as e:
+                await update.message.reply_text(str(e))
+                return
+            filters_storage['id'] = ids
+            past_start_date = datetime(2000, 1, 1)
+            filters_storage['start_date'] = past_start_date.strftime('%d.%m.%Y')
+            logger.debug(f"handle_text_input: Установлен фильтр 'id' = {ids}")
         # --- ДОБАВЬТЕ ЭТОТ БЛОК ---
         elif awaiting_input_type == 'description':
             # Сохраняем введенный текст для фильтра описания

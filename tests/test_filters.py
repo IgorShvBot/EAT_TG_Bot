@@ -8,7 +8,8 @@ REQUIRED_EXPORT_KEYS = [
     'start_date', 'end_date',
     'category', 'transaction_type', 'cash_source',
     'counterparty', 'check_num', 'transaction_class',
-    'description', 'pdf_type', 'import_id'
+    'description', 'pdf_type', 'import_id',
+    'id'
 ]
 
 def test_export_filters_have_all_required_keys():

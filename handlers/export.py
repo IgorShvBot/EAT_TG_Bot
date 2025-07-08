@@ -17,12 +17,13 @@ from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
 from db.base import DBConnection
 from db.transactions import get_transactions, get_last_import_ids, get_unique_values
+from handlers.edit import parse_ids_input
 from handlers.filters import get_default_filters
 from handlers.pdf_type_filter import make_pdf_type_button
 
 
 logger = logging.getLogger(__name__)
-EXPORT_FILTER_KEYS = ["category", "transaction_type", "cash_source", "transaction_class", "pdf_type", "import_id"]
+EXPORT_FILTER_KEYS = ["category", "transaction_type", "cash_source", "transaction_class", "pdf_type", "import_id", "id"]
 
 
 def shift_month(date_obj: datetime, months: int) -> datetime:
@@ -60,6 +61,7 @@ def build_filters_keyboard(filters: dict, edit_mode: bool = False) -> InlineKeyb
             InlineKeyboardButton("➡️", callback_data="end_date_next_month"),
         ],
         [InlineKeyboardButton(f"📦 ID импорта: {filters.get('import_id', 'Все')}", callback_data='set_import_id')],
+        [InlineKeyboardButton(f"🆔 ID записи: {', '.join(map(str, filters['id'])) if isinstance(filters.get('id'), list) else filters.get('id', 'Все')}", callback_data='set_id')],
         [InlineKeyboardButton(f"🏷 Категория: {filters['category']}", callback_data='set_category')],
         [InlineKeyboardButton(f"🔀 Тип: {filters['transaction_type']}", callback_data='set_type')],
         [InlineKeyboardButton(f"💳 Наличность: {filters['cash_source']}", callback_data='set_cash_source')],
@@ -117,7 +119,7 @@ async def handle_export_command(update: Update, context: ContextTypes.DEFAULT_TY
     """
     Обрабатывает команду /export — запускает настройку фильтров.
     """
-    context.user_data["edit_mode"] = False  # Явно выключаем режим редактирования
+    context.user_data.pop("edit_mode", None)  # сбрасываем возможные параметры редактирования
     context.user_data["export_filters"] = get_default_filters()
     await show_filters_menu(update, context)
 
@@ -265,7 +267,8 @@ def format_filters(filters: dict) -> str:
         ('counterparty', '👤 Контрагент'),
         ('check_num', '🔢 Чек #'),
         ('pdf_type', '📎 Тип PDF'),
-        ('import_id', '🆔 ID импорта')
+        ('import_id', '🆔 ID импорта'),
+        ('id', '🆔 ID записи')
     ]:
         if filters.get(key) not in [None, '', 'Все']:
             lines.append(f"{label}: {filters[key]}")
@@ -484,6 +487,17 @@ async def set_import_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"Ошибка при загрузке ID импорта: {e}")
         await query.edit_message_text("❌ Не удалось загрузить список ID импорта")
 
+
+async def set_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await query.edit_message_text(
+        "Введите ID записей через запятую (например: 15, 28, 42)\n"
+        "Или диапазон через дефис (15-28)"
+    )
+    context.user_data['awaiting_input'] = 'id'
+
+
 async def set_category(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -574,6 +588,7 @@ def register_export_handlers(application):
     application.add_handler(CallbackQueryHandler(set_end_date, pattern="^set_end_date$"))
     application.add_handler(CallbackQueryHandler(change_end_date_month, pattern="^end_date_(prev|next)_month$"))
     application.add_handler(CallbackQueryHandler(set_import_id, pattern="^set_import_id$"))
+    application.add_handler(CallbackQueryHandler(set_id, pattern="^set_id$"))
     application.add_handler(CallbackQueryHandler(set_category, pattern="^set_category$"))
     application.add_handler(CallbackQueryHandler(set_type, pattern="^set_type$"))
     application.add_handler(CallbackQueryHandler(set_cash_source, pattern="^set_cash_source$"))
