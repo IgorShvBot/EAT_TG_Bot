@@ -113,7 +113,10 @@ def get_transactions(user_id: int, start_date, end_date, db, filters: dict = Non
             elif key == 'import_id':
                 filter_conditions.append(sql.SQL("import_id = %s"))
                 params.append(value)
-
+            elif key == 'id':
+                filter_conditions.append(sql.SQL("id = ANY(%s)"))
+                params.append(value if isinstance(value, list) else [value])
+                
         if filter_conditions:
             query_parts.append(sql.SQL("AND"))
             query_parts.append(sql.SQL(" AND ").join(filter_conditions))

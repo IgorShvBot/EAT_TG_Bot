@@ -33,6 +33,9 @@ async def list_edit_templates(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def start_save_edit_template(update: Update, context: ContextTypes.DEFAULT_TYPE):
     updates = context.user_data.get("edit_mode", {}).get("updates")
     if not updates:
+        # На случай если edit_mode очистился после подтверждения
+        updates = context.user_data.get("last_edit_updates")
+    if not updates:
         await update.callback_query.answer()
         await update.callback_query.edit_message_text("⚠️ Нет данных для сохранения")
         return
@@ -53,6 +56,7 @@ async def save_edit_template_name(update: Update, context: ContextTypes.DEFAULT_
         save_edit_template(update.effective_user.id, name, fields, db=db)
     # После сохранения очищаем данные редактирования
     context.user_data.pop("edit_mode", None)
+    context.user_data.pop("last_edit_updates", None)
     await update.message.reply_text("✅ Шаблон сохранен")
 
 

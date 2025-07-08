@@ -23,7 +23,8 @@ def get_default_filters() -> dict:
         'transaction_class': 'Все',
         'description': 'Все',
         'pdf_type': 'Все',
-        'import_id': 'Все'
+        'import_id': 'Все',
+        'id': 'Все'
     }
 
 

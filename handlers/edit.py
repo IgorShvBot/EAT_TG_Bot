@@ -15,10 +15,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def build_edit_keyboard(updates: dict | None = None, add_confirm: bool = False) -> InlineKeyboardMarkup:
+def build_edit_keyboard(
+    updates: dict | None = None,
+    add_confirm: bool = False,
+    copied_from_id: int | None = None,
+) -> InlineKeyboardMarkup:
     """Возвращает клавиатуру выбора полей с учётом введённых значений."""
 
     def button_text(label: str, field: str) -> str:
+        if field == "copy_from_id" and copied_from_id is not None:
+            return f"{label}: {copied_from_id}"
         if updates is not None:
             if field in updates:
                 value = updates[field][0]
@@ -26,6 +32,7 @@ def build_edit_keyboard(updates: dict | None = None, add_confirm: bool = False) 
                 return f"{label}: {short}"
             else:
                 return f"{label}: без изменений"
+            
         return label
 
     keyboard = [
