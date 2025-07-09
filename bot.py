@@ -782,6 +782,27 @@ class TransactionProcessorBot:
             )
             return
 
+        if context.user_data.get('awaiting_edit_tpl_id'):
+            try:
+                source_id = int(text)
+            except ValueError:
+                await update.message.reply_text("Введите числовой ID")
+                return
+
+            with DBConnection() as db:
+                fields = get_transaction_fields(source_id, db=db)
+
+            if not fields:
+                await update.message.reply_text("Запись с таким ID не найдена")
+                return
+
+            context.user_data['save_edit_template_fields'] = fields
+            context.user_data.pop('awaiting_edit_tpl_id', None)
+            context.user_data['awaiting_edit_template_name'] = True
+
+            await update.message.reply_text("Введите название шаблона:")
+            return
+        
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
         is_in_edit_process = bool(edit_mode_data.get('field') and edit_mode_data.get('mode'))
