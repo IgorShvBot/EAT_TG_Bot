@@ -56,7 +56,9 @@ from handlers.templates import register_template_handlers
 from handlers.edit_templates import (
     register_edit_template_handlers,
     build_new_template_keyboard,
+    save_edit_template_name,
 )
+from handlers.templates import save_template_name
 # from handlers.config_handlers import show_config_menu
 
 from db.base import DBConnection
@@ -500,7 +502,7 @@ class TransactionProcessorBot:
                 "process_ids_input вызван без флага awaiting_ids - передача в handle_text_input"
             )
             await self.handle_text_input(update, context)
-            return
+            return False
         try:
             ids = get_valid_ids(update.message.text.strip())
         except ValueError as e:
@@ -611,10 +613,10 @@ class TransactionProcessorBot:
         edit_mode = context.user_data.get('edit_mode')
         # Пропускаем ввод, если ожидается название шаблона
         if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
-            return
+            return False
         # Если редактирование не активно, игнорируем сообщение
         if not isinstance(edit_mode, dict) or not edit_mode.get('field') or not edit_mode.get('mode'):
-            return
+            return False
         
         try:
             edit_mode = context.user_data.setdefault('edit_mode', {})
@@ -777,13 +779,21 @@ class TransactionProcessorBot:
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
-        # Пропускаем текст, если ожидается ввод имени шаблона (для экспорта или редактирования)
-        if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
+        # Если ожидается ввод имени шаблона, сразу передаем его соответствующему обработчику
+        if context.user_data.get('awaiting_edit_template_name'):
             logger.debug(
-                "handle_text_input: получено '%s' в ожидании имени шаблона, пропускаем",
+                "handle_text_input: передаем ввод '%s' в save_edit_template_name",
                 text,
             )
-            return
+            await save_edit_template_name(update, context)
+            return True
+        if context.user_data.get('awaiting_template_name'):
+            logger.debug(
+                "handle_text_input: передаем ввод '%s' в save_template_name",
+                text,
+            )
+            await save_template_name(update, context)
+            return True
         
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
