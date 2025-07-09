@@ -48,10 +48,13 @@ def build_new_template_keyboard(fields: dict, copied_from_id: int | None = None)
 
 
 async def create_edit_template_from_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Запрашивает ID транзакции для создания нового шаблона."""
     query = update.callback_query
     await query.answer()
-    context.user_data["awaiting_edit_tpl_id"] = True
-    await query.edit_message_text("Введите ID записи для создания шаблона:")
+    context.user_data["awaiting_new_tpl_id"] = True
+    context.user_data.pop("new_tpl_fields", None)
+    context.user_data.pop("new_tpl_source_id", None)
+    await query.edit_message_text("Введите ID записи, из которой скопировать данные:")
 
 
 async def list_edit_templates(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -116,7 +119,12 @@ async def save_edit_template_name(update: Update, context: ContextTypes.DEFAULT_
     # После сохранения очищаем данные редактирования
     context.user_data.pop("edit_mode", None)
     context.user_data.pop("last_edit_updates", None)
+    context.user_data.pop("new_tpl_fields", None)
+    context.user_data.pop("new_tpl_source_id", None)
+    context.user_data.pop("awaiting_new_tpl_id", None)
+    context.user_data.pop("editing_tpl_field", None)
     await update.message.reply_text("✅ Шаблон сохранен")
+    await list_edit_templates(update, context)
 
 
 async def apply_edit_template(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -144,15 +152,6 @@ async def remove_edit_template(update: Update, context: ContextTypes.DEFAULT_TYP
     with DBConnection() as db:
         delete_edit_template(query.from_user.id, tpl_id, db=db)
     await query.edit_message_text("🗑 Шаблон удален")
-
-
-async def start_new_template(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    context.user_data['awaiting_new_tpl_id'] = True
-    context.user_data.pop('new_tpl_fields', None)
-    context.user_data.pop('new_tpl_source_id', None)
-    await query.edit_message_text("Введите ID записи, из которой скопировать данные:")
 
 
 async def handle_new_template_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -223,7 +222,6 @@ def register_edit_template_handlers(app):
     app.add_handler(CommandHandler("edit_templates", list_edit_templates, filters=ADMIN_FILTER))
     app.add_handler(CallbackQueryHandler(start_save_edit_template, pattern="^edit_save_template$"))
     app.add_handler(CallbackQueryHandler(create_edit_template_from_id, pattern="^etpl_create_from_id$"))
-    app.add_handler(MessageHandler(filters.TEXT & ADMIN_FILTER, handle_new_template_text), group=1)
     app.add_handler(MessageHandler(filters.TEXT & ADMIN_FILTER, save_edit_template_name), group=1)
     app.add_handler(CallbackQueryHandler(apply_edit_template, pattern=r"^etpl_apply_\d+$"))
     app.add_handler(CallbackQueryHandler(remove_edit_template, pattern=r"^etpl_del_\d+$"))

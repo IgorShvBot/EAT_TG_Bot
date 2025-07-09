@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.11.0"
+__version__ = "3.11.2(1)"
 
 # === Standard library imports ===
 import os
@@ -53,7 +53,10 @@ from handlers.restart import register_restart_handlers
 from handlers.duplicates import register_duplicate_handlers
 from handlers.config_handlers import register_config_menu_handlers
 from handlers.templates import register_template_handlers
-from handlers.edit_templates import register_edit_template_handlers
+from handlers.edit_templates import (
+    register_edit_template_handlers,
+    build_new_template_keyboard,
+)
 # from handlers.config_handlers import show_config_menu
 
 from db.base import DBConnection
@@ -781,27 +784,6 @@ class TransactionProcessorBot:
                 text,
             )
             return
-
-        if context.user_data.get('awaiting_edit_tpl_id'):
-            try:
-                source_id = int(text)
-            except ValueError:
-                await update.message.reply_text("Введите числовой ID")
-                return
-
-            with DBConnection() as db:
-                fields = get_transaction_fields(source_id, db=db)
-
-            if not fields:
-                await update.message.reply_text("Запись с таким ID не найдена")
-                return
-
-            context.user_data['save_edit_template_fields'] = fields
-            context.user_data.pop('awaiting_edit_tpl_id', None)
-            context.user_data['awaiting_edit_template_name'] = True
-
-            await update.message.reply_text("Введите название шаблона:")
-            return
         
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
@@ -887,6 +869,41 @@ class TransactionProcessorBot:
             return
         # ----------------------------------------------------------
 
+        # --- Создание шаблона редактирования из существующей транзакции ---
+        if context.user_data.get('awaiting_new_tpl_id'):
+            try:
+                tx_id = int(text)
+            except ValueError:
+                await update.message.reply_text("Введите числовой ID")
+                return
+
+            with DBConnection() as db:
+                fields = get_transaction_fields(tx_id, db=db)
+
+            if not fields:
+                await update.message.reply_text("Запись с таким ID не найдена")
+                return
+
+            context.user_data['new_tpl_source_id'] = tx_id
+            context.user_data['new_tpl_fields'] = {k: v for k, v in fields.items() if v is not None}
+            context.user_data['awaiting_new_tpl_id'] = False
+
+            await update.message.reply_text(
+                "Отредактируйте поля или сохраните шаблон:",
+                reply_markup=build_new_template_keyboard(context.user_data['new_tpl_fields'], tx_id),
+            )
+            return
+
+        if context.user_data.get('editing_tpl_field'):
+            field = context.user_data.pop('editing_tpl_field')
+            context.user_data.setdefault('new_tpl_fields', {})[field] = text
+            source_id = context.user_data.get('new_tpl_source_id')
+            await update.message.reply_text(
+                "Поле обновлено. Выберите следующее поле или сохраните шаблон:",
+                reply_markup=build_new_template_keyboard(context.user_data['new_tpl_fields'], source_id),
+            )
+            return
+        # ----------------------------------------------------------
 
         # --- Логика для фильтров (экспорт или edit_by_filter), когда вводится значение ---
         # Получаем default_filters асинхронно ОДИН РАЗ
