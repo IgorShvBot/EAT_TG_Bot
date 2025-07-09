@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.11.0"
+__version__ = "3.11.3"
 
 # === Standard library imports ===
 import os
@@ -53,7 +53,12 @@ from handlers.restart import register_restart_handlers
 from handlers.duplicates import register_duplicate_handlers
 from handlers.config_handlers import register_config_menu_handlers
 from handlers.templates import register_template_handlers
-from handlers.edit_templates import register_edit_template_handlers
+from handlers.edit_templates import (
+    register_edit_template_handlers,
+    build_new_template_keyboard,
+    save_edit_template_name,
+)
+from handlers.templates import save_template_name
 # from handlers.config_handlers import show_config_menu
 
 from db.base import DBConnection
@@ -497,7 +502,7 @@ class TransactionProcessorBot:
                 "process_ids_input вызван без флага awaiting_ids - передача в handle_text_input"
             )
             await self.handle_text_input(update, context)
-            return
+            return False
         try:
             ids = get_valid_ids(update.message.text.strip())
         except ValueError as e:
@@ -608,10 +613,10 @@ class TransactionProcessorBot:
         edit_mode = context.user_data.get('edit_mode')
         # Пропускаем ввод, если ожидается название шаблона
         if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
-            return
+            return False
         # Если редактирование не активно, игнорируем сообщение
         if not isinstance(edit_mode, dict) or not edit_mode.get('field') or not edit_mode.get('mode'):
-            return
+            return False
         
         try:
             edit_mode = context.user_data.setdefault('edit_mode', {})
@@ -774,14 +779,22 @@ class TransactionProcessorBot:
         user_id = update.message.from_user.id
         text = update.message.text.strip() # Используем strip() для удаления пробелов
 
-        # Пропускаем текст, если ожидается ввод имени шаблона (для экспорта или редактирования)
-        if context.user_data.get('awaiting_template_name') or context.user_data.get('awaiting_edit_template_name'):
+        # Если ожидается ввод имени шаблона, сразу передаем его соответствующему обработчику
+        if context.user_data.get('awaiting_edit_template_name'):
             logger.debug(
-                "handle_text_input: получено '%s' в ожидании имени шаблона, пропускаем",
+                "handle_text_input: передаем ввод '%s' в save_edit_template_name",
                 text,
             )
-            return
-
+            await save_edit_template_name(update, context)
+            return True
+        if context.user_data.get('awaiting_template_name'):
+            logger.debug(
+                "handle_text_input: передаем ввод '%s' в save_template_name",
+                text,
+            )
+            await save_template_name(update, context)
+            return True
+        
         edit_mode_data = context.user_data.get('edit_mode') or {}
 
         is_in_edit_process = bool(edit_mode_data.get('field') and edit_mode_data.get('mode'))
@@ -866,6 +879,41 @@ class TransactionProcessorBot:
             return
         # ----------------------------------------------------------
 
+        # --- Создание шаблона редактирования из существующей транзакции ---
+        if context.user_data.get('awaiting_new_tpl_id'):
+            try:
+                tx_id = int(text)
+            except ValueError:
+                await update.message.reply_text("Введите числовой ID")
+                return
+
+            with DBConnection() as db:
+                fields = get_transaction_fields(tx_id, db=db)
+
+            if not fields:
+                await update.message.reply_text("Запись с таким ID не найдена")
+                return
+
+            context.user_data['new_tpl_source_id'] = tx_id
+            context.user_data['new_tpl_fields'] = {k: v for k, v in fields.items() if v is not None}
+            context.user_data['awaiting_new_tpl_id'] = False
+
+            await update.message.reply_text(
+                "Отредактируйте поля или сохраните шаблон:",
+                reply_markup=build_new_template_keyboard(context.user_data['new_tpl_fields'], tx_id),
+            )
+            return
+
+        if context.user_data.get('editing_tpl_field'):
+            field = context.user_data.pop('editing_tpl_field')
+            context.user_data.setdefault('new_tpl_fields', {})[field] = text
+            source_id = context.user_data.get('new_tpl_source_id')
+            await update.message.reply_text(
+                "Поле обновлено. Выберите следующее поле или сохраните шаблон:",
+                reply_markup=build_new_template_keyboard(context.user_data['new_tpl_fields'], source_id),
+            )
+            return
+        # ----------------------------------------------------------
 
         # --- Логика для фильтров (экспорт или edit_by_filter), когда вводится значение ---
         # Получаем default_filters асинхронно ОДИН РАЗ
