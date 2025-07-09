@@ -60,17 +60,9 @@ async def create_edit_template_from_id(update: Update, context: ContextTypes.DEF
 async def list_edit_templates(update: Update, context: ContextTypes.DEFAULT_TYPE):
     with DBConnection() as db:
         templates = get_edit_templates(update.effective_user.id, db=db)
-    # if not templates:
-    #     await update.message.reply_text("⚠️ Шаблоны не найдены")
-    #     return
 
-    # keyboard = []
     keyboard: list[list[InlineKeyboardButton]] = []
     for tpl in templates:
-        # keyboard.append([
-        #     InlineKeyboardButton(tpl["name"], callback_data=f"etpl_apply_{tpl['id']}") ,
-        #     InlineKeyboardButton("🗑", callback_data=f"etpl_del_{tpl['id']}") ,
-        # ])
         keyboard.append(
             [
                 InlineKeyboardButton(
@@ -84,12 +76,22 @@ async def list_edit_templates(update: Update, context: ContextTypes.DEFAULT_TYPE
         [InlineKeyboardButton("➕ Создать из ID", callback_data="etpl_create_from_id")]
     )
 
+    if context.user_data.get("edit_mode"):
+        keyboard.append([InlineKeyboardButton("⬅️ Назад", callback_data="etpl_back_to_fields")])
+
     text = "📑 Шаблоны редактирования:" if templates else "⚠️ Шаблоны не найдены"
 
-    await update.message.reply_text(
-        text,
-        reply_markup=InlineKeyboardMarkup(keyboard),
-    )
+    if update.callback_query:
+        await update.callback_query.edit_message_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+        await update.callback_query.answer()
+    else:
+        await update.message.reply_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
 
 
 async def start_save_edit_template(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -151,7 +153,21 @@ async def remove_edit_template(update: Update, context: ContextTypes.DEFAULT_TYP
     tpl_id = int(query.data.split("_")[2])
     with DBConnection() as db:
         delete_edit_template(query.from_user.id, tpl_id, db=db)
-    await query.edit_message_text("🗑 Шаблон удален")
+        await query.edit_message_text("🗑 Шаблон удален")
+
+
+async def back_to_edit_fields(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Возвращает пользователя к выбору полей редактирования."""
+    query = update.callback_query
+    await query.answer()
+    updates = context.user_data.get("edit_mode", {}).get("updates")
+    copied_from = context.user_data.get("edit_mode", {}).get("copied_from_id")
+    await query.edit_message_text(
+        "✏️ Выберите поле для редактирования:",
+        reply_markup=build_edit_keyboard(
+            updates, add_confirm=True, copied_from_id=copied_from
+        ),
+    )
 
 
 async def handle_new_template_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -220,9 +236,11 @@ async def handle_new_template_callback(update: Update, context: ContextTypes.DEF
 
 def register_edit_template_handlers(app):
     app.add_handler(CommandHandler("edit_templates", list_edit_templates, filters=ADMIN_FILTER))
+    app.add_handler(CallbackQueryHandler(list_edit_templates, pattern="^edit_show_templates$"))
     app.add_handler(CallbackQueryHandler(start_save_edit_template, pattern="^edit_save_template$"))
     app.add_handler(CallbackQueryHandler(create_edit_template_from_id, pattern="^etpl_create_from_id$"))
     app.add_handler(MessageHandler(filters.TEXT & ADMIN_FILTER, save_edit_template_name), group=1)
     app.add_handler(CallbackQueryHandler(apply_edit_template, pattern=r"^etpl_apply_\d+$"))
     app.add_handler(CallbackQueryHandler(remove_edit_template, pattern=r"^etpl_del_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_new_template_callback, pattern=r"^etpl_(?:copy_from_id|field_.*|save_new|cancel_new)$"))
+    app.add_handler(CallbackQueryHandler(back_to_edit_fields, pattern="^etpl_back_to_fields$"))

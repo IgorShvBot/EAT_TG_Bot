@@ -37,6 +37,7 @@ def build_edit_keyboard(
 
     keyboard = [
         [InlineKeyboardButton(button_text("📋 Из ID", "copy_from_id"), callback_data='edit_copy_from_id')],
+        [InlineKeyboardButton("📑 Шаблоны", callback_data='edit_show_templates')],
         [InlineKeyboardButton(button_text("🏷 Категория", "category"), callback_data='edit_field_category')],
         [InlineKeyboardButton(button_text("📝 Описание", "description"), callback_data='edit_field_description')],
         [InlineKeyboardButton(button_text("👥 Контрагент", "counterparty"), callback_data='edit_field_counterparty')],

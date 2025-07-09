@@ -5,7 +5,7 @@
 а также предоставляет административные команды.
 """
 
-__version__ = "3.11.2(1)"
+__version__ = "3.11.3"
 
 # === Standard library imports ===
 import os
